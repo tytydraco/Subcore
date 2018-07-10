@@ -4,11 +4,9 @@
 
 #include "sysfs.h"
 
-int main(int argc, const char** argv) {
-	SysFs sysfs;
-	SysFs::Cpu cpu;
-	SysFs::Block block;
+void alg();
 
+int main(int argc, const char** argv) {
 	return 0;
 }
 
@@ -17,7 +15,6 @@ int main(int argc, const char** argv) {
  * - Set ioshced to noop
  * - Set CPU governor to powersave
  * - Set max freq to min
- * - Set min freq to min
  * - Set GPU freq to max - 2
  * - Set LMK to High
  * - Make subcore scan less frequent
@@ -27,14 +24,10 @@ int main(int argc, const char** argv) {
  * - Set iosched to deadline
  * - Set CPU governor to conservative or interactive based on battery % and usage
  * - Set max freq based on battery % and usage
- * - set min freq to min
  * - set GPU freq based on battery %
  * - Set LMK to Light
  * - Make subcore scan normally
  * - Set readahead to 512KB
  * - Set swappiness to 25 
+ *
  */
-void alg() {
-	
-}
-
