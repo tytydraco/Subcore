@@ -112,3 +112,13 @@ int SysFs::Block::get_read_ahead(std::string blkdev) {
 	return stoi(str);
 }
 
+int SysFs::Battery::capacity() {
+	std::string capacity_str = IO::read_file(PATH_BATTERY + "/capacity");
+	return stoi(capacity_str);
+}
+
+bool SysFs::Battery::charging() {
+	std::string status_str = IO::read_file(PATH_BATTERY + "/status");
+	return (!status_str.compare("Charging"));
+}
+

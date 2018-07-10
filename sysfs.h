@@ -34,6 +34,14 @@ class SysFs {
 				void set_read_ahead(std::string blkdev, int read_ahead);
 				int get_read_ahead(std::string blkdev);
 		};
+
+		struct Battery {
+			private:
+				const std::string PATH_BATTERY = "/sys/class/power_supply/battery";
+			public:
+				int capacity();
+				bool charging();
+		};
 };
 
 #endif
