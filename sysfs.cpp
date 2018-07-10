@@ -143,6 +143,15 @@ int SysFs::Block::get_read_ahead(std::string blkdev) {
 	return stoi(str);
 }
 
+void SysFs::Block::set_swappiness(int swappiness) {
+	IO::write_file(PATH_SWAPPINESS, std::to_string(swappiness));
+}
+
+int SysFs::Block::get_swappiness() {
+	std::string str = IO::read_file(PATH_SWAPPINESS);
+	return stoi(str);
+}
+
 int SysFs::Battery::capacity() {
 	std::string capacity_str = IO::read_file(PATH_BATTERY + "/capacity");
 	return stoi(capacity_str);
