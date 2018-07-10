@@ -9,6 +9,8 @@ class SysFs {
 		struct Cpu {
 			private:
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
+				const std::string PATH_STAT = "/proc/stat";
+				const int STAT_AVG_SLEEP_MS = 1000;
 			public:
 				std::vector<int> get_freqs(int core);
 				void set_max_freq(int core, int freq);
@@ -18,6 +20,7 @@ class SysFs {
 				int get_present();
 				void set_gov(int core, std::string gov);
 				std::string get_gov(int core);
+				int get_loadavg();
 		};
 
 		struct Block {
@@ -43,6 +46,5 @@ class SysFs {
 				bool charging();
 		};
 };
-
 #endif
 

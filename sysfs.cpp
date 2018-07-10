@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <algorithm>
+#include <cstdio>
+#include <unistd.h>
 
 #include "misc.h"
 #include "sysfs.h"
@@ -56,6 +58,30 @@ void SysFs::Cpu::set_gov(int core, std::string gov) {
 
 std::string SysFs::Cpu::get_gov(int core) {
 	return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
+}
+
+int SysFs::Cpu::get_loadavg() {
+	long double a[4], b[4], loadavg;
+	FILE *fp;
+	char dump[50];
+
+	fp = std::fopen(PATH_STAT.c_str(), "r");
+	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
+	fclose(fp);
+	usleep(STAT_AVG_SLEEP_MS * 1000);
+
+	fp = std::fopen(PATH_STAT.c_str(), "r");
+	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &b[0], &b[1], &b[2], &b[3]);
+	fclose(fp);
+
+	loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
+	loadavg *= 100;
+
+	if (loadavg > 100)
+		loadavg = 100;
+	if (loadavg < 0)
+		loadavg = 0;
+	return (int) (loadavg);
 }
 
 std::vector<std::string> SysFs::Block::get_blkdevs() {
