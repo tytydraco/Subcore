@@ -11,6 +11,7 @@ class SysFs {
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
 				const int STAT_AVG_SLEEP_MS = 1000;
+				const int STAT_AVG_IDLE_THRESH = 10;
 			public:
 				std::vector<int> get_freqs(int core);
 				void set_max_freq(int core, int freq);
@@ -21,6 +22,7 @@ class SysFs {
 				void set_gov(int core, std::string gov);
 				std::string get_gov(int core);
 				int get_loadavg();
+				bool is_idle();
 		};
 
 		struct Block {

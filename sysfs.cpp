@@ -84,6 +84,11 @@ int SysFs::Cpu::get_loadavg() {
 	return (int) (loadavg);
 }
 
+bool SysFs::Cpu::is_idle() {
+	int current_load = get_loadavg();
+	return (current_load <= STAT_AVG_IDLE_THRESH);
+}
+
 std::vector<std::string> SysFs::Block::get_blkdevs() {
 	DIR* d;
 	std::vector<std::string> usable_blkdevs;
