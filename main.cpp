@@ -9,7 +9,5 @@ int main(int argc, const char** argv) {
 	SysFs::Cpu cpu;
 	SysFs::Block block;
 
-	block.get_blkdevs();
-
 	return 0;
 }
