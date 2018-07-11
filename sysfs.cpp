@@ -85,11 +85,6 @@ int SysFs::Cpu::get_loadavg() {
 	return (int) (loadavg);
 }
 
-bool SysFs::Cpu::is_idle() {
-	int current_load = get_loadavg();
-	return (current_load <= STAT_AVG_IDLE_THRESH);
-}
-
 std::vector<int> SysFs::Gpu::get_freqs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");

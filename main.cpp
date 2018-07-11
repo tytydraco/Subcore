@@ -3,10 +3,33 @@
 #include <vector>
 
 #include "sysfs.h"
+#include "subcore.h"
 
-void alg();
+SysFs::Cpu cpu;
+SysFs::Block block;
+SysFs::Gpu gpu;
+SysFs::Battery battery;
+Subcore subcore;
+
+std::string test_alg() {
+	int load = cpu.get_loadavg();
+	std::cout << std::to_string(load) << std::endl;
+	if (load <= cpu.STAT_AVG_IDLE_THRESH) {
+		subcore.set_sysfs(subcore.idle);
+		return "idle";
+	}
+
+	subcore.set_sysfs(subcore.performance);
+	return "other";
+}
 
 int main(int argc, const char** argv) {
+	std::cout << "[*] SubCore Init" << std::endl;
+	subcore.setup_presets();
+	while (1) {
+		std::cout << test_alg() << std::endl;
+	}	
+	
 	return 0;
 }
 

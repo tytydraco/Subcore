@@ -16,11 +16,6 @@ class Subcore {
 			int swappiness;
 		};
 
-		sysfs_struct powersave;
-		sysfs_struct idle;
-		sysfs_struct low_lat;
-		sysfs_struct performance;
-
 		SysFs::Cpu cpu;
 		SysFs::Block block;
 		SysFs::Gpu gpu;
@@ -30,6 +25,11 @@ class Subcore {
 		void setup_low_lat();
 		void setup_performance();
 	public:
+		sysfs_struct powersave;
+		sysfs_struct idle;
+		sysfs_struct low_lat;
+		sysfs_struct performance;
+
 		void setup_presets();
 		void set_sysfs(sysfs_struct sysfs);
 };
