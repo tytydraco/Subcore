@@ -26,6 +26,7 @@ std::vector<int> SysFs::Cpu::get_freqs(int core) {
 		freq_list.push_back(atoi(freq_str.c_str()));
 	}
 
+	std::sort(freq_list.begin(), freq_list.end());
 	return freq_list;
 }
 
@@ -102,6 +103,7 @@ std::vector<int> SysFs::Gpu::get_freqs() {
 		freq_list.push_back(atoi(freq_str.c_str()));
 	}
 
+	std::sort(freq_list.begin(), freq_list.end());
 	return freq_list;
 }
 

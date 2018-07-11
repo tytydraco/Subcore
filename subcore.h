@@ -23,6 +23,7 @@ class Subcore {
 
 		SysFs::Cpu cpu;
 		SysFs::Block block;
+		SysFs::Gpu gpu;
 
 		void setup_powersave();
 		void setup_idle();
