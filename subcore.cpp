@@ -19,6 +19,9 @@ void Subcore::setup_powersave() {
 	powersave.cpu_gov = "powersave";
 	powersave.cpu_max_freqs = new_cpu_max_freqs;
 	powersave.gpu_max_freq = gpu_avail_freqs[0];
+	powersave.lmk_minfree = block.LMK_AGGRESSIVE;
+	powersave.new_subcore_scan = 5000;
+	powersave.swappiness = 0;
 }
 
 void Subcore::set_sysfs(sysfs_struct sysfs) {

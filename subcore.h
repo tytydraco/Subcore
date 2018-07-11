@@ -10,7 +10,7 @@ class Subcore {
 			std::string cpu_gov;
 			std::vector<int> cpu_max_freqs;
 			int gpu_max_freq;
-			std::string lmk_adj;
+			std::string lmk_minfree;
 			int new_subcore_scan;
 			int readahead;
 			int swappiness;

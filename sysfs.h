@@ -44,11 +44,10 @@ class SysFs {
 				const std::string PATH_MOUNTS = "/proc/mounts";
 				const std::string PATH_LMK = "/sys/module/lowmemorykiller/parameters";
 				const std::string PATH_SWAPPINESS = "/proc/sys/vm/swappiness";
-				struct LMK_presets {
-					const std::string VERY_LIGHT = "9169,18338,27507,36676,45845,55014";
-					const std::string AGGRESSIVE = "18338,27507,55014,91690,128366,137535";
-				};
 			public:
+				const std::string LMK_VERY_LIGHT = "9169,18338,27507,36676,45845,55014";
+				const std::string LMK_AGGRESSIVE = "18338,27507,55014,91690,128366,137535";
+
 				std::vector<std::string> get_blkdevs();
 				void set_iosched(std::string blkdev, std::string iosched);
 				std::string get_iosched(std::string blkdev);
