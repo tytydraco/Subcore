@@ -126,12 +126,12 @@ std::string SysFs::Block::get_iosched(std::string blkdev) {
 	return IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler");
 }
 
-void SysFs::Block::set_lmk_adj(std::string adj) {
-	IO::write_file(PATH_LMK + "/adj", adj);
+void SysFs::Block::set_lmk(std::string minfree) {
+	IO::write_file(PATH_LMK + "/minfree", minfree);
 }
 
-std::string SysFs::Block::get_lmk_adj() {
-	return IO::read_file(PATH_LMK + "/adj");
+std::string SysFs::Block::get_lmk() {
+	return IO::read_file(PATH_LMK + "/minfree");
 }
 
 void SysFs::Block::set_read_ahead(std::string blkdev, int read_ahead) {

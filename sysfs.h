@@ -39,8 +39,8 @@ class SysFs {
 				std::vector<std::string> get_blkdevs();
 				void set_iosched(std::string blkdev, std::string iosched);
 				std::string get_iosched(std::string blkdev);
-				void set_lmk_adj(std::string adj);
-				std::string get_lmk_adj();
+				void set_lmk(std::string minfree);
+				std::string get_lmk();
 				void set_read_ahead(std::string blkdev, int read_ahead);
 				int get_read_ahead(std::string blkdev);
 				void set_swappiness(int swappiness);
