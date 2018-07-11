@@ -89,6 +89,49 @@ bool SysFs::Cpu::is_idle() {
 	return (current_load <= STAT_AVG_IDLE_THRESH);
 }
 
+std::vector<int> SysFs::Gpu::get_freqs() {
+	// read and split avail freqs
+	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");
+	std::istringstream iss(freq_list_str);
+	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
+			std::istream_iterator<std::string>());
+	std::vector<int> freq_list;
+
+	// iterate through freq list
+	for (std::string freq_str : freq_list_split) {
+		freq_list.push_back(atoi(freq_str.c_str()));
+	}
+
+	return freq_list;
+}
+
+void SysFs::Gpu::set_max_freq(int freq) {
+	IO::write_file(PATH_GPU + "/gpu_max_clock", std::to_string(freq));
+}
+
+int SysFs::Gpu::get_max_freq() {
+	std::string str = IO::read_file(PATH_GPU + "/gpu_max_clock");
+	return stoi(str);
+}
+
+void SysFs::Gpu::set_min_freq(int freq) {
+	IO::write_file(PATH_GPU + "/gpu_min_clock", std::to_string(freq));
+}
+
+int SysFs::Gpu::get_min_freq() {
+	std::string str = IO::read_file(PATH_GPU + "/gpu_min_clock");
+	return stoi(str);
+}
+
+void SysFs::Gpu::set_gov(std::string gov) {
+	IO::write_file(PATH_GPU + "/gpu_governor", gov);
+}
+
+std::string SysFs::Gpu::get_gov() {
+	std::string str = IO::read_file(PATH_GPU + "/gpu_governor");
+	return str;
+}
+
 std::vector<std::string> SysFs::Block::get_blkdevs() {
 	DIR* d;
 	std::vector<std::string> usable_blkdevs;

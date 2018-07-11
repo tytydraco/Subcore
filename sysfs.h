@@ -25,6 +25,19 @@ class SysFs {
 				bool is_idle();
 		};
 
+		struct Gpu {
+			private:
+				const std::string PATH_GPU = "/sys/kernel/gpu";
+			public:
+				std::vector<int> get_freqs();
+				void set_max_freq(int freq);
+				int get_max_freq();
+				void set_min_freq(int freq);
+				int get_min_freq();
+				void set_gov(std::string gov);
+				std::string get_gov();
+		};
+
 		struct Block {
 			private:
 				const std::string PATH_BLOCK = "/sys/block";

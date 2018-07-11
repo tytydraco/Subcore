@@ -5,10 +5,10 @@
 
 class Subcore {
 	private:
-		struct alg_preset {
+		struct sysfs_struct {
 			std::string iosched;
 			std::string cpu_gov;
-			int cpu_max_freq;
+			std::vector<int> cpu_max_freqs;
 			int gpu_max_freq;
 			std::string lmk_adj;
 			int new_subcore_scan;
@@ -16,14 +16,21 @@ class Subcore {
 			int swappiness;
 		};
 
-		alg_preset idle;
-		alg_preset awake;
+		sysfs_struct powersave;
+		sysfs_struct idle;
+		sysfs_struct low_lat;
+		sysfs_struct performance;
 
 		SysFs::Cpu cpu;
 		SysFs::Block block;
 
+		void setup_powersave();
+		void setup_idle();
+		void setup_lowlat();
+		void setup_performance();
 	public:
-		void algorithm(alg_preset new_preset);
+		void setup_presets();
+		void set_sysfs(sysfs_struct sysfs);
 };
 
 #endif
