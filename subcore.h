@@ -27,7 +27,7 @@ class Subcore {
 
 		void setup_powersave();
 		void setup_idle();
-		void setup_lowlat();
+		void setup_low_lat();
 		void setup_performance();
 	public:
 		void setup_presets();

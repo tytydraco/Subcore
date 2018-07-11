@@ -84,15 +84,38 @@ void Subcore::setup_performance() {
 	powersave.swappiness = 25;
 }
 
-void SubCore::setup_presets() {
+void Subcore::setup_presets() {
 	setup_powersave();
 	setup_idle();
-	setup_lowlat();
+	setup_low_lat();
 	setup_performance();
 }
 
 void Subcore::set_sysfs(sysfs_struct sysfs) {
-	
+	// iosched & readahead
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (std::string blkdev : blkdevs) {
+		block.set_iosched(blkdev, sysfs.iosched);
+		block.set_read_ahead(blkdev, sysfs.readahead);
+	}
+
+	// swappiness
+	block.set_swappiness(sysfs.swappiness);
+
+	//cpu gov & max freq
+	int present = cpu.get_present();
+	for (int i = 0; i <= present; i++) {
+		cpu.set_gov(i, sysfs.cpu_gov);
+		cpu.set_max_freq(i, sysfs.cpu_max_freqs[i]);
+	}
+
+	// gpu ma freq
+	gpu.set_max_freq(sysfs.gpu_max_freq);
+
+	// lmk minfree
+	block.set_lmk(sysfs.lmk_minfree);
+
+	// TODO: add subcore scan
 }
 
 
