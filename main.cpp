@@ -30,12 +30,12 @@ int main(int argc, const char** argv) {
  * - Set readahead to 128KB
  * - Set swappiness to 25
  * [PERFORMANCE]
- * - set iosched to deadline
- * - set CPU governor to ondemand
- * - set max freq to max
- * - set GPU max freq to max
- * - set LMK to Very Light
+ * - Set iosched to deadline
+ * - Set CPU governor to ondemand
+ * - Set max freq to max
+ * - Set GPU max freq to max
+ * - Set LMK to Very Light
  * - Make subcore scan normally
- * - set readahead to 2048KB
- * - ste swappiness to 25
+ * - Set readahead to 2048KB
+ * - Set swappiness to 25
  */
