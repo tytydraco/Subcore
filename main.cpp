@@ -11,23 +11,31 @@ int main(int argc, const char** argv) {
 }
 
 /* Goal: Increase efficiency while conserving power based on usage.	
- * [IDLE]
+ * [MAX POWER]
  * - Set ioshced to noop
  * - Set CPU governor to powersave
  * - Set max freq to min
- * - Set GPU freq to max - 2
- * - Set LMK to High
+ * - Set GPU freq to min + 2
+ * - Set LMK to Aggressive
  * - Make subcore scan less frequent
  * - Reduce readahead to 128KB
  * - Set swappiness to 0
- * [AWAKE]
+ * [LOW LAT]
  * - Set iosched to deadline
- * - Set CPU governor to conservative or interactive based on battery % and usage
- * - Set max freq based on battery % and usage
- * - set GPU freq based on battery %
- * - Set LMK to Light
+ * - Set CPU governor to interactive or ondemand
+ * - Set max freq to max - 2
+ * - set GPU freq to max - 2
+ * - Set LMK to Medium
  * - Make subcore scan normally
- * - Set readahead to 512KB
- * - Set swappiness to 25 
- *
+ * - Set readahead to 128KB
+ * - Set swappiness to 25
+ * [PERFORMANCE]
+ * - set iosched to deadline
+ * - set CPU governor to ondemand
+ * - set max freq to max
+ * - set GPU max freq to max
+ * - set LMK to Very Light
+ * - Make subcore scan normally
+ * - set readahead to 2048KB
+ * - ste swappiness to 25
  */
