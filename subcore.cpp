@@ -99,7 +99,7 @@ void Subcore::setup_performance() {
 	performance.cpu_max_freqs = new_cpu_max_freqs;
 	performance.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 	performance.lmk_minfree = block.LMK_VERY_LIGHT;
-	performance.swappiness = 25;
+	performance.swappiness = 75;
 	performance.readahead = 2048;
 }
 
