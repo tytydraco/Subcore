@@ -12,7 +12,11 @@ class SysFs {
 				const std::string PATH_STAT = "/proc/stat";
 				const int STAT_AVG_SLEEP_MS = 3000;
 			public:
-				const int STAT_AVG_IDLE_THRESH = 20;
+				const int LOAD_POWERSAVE_THRESH = 10;
+				const int LOAD_IDLE_THRESH = 20;
+				const int LOAD_LOW_LAT_THRESH = 40;
+				const int LOAD_PERFORMANCE_THRESH = 100;
+
 				std::vector<int> get_freqs(int core);
 				void set_max_freq(int core, int freq);
 				int get_max_freq(int core);

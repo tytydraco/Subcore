@@ -199,6 +199,6 @@ int SysFs::Battery::capacity() {
 
 bool SysFs::Battery::charging() {
 	std::string status_str = IO::read_file(PATH_BATTERY + "/status");
-	return (!status_str.compare("Charging"));
+	return (status_str.find("Charging") != std::string::npos);
 }
 

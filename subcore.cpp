@@ -22,7 +22,7 @@ void Subcore::setup_powersave() {
 	powersave.iosched = "noop";
 	powersave.cpu_gov = "powersave";
 	powersave.cpu_max_freqs = new_cpu_max_freqs;
-	powersave.gpu_max_freq = gpu_avail_freqs[0];
+	powersave.gpu_max_freq = gpu_avail_freqs[1];
 	powersave.lmk_minfree = block.LMK_AGGRESSIVE;
 	powersave.swappiness = 0;
 	powersave.readahead = 128;
