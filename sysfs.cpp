@@ -184,11 +184,20 @@ int SysFs::Block::get_read_ahead(std::string blkdev) {
 }
 
 void SysFs::Block::set_swappiness(int swappiness) {
-	IO::write_file(PATH_SWAPPINESS, std::to_string(swappiness));
+	IO::write_file(PATH_VM + "/swappiness", std::to_string(swappiness));
 }
 
 int SysFs::Block::get_swappiness() {
-	std::string str = IO::read_file(PATH_SWAPPINESS);
+	std::string str = IO::read_file(PATH_VM + "/swappiness");
+	return stoi(str);
+}
+
+void SysFs::Block::set_cache_pressure(int pressure) {
+		IO::write_file(PATH_VM + "/vfs_cache_pressure", stoi(pressure));
+}
+
+int SysFs::Block::get_cache_pressure() {
+	std::string str = IO::read_file(PATH_VM + "/vfs_cache_pressure");
 	return stoi(str);
 }
 

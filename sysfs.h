@@ -46,7 +46,7 @@ class SysFs {
 				const std::string PATH_BLOCK = "/sys/block";
 				const std::string PATH_MOUNTS = "/proc/mounts";
 				const std::string PATH_LMK = "/sys/module/lowmemorykiller/parameters";
-				const std::string PATH_SWAPPINESS = "/proc/sys/vm/swappiness";
+				const std::string PATH_VM = "/proc/sys/vm";
 			public:
 				const std::string LMK_VERY_LIGHT = "9169,18338,27507,36676,45845,55014";
 				const std::string LMK_AGGRESSIVE = "18338,27507,55014,91690,128366,137535";
@@ -60,6 +60,8 @@ class SysFs {
 				int get_read_ahead(std::string blkdev);
 				void set_swappiness(int swappiness);
 				int get_swappiness();
+				void set_cache_pressure(int pressure);
+				int get_swap_pessure();
 		};
 
 		struct Battery {
