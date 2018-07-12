@@ -72,7 +72,7 @@ void Subcore::setup_low_lat() {
 	low_lat.iosched = "deadline";
 	low_lat.cpu_gov = "interactive";
 	low_lat.cpu_max_freqs = new_cpu_max_freqs;
-	low_lat.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 3];
+	low_lat.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 	low_lat.lmk_minfree = block.LMK_VERY_LIGHT;
 	low_lat.swappiness = 25;
 	low_lat.readahead = 512;
