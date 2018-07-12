@@ -193,11 +193,29 @@ int SysFs::Block::get_swappiness() {
 }
 
 void SysFs::Block::set_cache_pressure(int pressure) {
-		IO::write_file(PATH_VM + "/vfs_cache_pressure", stoi(pressure));
+		IO::write_file(PATH_VM + "/vfs_cache_pressure", std::to_string(pressure));
 }
 
 int SysFs::Block::get_cache_pressure() {
 	std::string str = IO::read_file(PATH_VM + "/vfs_cache_pressure");
+	return stoi(str);
+}
+
+void SysFs::Block::set_dirty_ratio(int ratio) {
+		IO::write_file(PATH_VM + "/dirty_ratio", std::to_string(ratio));
+}
+
+int SysFs::Block::get_dirty_ratio() {
+	std::string str = IO::read_file(PATH_VM + "/dirty_ratio");
+	return stoi(str);
+}
+
+void SysFs::Block::set_dirty_background_ratio(int ratio) {
+		IO::write_file(PATH_VM + "/dirty_background_ratio", std::to_string(ratio));
+}
+
+int SysFs::Block::get_dirty_background_ratio() {
+	std::string str = IO::read_file(PATH_VM + "/dirty_background_ratio");
 	return stoi(str);
 }
 

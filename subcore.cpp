@@ -26,6 +26,7 @@ void Subcore::setup_powersave() {
 	powersave.lmk_minfree = block.LMK_AGGRESSIVE;
 	powersave.swappiness = 0;
 	powersave.readahead = 128;
+	powersave.cache_pressure = 25;
 }
 
 void Subcore::setup_idle() {
@@ -51,6 +52,7 @@ void Subcore::setup_idle() {
 	idle.lmk_minfree = block.LMK_AGGRESSIVE;
 	idle.swappiness = 0;
 	idle.readahead = 128;
+	idle.cache_pressure = 50;
 }
 
 void Subcore::setup_low_lat() {
@@ -76,6 +78,7 @@ void Subcore::setup_low_lat() {
 	low_lat.lmk_minfree = block.LMK_VERY_LIGHT;
 	low_lat.swappiness = 25;
 	low_lat.readahead = 512;
+	low_lat.cache_pressure = 75;
 }
 
 void Subcore::setup_performance() {
@@ -101,6 +104,7 @@ void Subcore::setup_performance() {
 	performance.lmk_minfree = block.LMK_VERY_LIGHT;
 	performance.swappiness = 75;
 	performance.readahead = 2048;
+	performance.cache_pressure = 100;
 }
 
 void Subcore::setup_presets() {

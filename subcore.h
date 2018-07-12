@@ -22,6 +22,7 @@ class Subcore {
 			int new_subcore_scan;
 			int readahead;
 			int swappiness;
+			int cache_pressure;
 		};
 
 		State current_state;

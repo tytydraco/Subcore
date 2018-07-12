@@ -61,7 +61,11 @@ class SysFs {
 				void set_swappiness(int swappiness);
 				int get_swappiness();
 				void set_cache_pressure(int pressure);
-				int get_swap_pessure();
+				int get_cache_pressure();
+				void set_dirty_ratio(int ratio);
+				int get_dirty_ratio();
+				void set_dirty_background_ratio(int ratio);
+				int get_dirty_background_ratio();
 		};
 
 		struct Battery {
