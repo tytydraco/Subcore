@@ -27,6 +27,8 @@ void Subcore::setup_powersave() {
 	powersave.swappiness = 0;
 	powersave.readahead = 128;
 	powersave.cache_pressure = 25;
+	powersave.dirty_ratio = 20;
+	powersave.dirty_background_ratio = 5;
 }
 
 void Subcore::setup_idle() {
@@ -53,6 +55,8 @@ void Subcore::setup_idle() {
 	idle.swappiness = 0;
 	idle.readahead = 128;
 	idle.cache_pressure = 50;
+	idle.dirty_ratio = 40;
+	idle.dirty_background_ratio = 5;
 }
 
 void Subcore::setup_low_lat() {
@@ -79,6 +83,8 @@ void Subcore::setup_low_lat() {
 	low_lat.swappiness = 25;
 	low_lat.readahead = 512;
 	low_lat.cache_pressure = 75;
+	low_lat.dirty_ratio = 60;
+	low_lat.dirty_background_ratio = 5;
 }
 
 void Subcore::setup_performance() {
@@ -105,6 +111,8 @@ void Subcore::setup_performance() {
 	performance.swappiness = 75;
 	performance.readahead = 2048;
 	performance.cache_pressure = 100;
+	performance.dirty_ratio = 90;
+	performance.dirty_background_ratio = 5;
 }
 
 void Subcore::setup_presets() {
@@ -128,6 +136,13 @@ void Subcore::set_sysfs(sysfs_struct sysfs) {
 
 	// swappiness
 	block.set_swappiness(sysfs.swappiness);
+
+	// cache pressure
+	block.set_cache_pressure(sysfs.cache_pressure);
+	
+	// dirty ratios
+	block.set_dirty_ratio(sysfs.dirty_ratio);
+	block.set_dirty_background_ratio(sysfs.dirty_background_ratio);
 
 	//cpu gov & max freq
 	int present = cpu.get_present();

@@ -23,6 +23,8 @@ class Subcore {
 			int readahead;
 			int swappiness;
 			int cache_pressure;
+			int dirty_ratio;
+			int dirty_background_ratio;
 		};
 
 		State current_state;
