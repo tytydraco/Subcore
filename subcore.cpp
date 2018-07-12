@@ -6,7 +6,7 @@
 
 void Subcore::algorithm() {
 	int load = cpu.get_loadavg();
-	std::cout << "[*] Load: " << std::to_string(load) << ": ";
+	std::cout << "[*] Load: " << std::to_string(load) << "\t";
 	
 	//special cases
 	int capacity = battery.capacity();
