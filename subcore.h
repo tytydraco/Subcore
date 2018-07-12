@@ -16,15 +16,14 @@ class Subcore {
 			State state;
 			std::string iosched;
 			std::string cpu_gov;
-			std::vector<int> cpu_max_freqs;
-			int gpu_max_freq;
+			std::vector<uint32_t> cpu_max_freqs;
+			uint16_t gpu_max_freq;
 			std::string lmk_minfree;
-			int new_subcore_scan;
-			int readahead;
-			int swappiness;
-			int cache_pressure;
-			int dirty_ratio;
-			int dirty_background_ratio;
+			uint16_t readahead;
+			uint8_t swappiness;
+			uint8_t cache_pressure;
+			uint8_t dirty_ratio;
+			uint8_t dirty_background_ratio;
 		};
 
 		State current_state;

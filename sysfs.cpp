@@ -13,13 +13,13 @@
 #include "misc.h"
 #include "sysfs.h"
 
-std::vector<int> SysFs::Cpu::get_freqs(int core) {
+std::vector<uint32_t> SysFs::Cpu::get_freqs(uint8_t core) {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_available_frequencies");
 	std::istringstream iss(freq_list_str);
 	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
 			std::istream_iterator<std::string>());
-	std::vector<int> freq_list;
+	std::vector<uint32_t> freq_list;
 
 	// iterate through freq list
 	for (std::string freq_str : freq_list_split) {
@@ -30,38 +30,38 @@ std::vector<int> SysFs::Cpu::get_freqs(int core) {
 	return freq_list;
 }
 
-void SysFs::Cpu::set_max_freq(int core, int freq) {
+void SysFs::Cpu::set_max_freq(uint8_t core, uint32_t freq) {
 	IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq", std::to_string(freq));
 }
 
-int SysFs::Cpu::get_max_freq(int core) {
+uint32_t SysFs::Cpu::get_max_freq(uint8_t core) {
 	std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq");
-	return atoi(str.c_str());
+	return (uint32_t) atoi(str.c_str());
 }
 
-void SysFs::Cpu::set_min_freq(int core, int freq) {
+void SysFs::Cpu::set_min_freq(uint8_t core, uint32_t freq) {
 	IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq", std::to_string(freq));
 }
 
-int SysFs::Cpu::get_min_freq(int core) {
+uint32_t SysFs::Cpu::get_min_freq(uint8_t core) {
 	std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq");
-	return atoi(str.c_str());
+	return (uint32_t) atoi(str.c_str());
 }
 
-int SysFs::Cpu::get_present() {
+uint8_t SysFs::Cpu::get_present() {
 	std::string present_str = IO::read_file(PATH_CPU + "/present");
-	return ((int) present_str.at(2) - '0') + 1;
+	return ((uint8_t) present_str.at(2) - '0') + 1;
 }
 
-void SysFs::Cpu::set_gov(int core, std::string gov) {
+void SysFs::Cpu::set_gov(uint8_t core, std::string gov) {
 	IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor", gov);
 }
 
-std::string SysFs::Cpu::get_gov(int core) {
+std::string SysFs::Cpu::get_gov(uint8_t core) {
 	return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
 }
 
-int SysFs::Cpu::get_loadavg() {
+uint8_t SysFs::Cpu::get_loadavg() {
 	long double a[4], b[4], loadavg;
 	FILE *fp;
 	char dump[50];
@@ -82,16 +82,16 @@ int SysFs::Cpu::get_loadavg() {
 		loadavg = 100;
 	if (loadavg < 0)
 		loadavg = 0;
-	return (int) (loadavg);
+	return (uint8_t) (loadavg);
 }
 
-std::vector<int> SysFs::Gpu::get_freqs() {
+std::vector<uint16_t> SysFs::Gpu::get_freqs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");
 	std::istringstream iss(freq_list_str);
 	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
 			std::istream_iterator<std::string>());
-	std::vector<int> freq_list;
+	std::vector<uint16_t> freq_list;
 
 	// iterate through freq list
 	for (std::string freq_str : freq_list_split) {
@@ -102,22 +102,22 @@ std::vector<int> SysFs::Gpu::get_freqs() {
 	return freq_list;
 }
 
-void SysFs::Gpu::set_max_freq(int freq) {
+void SysFs::Gpu::set_max_freq(uint16_t freq) {
 	IO::write_file(PATH_GPU + "/gpu_max_clock", std::to_string(freq));
 }
 
-int SysFs::Gpu::get_max_freq() {
+uint16_t SysFs::Gpu::get_max_freq() {
 	std::string str = IO::read_file(PATH_GPU + "/gpu_max_clock");
-	return stoi(str);
+	return (uint16_t) stoi(str);
 }
 
-void SysFs::Gpu::set_min_freq(int freq) {
+void SysFs::Gpu::set_min_freq(uint16_t freq) {
 	IO::write_file(PATH_GPU + "/gpu_min_clock", std::to_string(freq));
 }
 
-int SysFs::Gpu::get_min_freq() {
+uint16_t SysFs::Gpu::get_min_freq() {
 	std::string str = IO::read_file(PATH_GPU + "/gpu_min_clock");
-	return stoi(str);
+	return (uint16_t) stoi(str);
 }
 
 void SysFs::Gpu::set_gov(std::string gov) {
@@ -174,54 +174,54 @@ std::string SysFs::Block::get_lmk() {
 	return IO::read_file(PATH_LMK + "/minfree");
 }
 
-void SysFs::Block::set_read_ahead(std::string blkdev, int read_ahead) {
+void SysFs::Block::set_read_ahead(std::string blkdev, uint16_t read_ahead) {
 	IO::write_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb", std::to_string(read_ahead));
 }
 
-int SysFs::Block::get_read_ahead(std::string blkdev) {
+uint16_t SysFs::Block::get_read_ahead(std::string blkdev) {
 	std::string str = IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb");
-	return stoi(str);
+	return (uint16_t) stoi(str);
 }
 
-void SysFs::Block::set_swappiness(int swappiness) {
+void SysFs::Block::set_swappiness(uint8_t swappiness) {
 	IO::write_file(PATH_VM + "/swappiness", std::to_string(swappiness));
 }
 
-int SysFs::Block::get_swappiness() {
+uint8_t SysFs::Block::get_swappiness() {
 	std::string str = IO::read_file(PATH_VM + "/swappiness");
-	return stoi(str);
+	return (uint8_t) stoi(str);
 }
 
-void SysFs::Block::set_cache_pressure(int pressure) {
+void SysFs::Block::set_cache_pressure(uint8_t pressure) {
 		IO::write_file(PATH_VM + "/vfs_cache_pressure", std::to_string(pressure));
 }
 
-int SysFs::Block::get_cache_pressure() {
+uint8_t SysFs::Block::get_cache_pressure() {
 	std::string str = IO::read_file(PATH_VM + "/vfs_cache_pressure");
-	return stoi(str);
+	return (uint8_t) stoi(str);
 }
 
-void SysFs::Block::set_dirty_ratio(int ratio) {
+void SysFs::Block::set_dirty_ratio(uint8_t ratio) {
 		IO::write_file(PATH_VM + "/dirty_ratio", std::to_string(ratio));
 }
 
-int SysFs::Block::get_dirty_ratio() {
+uint8_t SysFs::Block::get_dirty_ratio() {
 	std::string str = IO::read_file(PATH_VM + "/dirty_ratio");
-	return stoi(str);
+	return (uint8_t) stoi(str);
 }
 
-void SysFs::Block::set_dirty_background_ratio(int ratio) {
+void SysFs::Block::set_dirty_background_ratio(uint8_t ratio) {
 		IO::write_file(PATH_VM + "/dirty_background_ratio", std::to_string(ratio));
 }
 
-int SysFs::Block::get_dirty_background_ratio() {
+uint8_t SysFs::Block::get_dirty_background_ratio() {
 	std::string str = IO::read_file(PATH_VM + "/dirty_background_ratio");
-	return stoi(str);
+	return (uint8_t) stoi(str);
 }
 
-int SysFs::Battery::capacity() {
+uint8_t SysFs::Battery::capacity() {
 	std::string capacity_str = IO::read_file(PATH_BATTERY + "/capacity");
-	return stoi(capacity_str);
+	return (uint8_t) stoi(capacity_str);
 }
 
 bool SysFs::Battery::charging() {

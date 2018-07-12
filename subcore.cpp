@@ -5,11 +5,11 @@
 #include "subcore.h"
 
 void Subcore::algorithm() {
-	int load = cpu.get_loadavg();
+	uint8_t load = cpu.get_loadavg();
 	std::cout << "[*] Load: " << std::to_string(load) << "\t";
 	
 	//special cases
-	int capacity = battery.capacity();
+	uint8_t capacity = battery.capacity();
 	bool charging = battery.charging();
 
 	if (charging) {
@@ -42,10 +42,10 @@ void Subcore::algorithm() {
 }
 
 void Subcore::setup_powersave() {
-	int present = cpu.get_present();
-	std::vector<int> new_cpu_max_freqs;
-	for (int i = 0; i <= present; i++) {
-		std::vector<int> cpu_avail_freqs = cpu.get_freqs(i);
+	uint8_t present = cpu.get_present();
+	std::vector<uint32_t> new_cpu_max_freqs;
+	for (size_t i = 0; i <= present; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
 		} else {
@@ -53,7 +53,7 @@ void Subcore::setup_powersave() {
 		}
 	}
 
-	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
 	powersave.state = state_powersave;
 	powersave.iosched = "noop";
@@ -69,11 +69,10 @@ void Subcore::setup_powersave() {
 }
 
 void Subcore::setup_idle() {
-
-	int present = cpu.get_present();
-	std::vector<int> new_cpu_max_freqs;
-	for (int i = 0; i <= present; i++) {
-		std::vector<int> cpu_avail_freqs = cpu.get_freqs(i);
+	uint8_t present = cpu.get_present();
+	std::vector<uint32_t> new_cpu_max_freqs;
+	for (size_t i = 0; i <= present; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[1]);
 		} else {
@@ -81,7 +80,7 @@ void Subcore::setup_idle() {
 		}
 	}
 
-	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
 	idle.state = state_idle;
 	idle.iosched = "noop";
@@ -97,11 +96,10 @@ void Subcore::setup_idle() {
 }
 
 void Subcore::setup_low_lat() {
-
-	int present = cpu.get_present();
-	std::vector<int> new_cpu_max_freqs;
-	for (int i = 0; i <= present; i++) {
-		std::vector<int> cpu_avail_freqs = cpu.get_freqs(i);
+	uint8_t present = cpu.get_present();
+	std::vector<uint32_t> new_cpu_max_freqs;
+	for (size_t i = 0; i <= present; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
 		} else {
@@ -109,7 +107,7 @@ void Subcore::setup_low_lat() {
 		}
 	}
 
-	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
 	low_lat.state = state_low_lat;
 	low_lat.iosched = "deadline";
@@ -125,11 +123,10 @@ void Subcore::setup_low_lat() {
 }
 
 void Subcore::setup_performance() {
-
-	int present = cpu.get_present();
-	std::vector<int> new_cpu_max_freqs;
-	for (int i = 0; i <= present; i++) {
-		std::vector<int> cpu_avail_freqs = cpu.get_freqs(i);
+	uint8_t present = cpu.get_present();
+	std::vector<uint32_t> new_cpu_max_freqs;
+	for (size_t i = 0; i <= present; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 		} else {
@@ -137,7 +134,7 @@ void Subcore::setup_performance() {
 		}
 	}
 
-	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
 	performance.state = state_performance;
 	performance.iosched = "deadline";
@@ -182,8 +179,8 @@ void Subcore::set_sysfs(sysfs_struct sysfs) {
 	block.set_dirty_background_ratio(sysfs.dirty_background_ratio);
 
 	//cpu gov & max freq
-	int present = cpu.get_present();
-	for (int i = 0; i <= present; i++) {
+	uint8_t present = cpu.get_present();
+	for (size_t i = 0; i <= present; i++) {
 		cpu.set_gov(i, sysfs.cpu_gov);
 		cpu.set_max_freq(i, sysfs.cpu_max_freqs[i]);
 	}
