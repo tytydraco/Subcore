@@ -10,7 +10,7 @@ class SysFs {
 			private:
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
-				const int STAT_AVG_SLEEP_MS = 500;
+				const int STAT_AVG_SLEEP_MS = 3000;
 			public:
 				const int STAT_AVG_IDLE_THRESH = 20;
 				std::vector<int> get_freqs(int core);

@@ -18,12 +18,12 @@ void Subcore::setup_powersave() {
 
 	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
 
+	powersave.state = state_powersave;
 	powersave.iosched = "noop";
 	powersave.cpu_gov = "powersave";
 	powersave.cpu_max_freqs = new_cpu_max_freqs;
 	powersave.gpu_max_freq = gpu_avail_freqs[0];
 	powersave.lmk_minfree = block.LMK_AGGRESSIVE;
-	powersave.new_subcore_scan = 5000;
 	powersave.swappiness = 0;
 	powersave.readahead = 128;
 }
@@ -43,12 +43,12 @@ void Subcore::setup_idle() {
 
 	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
 
+	idle.state = state_idle;
 	idle.iosched = "noop";
 	idle.cpu_gov = "conservative";
 	idle.cpu_max_freqs = new_cpu_max_freqs;
 	idle.gpu_max_freq = gpu_avail_freqs[2];
 	idle.lmk_minfree = block.LMK_AGGRESSIVE;
-	idle.new_subcore_scan = 2000;
 	idle.swappiness = 0;
 	idle.readahead = 128;
 }
@@ -68,12 +68,12 @@ void Subcore::setup_low_lat() {
 
 	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
 
+	low_lat.state = state_low_lat;
 	low_lat.iosched = "deadline";
 	low_lat.cpu_gov = "interactive";
 	low_lat.cpu_max_freqs = new_cpu_max_freqs;
 	low_lat.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 	low_lat.lmk_minfree = block.LMK_VERY_LIGHT;
-	low_lat.new_subcore_scan = 1000;
 	low_lat.swappiness = 25;
 	low_lat.readahead = 512;
 }
@@ -93,12 +93,12 @@ void Subcore::setup_performance() {
 
 	std::vector<int> gpu_avail_freqs = gpu.get_freqs();
 
+	performance.state = state_performance;
 	performance.iosched = "deadline";
 	performance.cpu_gov = "ondemand";
 	performance.cpu_max_freqs = new_cpu_max_freqs;
 	performance.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 	performance.lmk_minfree = block.LMK_VERY_LIGHT;
-	performance.new_subcore_scan = 500;
 	performance.swappiness = 25;
 	performance.readahead = 2048;
 }
@@ -111,6 +111,10 @@ void Subcore::setup_presets() {
 }
 
 void Subcore::set_sysfs(sysfs_struct sysfs) {
+	// if we are already on this state, do nothing
+	if (current_state == sysfs.state)
+		return;
+
 	// iosched & readahead
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (std::string blkdev : blkdevs) {
@@ -134,7 +138,9 @@ void Subcore::set_sysfs(sysfs_struct sysfs) {
 	// lmk minfree
 	block.set_lmk(sysfs.lmk_minfree);
 
-	// TODO: add subcore scan
+	// set the current state
+	current_state = sysfs.state;
 }
+
 
 

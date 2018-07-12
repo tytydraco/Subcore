@@ -15,11 +15,11 @@ std::string test_alg() {
 	int load = cpu.get_loadavg();
 	std::cout << std::to_string(load) << std::endl;
 	if (load <= cpu.STAT_AVG_IDLE_THRESH) {
-		subcore.set_sysfs(subcore.idle);
+		//subcore.set_sysfs(subcore.idle);
 		return "idle";
-	}
+	} 
 
-	subcore.set_sysfs(subcore.performance);
+	//subcore.set_sysfs(subcore.performance);
 	return "other";
 }
 

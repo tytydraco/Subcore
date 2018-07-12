@@ -5,7 +5,15 @@
 
 class Subcore {
 	private:
+		enum State {
+			state_powersave,
+			state_idle,
+			state_low_lat,
+			state_performance
+		};
+
 		struct sysfs_struct {
+			State state;
 			std::string iosched;
 			std::string cpu_gov;
 			std::vector<int> cpu_max_freqs;
@@ -15,6 +23,8 @@ class Subcore {
 			int readahead;
 			int swappiness;
 		};
+
+		State current_state;
 
 		SysFs::Cpu cpu;
 		SysFs::Block block;
