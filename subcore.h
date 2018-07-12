@@ -32,12 +32,14 @@ class Subcore {
 		SysFs::Cpu cpu;
 		SysFs::Block block;
 		SysFs::Gpu gpu;
+		SysFs::Battery battery;
 
 		void setup_powersave();
 		void setup_idle();
 		void setup_low_lat();
 		void setup_performance();
 	public:
+		void algorithm();
 		sysfs_struct powersave;
 		sysfs_struct idle;
 		sysfs_struct low_lat;

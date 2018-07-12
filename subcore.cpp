@@ -4,6 +4,43 @@
 
 #include "subcore.h"
 
+void Subcore::algorithm() {
+	int load = cpu.get_loadavg();
+	std::cout << "[*] Load: " << std::to_string(load) << ": ";
+	
+	//special cases
+	int capacity = battery.capacity();
+	bool charging = battery.charging();
+
+	if (charging) {
+		// alwats use highest load based algorithm
+		load = 100;
+	} else if (capacity <= 15) {
+		// always use lowest load based algorithm
+		load = 0;
+	} else if (capacity <= 25) {
+		// always use idle or lower
+		load = (load > cpu.LOAD_IDLE_THRESH) ? cpu.LOAD_IDLE_THRESH : load;
+	}
+
+	// load based algorithm
+	if (load <= cpu.LOAD_POWERSAVE_THRESH) {
+		set_sysfs(powersave);
+		std::cout << "powersave" << std::endl;
+	} else if (load <= cpu.LOAD_IDLE_THRESH) {
+		set_sysfs(idle);
+		std::cout << "idle" << std::endl;
+	} else if (load <= cpu.LOAD_LOW_LAT_THRESH) {
+		set_sysfs(low_lat);
+		std::cout << "low_lat" << std::endl;
+	} else if (load <= cpu.LOAD_PERFORMANCE_THRESH) {
+		set_sysfs(performance);
+		std::cout << "performance" << std::endl;
+	} else {
+		std::cout << "other" << std::endl;
+	}
+}
+
 void Subcore::setup_powersave() {
 	int present = cpu.get_present();
 	std::vector<int> new_cpu_max_freqs;
