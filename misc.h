@@ -2,6 +2,8 @@
 #define MISC_H
 
 #include <string>
+#include <unistd.h>
+
 namespace IO {
 	inline void write_file(std::string path, std::string in) {
 		std::ofstream of;
@@ -23,6 +25,12 @@ namespace IO {
 
 		return std::string((std::istreambuf_iterator<char>(ifs)),
 					(std::istreambuf_iterator<char>()));
+	}
+}
+
+namespace Root {
+	inline bool is_root() {
+		return (geteuid() == 0);
 	}
 }
 
