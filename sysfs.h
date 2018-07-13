@@ -20,23 +20,23 @@ class SysFs {
 				const uint8_t LOAD_LOW_LAT_THRESH = 40;
 				const uint8_t LOAD_PERFORMANCE_THRESH = 100;
 
-				std::vector<uint32_t> get_freqs(uint8_t core);
+				std::vector<uint32_t> get_freqs(uint16_t core);
 				uint8_t get_loadavg();
 
-				inline void set_max_freq(uint8_t core, uint32_t freq) {
+				inline void set_max_freq(uint16_t core, uint32_t freq) {
 					IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq", std::to_string(freq));
 				}
 
-				inline uint32_t get_max_freq(uint8_t core) {
+				inline uint32_t get_max_freq(uint16_t core) {
 					std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq");
 					return (uint32_t) atoi(str.c_str());
 				}
 
-				inline void set_min_freq(uint8_t core, uint32_t freq) {
+				inline void set_min_freq(uint16_t core, uint32_t freq) {
 					IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq", std::to_string(freq));
 				}
 
-				inline uint32_t get_min_freq(uint8_t core) {
+				inline uint32_t get_min_freq(uint16_t core) {
 					std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq");
 					return (uint32_t) atoi(str.c_str());
 				}
@@ -46,11 +46,11 @@ class SysFs {
 					return ((uint8_t) present_str.at(2) - '0') + 1;
 				}
 
-				inline void set_gov(uint8_t core, std::string gov) {
+				inline void set_gov(uint16_t core, std::string gov) {
 					IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor", gov);
 				}
 
-				inline std::string get_gov(uint8_t core) {
+				inline std::string get_gov(uint16_t core) {
 					return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
 				}	
 		};
