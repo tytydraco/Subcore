@@ -19,8 +19,8 @@ void Subcore::algorithm() {
 		// always use lowest load based algorithm
 		load = 0;
 	} else if (capacity <= 25) {
-		// always use idle or lower
-		load = (load > cpu.LOAD_IDLE_THRESH) ? cpu.LOAD_IDLE_THRESH : load;
+		// use lower power profiles more
+		load /= 2;
 	}
 
 	// load based algorithm
