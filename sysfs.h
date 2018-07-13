@@ -14,6 +14,27 @@ class SysFs {
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
 				const uint16_t STAT_AVG_SLEEP_MS = 3000;
+				const std::string GOV_PREF_POWERSAVE[10] = {
+					"powersave"
+				};
+				const std::string GOV_PREF_IDLE[10] = {
+					"energy-dcfc",
+					"schedutil",
+					"darkness",
+					"nightmare",
+					"conservative"
+				};
+				const std::string GOV_PREF_LOW_LAT[10] = {
+					"relaxed",
+					"chill",
+					"interactive",
+					"helix_schedutil",
+					"schedutil",
+					"interactive"
+				};
+				const std::string GOV_PREF_PERFORMANCE[10] = {
+					"ondemand"
+				};
 			public:
 				const uint8_t LOAD_POWERSAVE_THRESH = 10;
 				const uint8_t LOAD_IDLE_THRESH = 20;
