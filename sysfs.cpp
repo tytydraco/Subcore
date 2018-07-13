@@ -30,6 +30,14 @@ std::vector<uint32_t> SysFs::Cpu::get_freqs(uint16_t core) {
 	return freq_list;
 }
 
+std::vector<std::string> SysFs::Cpu::get_govs() {
+	// read and split avail freqs
+	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu0" + "/cpufreq/scaling_available_governors");
+	std::istringstream iss(freq_list_str);
+	return std::vector<std::string>((std::istream_iterator<std::string>(iss)),
+			std::istream_iterator<std::string>());
+}
+
 uint8_t SysFs::Cpu::get_loadavg() {
 	long double a[4], b[4], loadavg;
 	FILE *fp;

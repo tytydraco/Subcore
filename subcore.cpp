@@ -55,9 +55,21 @@ void Subcore::setup_powersave() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
+	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
+	std::string new_cpu_pref_gov;
+	for (std::string cpu_pref_gov : cpu.GOV_PREF_POWERSAVE) {
+		for (std::string cpu_avail_gov : cpu_avail_govs) {
+			if (cpu_avail_gov == cpu_pref_gov) {	
+				new_cpu_pref_gov = cpu_pref_gov;
+				goto exit_gov_loop;
+			}	
+		}
+	}
+
+exit_gov_loop:
 	powersave.state = state_powersave;
 	powersave.iosched = "noop";
-	powersave.cpu_gov = "powersave";
+	powersave.cpu_gov = new_cpu_pref_gov;
 	powersave.cpu_max_freqs = new_cpu_max_freqs;
 	powersave.gpu_max_freq = gpu_avail_freqs[2];
 	powersave.lmk_minfree = block.LMK_AGGRESSIVE;
@@ -82,9 +94,21 @@ void Subcore::setup_idle() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
+	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
+	std::string new_cpu_pref_gov;
+	for (std::string cpu_pref_gov : cpu.GOV_PREF_IDLE) {
+		for (std::string cpu_avail_gov : cpu_avail_govs) {
+			if (cpu_avail_gov == cpu_pref_gov) {
+				new_cpu_pref_gov = cpu_pref_gov;
+				goto exit_gov_loop;
+			}	
+		}
+	}
+	
+exit_gov_loop:
 	idle.state = state_idle;
 	idle.iosched = "noop";
-	idle.cpu_gov = "conservative";
+	idle.cpu_gov = new_cpu_pref_gov;
 	idle.cpu_max_freqs = new_cpu_max_freqs;
 	idle.gpu_max_freq = gpu_avail_freqs[2];
 	idle.lmk_minfree = block.LMK_AGGRESSIVE;
@@ -109,9 +133,21 @@ void Subcore::setup_low_lat() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
+	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
+	std::string new_cpu_pref_gov;
+	for (std::string cpu_pref_gov : cpu.GOV_PREF_LOW_LAT) {
+		for (std::string cpu_avail_gov : cpu_avail_govs) {
+			if (cpu_avail_gov == cpu_pref_gov) {
+				new_cpu_pref_gov = cpu_pref_gov;
+				goto exit_gov_loop;
+			}	
+		}
+	}
+
+exit_gov_loop:
 	low_lat.state = state_low_lat;
 	low_lat.iosched = "deadline";
-	low_lat.cpu_gov = "interactive";
+	low_lat.cpu_gov = new_cpu_pref_gov;
 	low_lat.cpu_max_freqs = new_cpu_max_freqs;
 	low_lat.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 	low_lat.lmk_minfree = block.LMK_VERY_LIGHT;
@@ -136,9 +172,21 @@ void Subcore::setup_performance() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
+	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
+	std::string new_cpu_pref_gov;
+	for (std::string cpu_pref_gov : cpu.GOV_PREF_PERFORMANCE) {
+		for (std::string cpu_avail_gov : cpu_avail_govs) {
+			if (cpu_avail_gov == cpu_pref_gov) {
+				new_cpu_pref_gov = cpu_pref_gov;
+				goto exit_gov_loop;
+			}	
+		}
+	}
+	
+exit_gov_loop:
 	performance.state = state_performance;
 	performance.iosched = "deadline";
-	performance.cpu_gov = "ondemand";
+	performance.cpu_gov = new_cpu_pref_gov;
 	performance.cpu_max_freqs = new_cpu_max_freqs;
 	performance.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 	performance.lmk_minfree = block.LMK_VERY_LIGHT;

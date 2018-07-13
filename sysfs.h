@@ -13,7 +13,8 @@ class SysFs {
 			private:
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
-				const uint16_t STAT_AVG_SLEEP_MS = 3000;
+				const uint16_t STAT_AVG_SLEEP_MS = 3000;	
+			public:
 				const std::string GOV_PREF_POWERSAVE[10] = {
 					"powersave"
 				};
@@ -35,13 +36,13 @@ class SysFs {
 				const std::string GOV_PREF_PERFORMANCE[10] = {
 					"ondemand"
 				};
-			public:
 				const uint8_t LOAD_POWERSAVE_THRESH = 10;
 				const uint8_t LOAD_IDLE_THRESH = 20;
 				const uint8_t LOAD_LOW_LAT_THRESH = 40;
 				const uint8_t LOAD_PERFORMANCE_THRESH = 100;
 
 				std::vector<uint32_t> get_freqs(uint16_t core);
+				std::vector<std::string> get_govs();
 				uint8_t get_loadavg();
 
 				inline void set_max_freq(uint16_t core, uint32_t freq) {
