@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
+#include <iterator>
 
 #include "misc.h"
 
@@ -198,6 +200,18 @@ class SysFs {
 				inline bool charging() {
 					std::string status_str = IO::read_file(PATH_BATTERY + "/status");
 					return (status_str.find("Charging") != std::string::npos);
+				}
+		};
+
+		struct Memory {
+			private:
+				const std::string PATH_MEMINFO = "/proc/meminfo";
+			public:
+				inline long get_ram_size() {
+					std::string str = IO::read_file(PATH_MEMINFO);
+					std::istringstream iss(str);
+					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+					return stol(str_split[1]);
 				}
 		};
 };
