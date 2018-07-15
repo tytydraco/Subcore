@@ -38,9 +38,9 @@ class SysFs {
 				const std::string GOV_PREF_PERFORMANCE[10] = {
 					"ondemand"
 				};
-				const uint8_t LOAD_POWERSAVE_THRESH = 10;
-				const uint8_t LOAD_IDLE_THRESH = 20;
-				const uint8_t LOAD_LOW_LAT_THRESH = 40;
+				const uint8_t LOAD_POWERSAVE_THRESH = 20;
+				const uint8_t LOAD_IDLE_THRESH = 40;
+				const uint8_t LOAD_LOW_LAT_THRESH = 60;
 				const uint8_t LOAD_PERFORMANCE_THRESH = 100;
 
 				std::vector<uint32_t> get_freqs(uint16_t core);
