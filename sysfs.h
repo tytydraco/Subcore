@@ -201,6 +201,10 @@ class SysFs {
 			public:
 				inline uint8_t capacity() {
 					std::string capacity_str = IO::read_file(PATH_BATTERY + "/capacity");
+					// return 100 if there is no valid capacity
+					if (capacity_str == "")
+						return 100;
+					
 					return (uint8_t) stoi(capacity_str);
 				}
 

@@ -8,7 +8,7 @@
 Subcore subcore;
 
 int main(int argc, const char** argv) {
-	std::cout << "[*] SubCore Init" << std::endl;
+	std::cout << "[*] SubCore Init" << std::endl;	
 	subcore.setup_presets();
 	
 	if (!Root::is_root()) {
