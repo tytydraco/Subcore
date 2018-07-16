@@ -21,16 +21,16 @@ void Subcore::algorithm() {
 	}
 
 	// load based algorithm
-	if (load <= cpu.LOAD_POWERSAVE_THRESH) {
+	if (load <= cpu.LOAD_LEVEL_0) {
 		set_sysfs(level_0);
 		std::cout << "level_0" << std::endl;
-	} else if (load <= cpu.LOAD_IDLE_THRESH) {
+	} else if (load <= cpu.LOAD_LEVEL_1) {
 		set_sysfs(level_1);
 		std::cout << "level_1" << std::endl;
-	} else if (load <= cpu.LOAD_LOW_LAT_THRESH) {
+	} else if (load <= cpu.LOAD_LEVEL_2) {
 		set_sysfs(level_2);
 		std::cout << "level_2" << std::endl;
-	} else if (load <= cpu.LOAD_PERFORMANCE_THRESH) {
+	} else if (load <= cpu.LOAD_LEVEL_3) {
 		set_sysfs(level_3);
 		std::cout << "level_3" << std::endl;
 	} else {
