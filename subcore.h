@@ -6,10 +6,10 @@
 class Subcore {
 	private:
 		enum State {
-			state_powersave,
-			state_idle,
-			state_low_lat,
-			state_performance
+			state_level_0,
+			state_level_1,
+			state_level_2,
+			state_level_3
 		};
 
 		struct sysfs_struct {
@@ -33,16 +33,16 @@ class Subcore {
 		SysFs::Gpu gpu;
 		SysFs::Battery battery;
 
-		void setup_powersave();
-		void setup_idle();
-		void setup_low_lat();
-		void setup_performance();
+		void setup_level_0();
+		void setup_level_1();
+		void setup_level_2();
+		void setup_level_3();
 	public:
 		void algorithm();
-		sysfs_struct powersave;
-		sysfs_struct idle;
-		sysfs_struct low_lat;
-		sysfs_struct performance;
+		sysfs_struct level_0;
+		sysfs_struct level_1;
+		sysfs_struct level_2;
+		sysfs_struct level_3;
 
 		void setup_presets();
 		void set_sysfs(sysfs_struct sysfs);

@@ -22,23 +22,23 @@ void Subcore::algorithm() {
 
 	// load based algorithm
 	if (load <= cpu.LOAD_POWERSAVE_THRESH) {
-		set_sysfs(powersave);
-		std::cout << "powersave" << std::endl;
+		set_sysfs(level_0);
+		std::cout << "level_0" << std::endl;
 	} else if (load <= cpu.LOAD_IDLE_THRESH) {
-		set_sysfs(idle);
-		std::cout << "idle" << std::endl;
+		set_sysfs(level_1);
+		std::cout << "level_1" << std::endl;
 	} else if (load <= cpu.LOAD_LOW_LAT_THRESH) {
-		set_sysfs(low_lat);
-		std::cout << "low_lat" << std::endl;
+		set_sysfs(level_2);
+		std::cout << "level_2" << std::endl;
 	} else if (load <= cpu.LOAD_PERFORMANCE_THRESH) {
-		set_sysfs(performance);
-		std::cout << "performance" << std::endl;
+		set_sysfs(level_3);
+		std::cout << "level_3" << std::endl;
 	} else {
 		std::cout << "other" << std::endl;
 	}
 }
 
-void Subcore::setup_powersave() {
+void Subcore::setup_level_0() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i <= present; i++) {
@@ -64,20 +64,20 @@ void Subcore::setup_powersave() {
 	}
 
 exit_gov_loop:
-	powersave.state = state_powersave;
-	powersave.iosched = "noop";
-	powersave.cpu_gov = new_cpu_pref_gov;
-	powersave.cpu_max_freqs = new_cpu_max_freqs;
-	powersave.gpu_max_freq = gpu_avail_freqs[2];
-	powersave.lmk_minfree = block.LMK_AGGRESSIVE;
-	powersave.swappiness = 0;
-	powersave.readahead = 128;
-	powersave.cache_pressure = 25;
-	powersave.dirty_ratio = 20;
-	powersave.dirty_background_ratio = 5;
+	level_0.state = state_level_0;
+	level_0.iosched = "noop";
+	level_0.cpu_gov = new_cpu_pref_gov;
+	level_0.cpu_max_freqs = new_cpu_max_freqs;
+	level_0.gpu_max_freq = gpu_avail_freqs[2];
+	level_0.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_0.swappiness = 0;
+	level_0.readahead = 128;
+	level_0.cache_pressure = 25;
+	level_0.dirty_ratio = 20;
+	level_0.dirty_background_ratio = 5;
 }
 
-void Subcore::setup_idle() {
+void Subcore::setup_level_1() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i <= present; i++) {
@@ -103,20 +103,20 @@ void Subcore::setup_idle() {
 	}
 	
 exit_gov_loop:
-	idle.state = state_idle;
-	idle.iosched = "noop";
-	idle.cpu_gov = new_cpu_pref_gov;
-	idle.cpu_max_freqs = new_cpu_max_freqs;
-	idle.gpu_max_freq = gpu_avail_freqs[2];
-	idle.lmk_minfree = block.LMK_AGGRESSIVE;
-	idle.swappiness = 0;
-	idle.readahead = 128;
-	idle.cache_pressure = 50;
-	idle.dirty_ratio = 40;
-	idle.dirty_background_ratio = 5;
+	level_1.state = state_level_1;
+	level_1.iosched = "noop";
+	level_1.cpu_gov = new_cpu_pref_gov;
+	level_1.cpu_max_freqs = new_cpu_max_freqs;
+	level_1.gpu_max_freq = gpu_avail_freqs[2];
+	level_1.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_1.swappiness = 0;
+	level_1.readahead = 128;
+	level_1.cache_pressure = 50;
+	level_1.dirty_ratio = 40;
+	level_1.dirty_background_ratio = 5;
 }
 
-void Subcore::setup_low_lat() {
+void Subcore::setup_level_2() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i <= present; i++) {
@@ -142,20 +142,20 @@ void Subcore::setup_low_lat() {
 	}
 
 exit_gov_loop:
-	low_lat.state = state_low_lat;
-	low_lat.iosched = "deadline";
-	low_lat.cpu_gov = new_cpu_pref_gov;
-	low_lat.cpu_max_freqs = new_cpu_max_freqs;
-	low_lat.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
-	low_lat.lmk_minfree = block.LMK_VERY_LIGHT;
-	low_lat.swappiness = 25;
-	low_lat.readahead = 512;
-	low_lat.cache_pressure = 75;
-	low_lat.dirty_ratio = 60;
-	low_lat.dirty_background_ratio = 5;
+	level_2.state = state_level_2;
+	level_2.iosched = "deadline";
+	level_2.cpu_gov = new_cpu_pref_gov;
+	level_2.cpu_max_freqs = new_cpu_max_freqs;
+	level_2.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
+	level_2.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_2.swappiness = 25;
+	level_2.readahead = 512;
+	level_2.cache_pressure = 75;
+	level_2.dirty_ratio = 60;
+	level_2.dirty_background_ratio = 5;
 }
 
-void Subcore::setup_performance() {
+void Subcore::setup_level_3() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i <= present; i++) {
@@ -181,24 +181,24 @@ void Subcore::setup_performance() {
 	}
 	
 exit_gov_loop:
-	performance.state = state_performance;
-	performance.iosched = "deadline";
-	performance.cpu_gov = new_cpu_pref_gov;
-	performance.cpu_max_freqs = new_cpu_max_freqs;
-	performance.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
-	performance.lmk_minfree = block.LMK_VERY_LIGHT;
-	performance.swappiness = 75;
-	performance.readahead = 2048;
-	performance.cache_pressure = 100;
-	performance.dirty_ratio = 90;
-	performance.dirty_background_ratio = 5;
+	level_3.state = state_level_3;
+	level_3.iosched = "deadline";
+	level_3.cpu_gov = new_cpu_pref_gov;
+	level_3.cpu_max_freqs = new_cpu_max_freqs;
+	level_3.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+	level_3.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_3.swappiness = 75;
+	level_3.readahead = 2048;
+	level_3.cache_pressure = 100;
+	level_3.dirty_ratio = 90;
+	level_3.dirty_background_ratio = 5;
 }
 
 void Subcore::setup_presets() {
-	setup_powersave();
-	setup_idle();
-	setup_low_lat();
-	setup_performance();
+	setup_level_0();
+	setup_level_1();
+	setup_level_2();
+	setup_level_3();
 }
 
 void Subcore::set_sysfs(sysfs_struct sysfs) {
