@@ -18,9 +18,6 @@ void Subcore::algorithm() {
 	} else if (capacity <= 15) {
 		// always use lowest load based algorithm
 		load = 0;
-	} else if (capacity <= 25) {
-		// use lower power profiles more
-		load /= 1.5;
 	}
 
 	// load based algorithm
