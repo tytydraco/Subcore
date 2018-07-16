@@ -78,6 +78,8 @@ exit_gov_loop:
 	level_0.cache_pressure = 80;
 	level_0.dirty_ratio = 90;
 	level_0.dirty_background_ratio = 80;
+	level_0.entropy_read = 64;
+	level_0.entropy_write = 128;
 	level_0.subcore_scan_ms = 5000;
 }
 
@@ -121,6 +123,8 @@ exit_gov_loop:
 	level_1.cache_pressure = 60;
 	level_1.dirty_ratio = 80;
 	level_1.dirty_background_ratio = 70;
+	level_1.entropy_read = 128;
+	level_1.entropy_write = 256;
 	level_1.subcore_scan_ms = 4000;
 }
 
@@ -164,6 +168,8 @@ exit_gov_loop:
 	level_2.cache_pressure = 50;
 	level_2.dirty_ratio = 40;
 	level_2.dirty_background_ratio = 30;
+	level_2.entropy_read = 512;
+	level_2.entropy_write = 2048;
 	level_2.subcore_scan_ms = 3000;
 }
 
@@ -207,6 +213,8 @@ exit_gov_loop:
 	level_3.cache_pressure = 40;
 	level_3.dirty_ratio = 30;
 	level_3.dirty_background_ratio = 20;
+	level_3.entropy_read = 1024;
+	level_3.entropy_write = 2048;
 	level_3.subcore_scan_ms = 2000;
 }
 
@@ -251,6 +259,10 @@ void Subcore::set_sysfs(sysfs_struct sysfs) {
 	
 	// lmk minfree
 	block.set_lmk(sysfs.lmk_minfree);
+
+	// entropy
+	block.set_entropy_read(sysfs.entropy_read);
+	block.set_entropy_write(sysfs.entropy_write);
 	
 	// subcore scan ms
 	cpu.STAT_AVG_SLEEP_MS = sysfs.subcore_scan_ms;

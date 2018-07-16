@@ -126,6 +126,7 @@ class SysFs {
 				const std::string PATH_MOUNTS = "/proc/mounts";
 				const std::string PATH_LMK = "/sys/module/lowmemorykiller/parameters";
 				const std::string PATH_VM = "/proc/sys/vm";
+				const std::string PATH_ENTROPY = "/proc/sys/kernel/random";
 			public:
 				const std::string LMK_VERY_LIGHT = "9169,18338,27507,36676,45845,55014";
 				const std::string LMK_AGGRESSIVE = "18338,27507,55014,91690,128366,137535";
@@ -191,6 +192,24 @@ class SysFs {
 				inline uint8_t get_dirty_background_ratio() {
 					std::string str = IO::read_file(PATH_VM + "/dirty_background_ratio");
 					return (uint8_t) stoi(str);
+				}
+
+				inline void set_entropy_read(uint16_t entropy) {
+					IO::write_file(PATH_ENTROPY + "/read_wakeup_threshold", std::to_string(entropy));
+				}
+
+				inline uint16_t get_entropy_read() {
+					std::string str = IO::read_file(PATH_ENTROPY + "/read_wakeup_threshold");
+					return (uint16_t) stoi(str);
+				}
+
+				inline void set_entropy_write(uint16_t entropy) {
+					IO::write_file(PATH_ENTROPY + "/write_wakeup_threshold", std::to_string(entropy));
+				}
+
+				inline uint16_t get_entropy_write() {
+					std::string str = IO::read_file(PATH_ENTROPY + "/write_wakeup_threshold");
+					return (uint16_t) stoi(str);
 				}
 
 		};
