@@ -71,7 +71,7 @@ exit_gov_loop:
 	if (gpu_avail_freqs.size() == 0) 
 		level_0.gpu_max_freq = 0;
 	else 
-		level_0.gpu_max_freq = gpu_avail_freqs[1];
+		level_0.gpu_max_freq = gpu_avail_freqs[2];
 	level_0.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_0.swappiness = 0;
 	level_0.readahead = 128;
@@ -114,7 +114,7 @@ exit_gov_loop:
 	if (gpu_avail_freqs.size() == 0) 
 		level_1.gpu_max_freq = 0;
 	else 
-		level_1.gpu_max_freq = gpu_avail_freqs[2];
+		level_1.gpu_max_freq = gpu_avail_freqs[3];
 	level_1.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.swappiness = 0;
 	level_1.readahead = 256;
