@@ -111,6 +111,13 @@ class SysFs {
 					std::string str = IO::read_file(PATH_GPU + "/gpu_governor");
 					return str;
 				}
+
+				inline uint8_t get_load() {
+					std::string str = IO::read_file(PATH_GPU + "/gpu_load");
+					std::istringstream iss(str);
+					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+					return stoi(str_split[0]);
+				}
 		};
 
 		struct Block {
