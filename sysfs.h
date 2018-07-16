@@ -214,11 +214,11 @@ class SysFs {
 			private:
 				const std::string PATH_MEMINFO = "/proc/meminfo";
 			public:
-				inline long get_ram_size() {
+				inline uint32_t get_ram_size() {
 					std::string str = IO::read_file(PATH_MEMINFO);
 					std::istringstream iss(str);
 					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-					return stol(str_split[1]);
+					return stoi(str_split[1]);
 				}
 		};
 };
