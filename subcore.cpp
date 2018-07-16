@@ -76,8 +76,8 @@ exit_gov_loop:
 	level_0.swappiness = 0;
 	level_0.readahead = 128;
 	level_0.cache_pressure = 10;
-	level_0.dirty_ratio = 90;
-	level_0.dirty_background_ratio = 80;
+	level_0.dirty_ratio = 10;
+	level_0.dirty_background_ratio = 5;
 	level_0.subcore_scan_ms = 5000;
 }
 
@@ -119,8 +119,8 @@ exit_gov_loop:
 	level_1.swappiness = 0;
 	level_1.readahead = 256;
 	level_1.cache_pressure = 20;
-	level_1.dirty_ratio = 80;
-	level_1.dirty_background_ratio = 70;
+	level_1.dirty_ratio = 20;
+	level_1.dirty_background_ratio = 5;
 	level_1.subcore_scan_ms = 4000;
 }
 
@@ -162,8 +162,8 @@ exit_gov_loop:
 	level_2.swappiness = 25;
 	level_2.readahead = 512;
 	level_2.cache_pressure = 40;
-	level_2.dirty_ratio = 70;
-	level_2.dirty_background_ratio = 60;
+	level_2.dirty_ratio = 40;
+	level_2.dirty_background_ratio = 10;
 	level_2.subcore_scan_ms = 3000;
 }
 
@@ -206,7 +206,7 @@ exit_gov_loop:
 	level_3.readahead = 1024;
 	level_3.cache_pressure = 80;
 	level_3.dirty_ratio = 60;
-	level_3.dirty_background_ratio = 50;
+	level_3.dirty_background_ratio = 10;
 	level_3.subcore_scan_ms = 2000;
 }
 
