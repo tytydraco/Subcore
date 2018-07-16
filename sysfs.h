@@ -220,6 +220,13 @@ class SysFs {
 					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
 					return stoi(str_split[1]);
 				}
+
+				inline uint32_t get_avail_ram() {
+					std::string str = IO::read_file(PATH_MEMINFO);
+					std::istringstream iss(str);
+					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+					return stoi(str_split[4]);
+				}
 		};
 };
 #endif
