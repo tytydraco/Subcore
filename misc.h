@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unistd.h>
+#include <sys/stat.h>
 
 namespace IO {
 	inline void write_file(std::string path, std::string in) {
@@ -27,9 +28,9 @@ namespace IO {
 					(std::istreambuf_iterator<char>()));
 	}
 
-	inline bool file_exists(std::string path) {
-		std::ifstream infile(path);
-    	return infile.good();
+	inline bool path_exists(std::string path) {
+		struct stat st;
+		return (stat(path.c_str(), &st) == 0);
 	}
 }
 

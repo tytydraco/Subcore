@@ -259,13 +259,13 @@ class SysFs {
 				const std::string PATH_FB0 = "/sys/devices/virtual/graphics/fb0";
 			public:
 				inline bool get_suspended() {
-					if (IO::file_exists(PATH_STATE_NOTIFIER)) {
+					if (IO::path_exists(PATH_STATE_NOTIFIER)) {
 						std::string str = IO::read_file(PATH_STATE_NOTIFIER + "/state_suspended");
 						return (str.find("Y") != std::string::npos);
-					} else if (IO::file_exists(PATH_POWER_SUSPEND)) {
+					} else if (IO::path_exists(PATH_POWER_SUSPEND)) {
 						std::string str = IO::read_file(PATH_POWER_SUSPEND + "/power_suspend_state");
 						return (str.find("1") != std::string::npos);
-					} else if (IO::file_exists(PATH_FB0)) {
+					} else if (IO::path_exists(PATH_FB0)) {
 						std::string str = IO::read_file(PATH_FB0 + "/idle_notify");
 						return (str.find("yes") != std::string::npos);
 					}
