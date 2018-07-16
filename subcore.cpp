@@ -68,11 +68,11 @@ exit_gov_loop:
 	level_0.iosched = "noop";
 	level_0.cpu_gov = new_cpu_pref_gov;
 	level_0.cpu_max_freqs = new_cpu_max_freqs;
-	level_0.gpu_max_freq = gpu_avail_freqs[2];
+	level_0.gpu_max_freq = gpu_avail_freqs[1];
 	level_0.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_0.swappiness = 0;
 	level_0.readahead = 128;
-	level_0.cache_pressure = 25;
+	level_0.cache_pressure = 10;
 	level_0.dirty_ratio = 20;
 	level_0.dirty_background_ratio = 5;
 }
@@ -83,7 +83,7 @@ void Subcore::setup_level_1() {
 	for (size_t i = 0; i <= present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[1]);
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[3]);
 		} else {
 			new_cpu_max_freqs.push_back(0);
 		}
@@ -110,9 +110,9 @@ exit_gov_loop:
 	level_1.gpu_max_freq = gpu_avail_freqs[2];
 	level_1.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.swappiness = 0;
-	level_1.readahead = 128;
-	level_1.cache_pressure = 50;
-	level_1.dirty_ratio = 40;
+	level_1.readahead = 256;
+	level_1.cache_pressure = 15;
+	level_1.dirty_ratio = 30;
 	level_1.dirty_background_ratio = 5;
 }
 
@@ -150,8 +150,8 @@ exit_gov_loop:
 	level_2.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_2.swappiness = 25;
 	level_2.readahead = 512;
-	level_2.cache_pressure = 75;
-	level_2.dirty_ratio = 60;
+	level_2.cache_pressure = 40;
+	level_2.dirty_ratio = 40;
 	level_2.dirty_background_ratio = 5;
 }
 
@@ -187,10 +187,10 @@ exit_gov_loop:
 	level_3.cpu_max_freqs = new_cpu_max_freqs;
 	level_3.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 	level_3.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_3.swappiness = 75;
-	level_3.readahead = 2048;
-	level_3.cache_pressure = 100;
-	level_3.dirty_ratio = 90;
+	level_3.swappiness = 50;
+	level_3.readahead = 1024;
+	level_3.cache_pressure = 50;
+	level_3.dirty_ratio = 75;
 	level_3.dirty_background_ratio = 5;
 }
 
