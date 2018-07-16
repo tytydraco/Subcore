@@ -17,7 +17,7 @@ void Subcore::algorithm() {
 		load = 100;
 	} else if (capacity <= 15) {
 		// always use lowest load based algorithm
-		load = 0;
+		load /= 2;
 	}
 
 	// load based algorithm
