@@ -11,10 +11,14 @@ void Subcore::algorithm() {
 	//special cases
 	uint8_t capacity = battery.capacity();
 	bool charging = battery.charging();
+	bool display_off = display.get_suspended();
 
 	if (charging) {
 		// alwats use highest load based algorithm
 		load = 100;
+	} else if (display_off) {
+		// use minimum load to conserve power
+		load = 0;
 	} else if (capacity <= 15) {
 		// always use lowest load based algorithm
 		load /= 2;

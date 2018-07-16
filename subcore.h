@@ -35,6 +35,7 @@ class Subcore {
 		SysFs::Block block;
 		SysFs::Gpu gpu;
 		SysFs::Battery battery;
+		SysFs::Display display;
 
 		void setup_level_0();
 		void setup_level_1();

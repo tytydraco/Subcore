@@ -26,6 +26,11 @@ namespace IO {
 		return std::string((std::istreambuf_iterator<char>(ifs)),
 					(std::istreambuf_iterator<char>()));
 	}
+
+	inline bool file_exists(std::string path) {
+		std::ifstream infile(path);
+    	return infile.good();
+	}
 }
 
 namespace Root {
