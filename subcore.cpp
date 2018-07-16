@@ -75,6 +75,7 @@ exit_gov_loop:
 	level_0.cache_pressure = 10;
 	level_0.dirty_ratio = 20;
 	level_0.dirty_background_ratio = 5;
+	level_0.subcore_scan_ms = 5000;
 }
 
 void Subcore::setup_level_1() {
@@ -114,6 +115,7 @@ exit_gov_loop:
 	level_1.cache_pressure = 15;
 	level_1.dirty_ratio = 30;
 	level_1.dirty_background_ratio = 5;
+	level_1.subcore_scan_ms = 4000;
 }
 
 void Subcore::setup_level_2() {
@@ -153,6 +155,7 @@ exit_gov_loop:
 	level_2.cache_pressure = 40;
 	level_2.dirty_ratio = 40;
 	level_2.dirty_background_ratio = 5;
+	level_2.subcore_scan_ms = 3000;
 }
 
 void Subcore::setup_level_3() {
@@ -192,6 +195,7 @@ exit_gov_loop:
 	level_3.cache_pressure = 50;
 	level_3.dirty_ratio = 75;
 	level_3.dirty_background_ratio = 5;
+	level_3.subcore_scan_ms = 2000;
 }
 
 void Subcore::setup_presets() {
@@ -235,6 +239,9 @@ void Subcore::set_sysfs(sysfs_struct sysfs) {
 
 	// lmk minfree
 	block.set_lmk(sysfs.lmk_minfree);
+
+	// subcore scan ms
+	cpu.STAT_AVG_SLEEP_MS = sysfs.subcore_scan_ms;
 
 	// set the current state
 	current_state = sysfs.state;

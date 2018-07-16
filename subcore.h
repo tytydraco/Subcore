@@ -24,6 +24,7 @@ class Subcore {
 			uint8_t cache_pressure;
 			uint8_t dirty_ratio;
 			uint8_t dirty_background_ratio;
+			uint16_t subcore_scan_ms;
 		};
 
 		State current_state;

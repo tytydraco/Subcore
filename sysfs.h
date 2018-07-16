@@ -15,8 +15,8 @@ class SysFs {
 			private:
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
-				const uint16_t STAT_AVG_SLEEP_MS = 3000;	
 			public:
+				uint16_t STAT_AVG_SLEEP_MS = 3000;
 				const std::string GOV_PREF_POWERSAVE[10] = {
 					"powersave"
 				};
