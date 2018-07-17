@@ -11,7 +11,6 @@ void Subcore::algorithm() {
 		std::cout << "[*] Load: " << std::to_string(load) << "\t";
 	
 	//special cases
-	uint8_t capacity = battery.capacity();
 	bool charging = battery.charging();
 	bool display_off = display.get_suspended();
 
@@ -21,9 +20,6 @@ void Subcore::algorithm() {
 	} else if (display_off) {
 		// use minimum load to conserve power
 		load = 0;
-	} else if (capacity <= 15) {
-		// always use lowest load based algorithm
-		load /= 2;
 	}
 
 	// load based algorithm
