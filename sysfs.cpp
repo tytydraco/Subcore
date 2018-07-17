@@ -43,16 +43,20 @@ uint8_t SysFs::Cpu::get_loadavg() {
 	long double a[4], b[4], loadavg;
 	FILE *fp;
 
+	// take first measurement
 	fp = std::fopen(PATH_STAT.c_str(), "r");
 	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
 	fclose(fp);
 	
+	// sleep
 	usleep(STAT_AVG_SLEEP_MS * 1000);
 
+	// take second measurement
 	fp = std::fopen(PATH_STAT.c_str(), "r");
 	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &b[0], &b[1], &b[2], &b[3]);
 	fclose(fp);
 
+	// calculate avg based on measurements
 	loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
 	loadavg *= 100;
 
@@ -91,7 +95,10 @@ std::vector<std::string> SysFs::Block::get_blkdevs() {
 	if ((d = opendir("/sys/block/")) == NULL)
 			return {};
 
+	// get MMC and SDX devices only
 	std::vector<std::string> prefixes = {"mmcblk", "sd"};
+
+	// excluse these because they are not what we are looking for
 	std::vector<std::string> prefix_excls = {"mmcblk0rpmb"};
 
 loopstart:
@@ -109,6 +116,7 @@ loopstart:
 			}
 		}
 	}
+
 	return usable_blkdevs;
 }
 

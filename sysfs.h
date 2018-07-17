@@ -17,35 +17,6 @@ class SysFs {
 				const std::string PATH_STAT = "/proc/stat";
 			public:
 				uint16_t STAT_AVG_SLEEP_MS = 3000;
-				const std::string GOV_PREF_LEVEL_0[10] = {
-					"powersave",
-					"performance"
-				};
-				const std::string GOV_PREF_LEVEL_1[10] = {
-					"energy-dcfc",
-					"schedutil",
-					"darkness",
-					"nightmare",
-					"conservative",
-					"performance"
-				};
-				const std::string GOV_PREF_LEVEL_2[10] = {
-					"relaxed",
-					"chill",
-					"interactive",
-					"helix_schedutil",
-					"schedutil",
-					"interactive",
-					"performance"
-				};
-				const std::string GOV_PREF_LEVEL_3[10] = {
-					"ondemand",
-					"performance"
-				};
-				const uint8_t LOAD_LEVEL_0 = 10;
-				const uint8_t LOAD_LEVEL_1 = 40;
-				const uint8_t LOAD_LEVEL_2 = 60;
-				const uint8_t LOAD_LEVEL_3 = 100;
 
 				std::vector<uint32_t> get_freqs(uint16_t core);
 				std::vector<std::string> get_govs();

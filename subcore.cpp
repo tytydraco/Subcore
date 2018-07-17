@@ -23,19 +23,19 @@ void Subcore::algorithm() {
 	}
 
 	// load based algorithm
-	if (load <= cpu.LOAD_LEVEL_0) {
+	if (load <= level_0.load_requirement) {
 		set_sysfs(level_0);
 		if (debug)
 			std::cout << "level_0" << std::endl;
-	} else if (load <= cpu.LOAD_LEVEL_1) {
+	} else if (load <= level_1.load_requirement) {
 		set_sysfs(level_1);
 		if (debug)
 			std::cout << "level_1" << std::endl;
-	} else if (load <= cpu.LOAD_LEVEL_2) {
+	} else if (load <= level_2.load_requirement) {
 		set_sysfs(level_2);
 		if (debug)
 			std::cout << "level_2" << std::endl;
-	} else if (load <= cpu.LOAD_LEVEL_3) {
+	} else if (load <= level_3.load_requirement) {
 		set_sysfs(level_3);
 		if (debug)
 			std::cout << "level_3" << std::endl;
@@ -57,26 +57,32 @@ void Subcore::setup_level_0() {
 		}
 	}
 
+	level_0.gov_pref = std::vector<std::string> {
+		"powersave",
+		"performance"
+	};
+
+	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
-	level_0.iosched = "noop";
-	level_0.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_0);
-	level_0.cpu_max_freqs = new_cpu_max_freqs;
+	level_0.level_data.iosched = "noop";
+	level_0.level_data.cpu_gov = preferred_gov(level_0.gov_pref);
+	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
-		level_0.gpu_max_freq = 0;
+		level_0.level_data.gpu_max_freq = 0;
 	else 
-		level_0.gpu_max_freq = gpu_avail_freqs[2];
+		level_0.level_data.gpu_max_freq = gpu_avail_freqs[2];
 
-	level_0.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_0.swappiness = 10;
-	level_0.readahead = 128;
-	level_0.cache_pressure = 80;
-	level_0.dirty_ratio = 90;
-	level_0.dirty_background_ratio = 80;
-	level_0.entropy_read = 64;
-	level_0.entropy_write = 128;
-	level_0.subcore_scan_ms = 5000;
+	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_0.level_data.swappiness = 10;
+	level_0.level_data.readahead = 128;
+	level_0.level_data.cache_pressure = 80;
+	level_0.level_data.dirty_ratio = 90;
+	level_0.level_data.dirty_background_ratio = 80;
+	level_0.level_data.entropy_read = 64;
+	level_0.level_data.entropy_write = 128;
+	level_0.level_data.subcore_scan_ms = 5000;
 }
 
 void Subcore::setup_level_1() {
@@ -91,26 +97,36 @@ void Subcore::setup_level_1() {
 		}
 	}
 
+	level_1.gov_pref = std::vector<std::string> {
+		"energy-dcfc",
+		"schedutil",
+		"darkness",
+		"nightmare",
+		"conservative",
+		"performance"
+	};
+
+	level_1.load_requirement = 40;
 	level_1.state = state_level_1;
-	level_1.iosched = "noop";
-	level_1.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_1);
-	level_1.cpu_max_freqs = new_cpu_max_freqs;
+	level_1.level_data.iosched = "noop";
+	level_1.level_data.cpu_gov = preferred_gov(level_1.gov_pref);
+	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
-		level_1.gpu_max_freq = 0;
+		level_1.level_data.gpu_max_freq = 0;
 	else 
-		level_1.gpu_max_freq = gpu_avail_freqs[3];
+		level_1.level_data.gpu_max_freq = gpu_avail_freqs[3];
 
-	level_1.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_1.swappiness = 20;
-	level_1.readahead = 256;
-	level_1.cache_pressure = 60;
-	level_1.dirty_ratio = 80;
-	level_1.dirty_background_ratio = 70;
-	level_1.entropy_read = 128;
-	level_1.entropy_write = 256;
-	level_1.subcore_scan_ms = 4000;
+	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_1.level_data.swappiness = 20;
+	level_1.level_data.readahead = 256;
+	level_1.level_data.cache_pressure = 60;
+	level_1.level_data.dirty_ratio = 80;
+	level_1.level_data.dirty_background_ratio = 70;
+	level_1.level_data.entropy_read = 128;
+	level_1.level_data.entropy_write = 256;
+	level_1.level_data.subcore_scan_ms = 4000;
 }
 
 void Subcore::setup_level_2() {
@@ -125,26 +141,37 @@ void Subcore::setup_level_2() {
 		}
 	}
 
+	level_2.gov_pref = std::vector<std::string> {
+		"relaxed",
+		"chill",
+		"interactive",
+		"helix_schedutil",
+		"schedutil",
+		"interactive",
+		"performance"
+	};
+
+	level_2.load_requirement = 60;
 	level_2.state = state_level_2;
-	level_2.iosched = "deadline";
-	level_2.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_2);
-	level_2.cpu_max_freqs = new_cpu_max_freqs;
+	level_2.level_data.iosched = "deadline";
+	level_2.level_data.cpu_gov = preferred_gov(level_2.gov_pref);
+	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
-		level_2.gpu_max_freq = 0;
+		level_2.level_data.gpu_max_freq = 0;
 	else 
-		level_2.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
+		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 
-	level_2.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_2.swappiness = 30;
-	level_2.readahead = 512;
-	level_2.cache_pressure = 50;
-	level_2.dirty_ratio = 40;
-	level_2.dirty_background_ratio = 30;
-	level_2.entropy_read = 512;
-	level_2.entropy_write = 2048;
-	level_2.subcore_scan_ms = 3000;
+	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_2.level_data.swappiness = 30;
+	level_2.level_data.readahead = 512;
+	level_2.level_data.cache_pressure = 50;
+	level_2.level_data.dirty_ratio = 40;
+	level_2.level_data.dirty_background_ratio = 30;
+	level_2.level_data.entropy_read = 512;
+	level_2.level_data.entropy_write = 2048;
+	level_2.level_data.subcore_scan_ms = 3000;
 }
 
 void Subcore::setup_level_3() {
@@ -159,26 +186,32 @@ void Subcore::setup_level_3() {
 		}
 	}
 
+	level_3.gov_pref = std::vector<std::string> {
+		"ondemand",
+		"performance"
+	};
+
+	level_3.load_requirement = 100;
 	level_3.state = state_level_3;
-	level_3.iosched = "deadline";
-	level_3.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_3);
-	level_3.cpu_max_freqs = new_cpu_max_freqs;
+	level_3.level_data.iosched = "deadline";
+	level_3.level_data.cpu_gov = preferred_gov(level_3.gov_pref);
+	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
-		level_3.gpu_max_freq = 0;
+		level_3.level_data.gpu_max_freq = 0;
 	else 
-		level_3.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 
-	level_3.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_3.swappiness = 40;
-	level_3.readahead = 1024;
-	level_3.cache_pressure = 40;
-	level_3.dirty_ratio = 30;
-	level_3.dirty_background_ratio = 20;
-	level_3.entropy_read = 1024;
-	level_3.entropy_write = 2048;
-	level_3.subcore_scan_ms = 2000;
+	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_3.level_data.swappiness = 40;
+	level_3.level_data.readahead = 1024;
+	level_3.level_data.cache_pressure = 40;
+	level_3.level_data.dirty_ratio = 30;
+	level_3.level_data.dirty_background_ratio = 20;
+	level_3.level_data.entropy_read = 1024;
+	level_3.level_data.entropy_write = 2048;
+	level_3.level_data.subcore_scan_ms = 2000;
 }
 
 void Subcore::setup_presets() {	
@@ -188,59 +221,59 @@ void Subcore::setup_presets() {
 	setup_level_3();	
 }
 
-void Subcore::set_sysfs(sysfs_struct sysfs) {
+void Subcore::set_sysfs(level_struct level) {
 	// if we are already on this state, do nothing
-	if (current_state == sysfs.state)
+	if (current_state == level.state)
 		return;
 
 	// iosched & readahead
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (std::string blkdev : blkdevs) {
-		block.set_iosched(blkdev, sysfs.iosched);
-		block.set_read_ahead(blkdev, sysfs.readahead);
+		block.set_iosched(blkdev, level.level_data.iosched);
+		block.set_read_ahead(blkdev, level.level_data.readahead);
 	}
 
 	// swappiness
-	block.set_swappiness(sysfs.swappiness);
+	block.set_swappiness(level.level_data.swappiness);
 
 	// cache pressure
-	block.set_cache_pressure(sysfs.cache_pressure);
+	block.set_cache_pressure(level.level_data.cache_pressure);
 	
 	// dirty ratios
-	block.set_dirty_ratio(sysfs.dirty_ratio);
-	block.set_dirty_background_ratio(sysfs.dirty_background_ratio);
+	block.set_dirty_ratio(level.level_data.dirty_ratio);
+	block.set_dirty_background_ratio(level.level_data.dirty_background_ratio);
 
 	//cpu gov & max freq
 	uint8_t present = cpu.get_present();
 	for (size_t i = 0; i <= present; i++) {
-		cpu.set_gov(i, sysfs.cpu_gov);
-		cpu.set_max_freq(i, sysfs.cpu_max_freqs[i]);
+		cpu.set_gov(i, level.level_data.cpu_gov);
+		cpu.set_max_freq(i, level.level_data.cpu_max_freqs[i]);
 	}
 	
 	// gpu max freq
-	gpu.set_max_freq(sysfs.gpu_max_freq);
+	gpu.set_max_freq(level.level_data.gpu_max_freq);
 	
 	// lmk minfree
-	block.set_lmk(sysfs.lmk_minfree);
+	block.set_lmk(level.level_data.lmk_minfree);
 
 	// entropy
-	block.set_entropy_read(sysfs.entropy_read);
-	block.set_entropy_write(sysfs.entropy_write);
+	block.set_entropy_read(level.level_data.entropy_read);
+	block.set_entropy_write(level.level_data.entropy_write);
 	
 	// subcore scan ms
-	cpu.STAT_AVG_SLEEP_MS = sysfs.subcore_scan_ms;
+	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
 
 	// set the current state
-	current_state = sysfs.state;
+	current_state = level.state;
 }
 
-std::string Subcore::preferred_gov(const std::string *pref_govs) {
+std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
 	std::string new_cpu_pref_gov;
-	for (size_t i = 0; i < pref_govs->size(); i++) {
+	for (std::string pref_gov : pref_govs) {
 		for (std::string cpu_avail_gov : cpu_avail_govs) {
-			if (cpu_avail_gov == pref_govs[i]) {
-				return pref_govs[i];
+			if (cpu_avail_gov == pref_gov) {
+				return pref_gov;
 			}	
 		}
 	}
