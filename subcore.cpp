@@ -80,7 +80,7 @@ exit_gov_loop:
 	else 
 		level_0.gpu_max_freq = gpu_avail_freqs[2];
 	level_0.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_0.swappiness = 0;
+	level_0.swappiness = 10;
 	level_0.readahead = 128;
 	level_0.cache_pressure = 80;
 	level_0.dirty_ratio = 90;
@@ -125,7 +125,7 @@ exit_gov_loop:
 	else 
 		level_1.gpu_max_freq = gpu_avail_freqs[3];
 	level_1.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_1.swappiness = 0;
+	level_1.swappiness = 20;
 	level_1.readahead = 256;
 	level_1.cache_pressure = 60;
 	level_1.dirty_ratio = 80;
@@ -170,7 +170,7 @@ exit_gov_loop:
 	else 
 		level_2.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 	level_2.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_2.swappiness = 25;
+	level_2.swappiness = 30;
 	level_2.readahead = 512;
 	level_2.cache_pressure = 50;
 	level_2.dirty_ratio = 40;
@@ -215,7 +215,7 @@ exit_gov_loop:
 	else 
 		level_3.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 	level_3.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_3.swappiness = 50;
+	level_3.swappiness = 40;
 	level_3.readahead = 1024;
 	level_3.cache_pressure = 40;
 	level_3.dirty_ratio = 30;
