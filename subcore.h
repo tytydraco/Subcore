@@ -42,6 +42,8 @@ class Subcore {
 		void setup_level_2();
 		void setup_level_3();
 	public:
+		bool debug = false;
+
 		void algorithm();
 		sysfs_struct level_0;
 		sysfs_struct level_1;
