@@ -26,6 +26,7 @@ std::vector<uint32_t> SysFs::Cpu::get_freqs(uint16_t core) {
 		freq_list.push_back(atoi(freq_str.c_str()));
 	}
 
+	// sort from least to greatest
 	std::sort(freq_list.begin(), freq_list.end());
 	return freq_list;
 }
@@ -45,6 +46,7 @@ uint8_t SysFs::Cpu::get_loadavg() {
 	fp = std::fopen(PATH_STAT.c_str(), "r");
 	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
 	fclose(fp);
+	
 	usleep(STAT_AVG_SLEEP_MS * 1000);
 
 	fp = std::fopen(PATH_STAT.c_str(), "r");
@@ -54,10 +56,12 @@ uint8_t SysFs::Cpu::get_loadavg() {
 	loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
 	loadavg *= 100;
 
+	// limit bounds
 	if (loadavg > 100)
-		loadavg = 100;
+		return (uint8_t) 100;
 	if (loadavg < 0)
-		loadavg = 0;
+		return (uint8_t) 0;
+
 	return (uint8_t) (loadavg);
 }
 
@@ -74,6 +78,7 @@ std::vector<uint16_t> SysFs::Gpu::get_freqs() {
 		freq_list.push_back(atoi(freq_str.c_str()));
 	}
 
+	// sort in order of least to greatest
 	std::sort(freq_list.begin(), freq_list.end());
 	return freq_list;
 }
