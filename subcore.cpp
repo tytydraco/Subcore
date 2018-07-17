@@ -57,8 +57,6 @@ void Subcore::setup_level_0() {
 		}
 	}
 
-	
-
 	level_0.state = state_level_0;
 	level_0.iosched = "noop";
 	level_0.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_0);
