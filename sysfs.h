@@ -18,14 +18,16 @@ class SysFs {
 			public:
 				uint16_t STAT_AVG_SLEEP_MS = 3000;
 				const std::string GOV_PREF_POWERSAVE[10] = {
-					"powersave"
+					"powersave",
+					"performance"
 				};
 				const std::string GOV_PREF_IDLE[10] = {
 					"energy-dcfc",
 					"schedutil",
 					"darkness",
 					"nightmare",
-					"conservative"
+					"conservative",
+					"performance"
 				};
 				const std::string GOV_PREF_LOW_LAT[10] = {
 					"relaxed",
@@ -33,10 +35,12 @@ class SysFs {
 					"interactive",
 					"helix_schedutil",
 					"schedutil",
-					"interactive"
+					"interactive",
+					"performance"
 				};
 				const std::string GOV_PREF_PERFORMANCE[10] = {
-					"ondemand"
+					"ondemand",
+					"performance"
 				};
 				const uint8_t LOAD_LEVEL_0 = 10;
 				const uint8_t LOAD_LEVEL_1 = 40;
