@@ -41,6 +41,8 @@ class Subcore {
 		void setup_level_1();
 		void setup_level_2();
 		void setup_level_3();
+
+		std::string preferred_gov(const std::string *pref_govs);
 	public:
 		bool debug = false;
 

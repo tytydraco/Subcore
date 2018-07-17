@@ -59,21 +59,9 @@ void Subcore::setup_level_0() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
-	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
-	std::string new_cpu_pref_gov;
-	for (std::string cpu_pref_gov : cpu.GOV_PREF_POWERSAVE) {
-		for (std::string cpu_avail_gov : cpu_avail_govs) {
-			if (cpu_avail_gov == cpu_pref_gov) {	
-				new_cpu_pref_gov = cpu_pref_gov;
-				goto exit_gov_loop;
-			}	
-		}
-	}
-
-exit_gov_loop:	
 	level_0.state = state_level_0;
 	level_0.iosched = "noop";
-	level_0.cpu_gov = new_cpu_pref_gov;
+	level_0.cpu_gov = preferred_gov(cpu.GOV_PREF_POWERSAVE);
 	level_0.cpu_max_freqs = new_cpu_max_freqs;
 	if (gpu_avail_freqs.size() == 0) 
 		level_0.gpu_max_freq = 0;
@@ -104,21 +92,9 @@ void Subcore::setup_level_1() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
-	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
-	std::string new_cpu_pref_gov;
-	for (std::string cpu_pref_gov : cpu.GOV_PREF_IDLE) {
-		for (std::string cpu_avail_gov : cpu_avail_govs) {
-			if (cpu_avail_gov == cpu_pref_gov) {
-				new_cpu_pref_gov = cpu_pref_gov;
-				goto exit_gov_loop;
-			}	
-		}
-	}
-	
-exit_gov_loop:
 	level_1.state = state_level_1;
 	level_1.iosched = "noop";
-	level_1.cpu_gov = new_cpu_pref_gov;
+	level_1.cpu_gov = preferred_gov(cpu.GOV_PREF_IDLE);
 	level_1.cpu_max_freqs = new_cpu_max_freqs;
 	if (gpu_avail_freqs.size() == 0) 
 		level_1.gpu_max_freq = 0;
@@ -149,21 +125,9 @@ void Subcore::setup_level_2() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
-	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
-	std::string new_cpu_pref_gov;
-	for (std::string cpu_pref_gov : cpu.GOV_PREF_LOW_LAT) {
-		for (std::string cpu_avail_gov : cpu_avail_govs) {
-			if (cpu_avail_gov == cpu_pref_gov) {
-				new_cpu_pref_gov = cpu_pref_gov;
-				goto exit_gov_loop;
-			}	
-		}
-	}
-
-exit_gov_loop:
 	level_2.state = state_level_2;
 	level_2.iosched = "deadline";
-	level_2.cpu_gov = new_cpu_pref_gov;
+	level_2.cpu_gov = preferred_gov(cpu.GOV_PREF_LOW_LAT);
 	level_2.cpu_max_freqs = new_cpu_max_freqs;
 	if (gpu_avail_freqs.size() == 0) 
 		level_2.gpu_max_freq = 0;
@@ -194,21 +158,9 @@ void Subcore::setup_level_3() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 
-	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
-	std::string new_cpu_pref_gov;
-	for (std::string cpu_pref_gov : cpu.GOV_PREF_PERFORMANCE) {
-		for (std::string cpu_avail_gov : cpu_avail_govs) {
-			if (cpu_avail_gov == cpu_pref_gov) {
-				new_cpu_pref_gov = cpu_pref_gov;
-				goto exit_gov_loop;
-			}	
-		}
-	}
-	
-exit_gov_loop:
 	level_3.state = state_level_3;
 	level_3.iosched = "deadline";
-	level_3.cpu_gov = new_cpu_pref_gov;
+	level_3.cpu_gov = preferred_gov(cpu.GOV_PREF_PERFORMANCE);
 	level_3.cpu_max_freqs = new_cpu_max_freqs;
 	if (gpu_avail_freqs.size() == 0) 
 		level_3.gpu_max_freq = 0;
@@ -278,5 +230,18 @@ void Subcore::set_sysfs(sysfs_struct sysfs) {
 	current_state = sysfs.state;
 }
 
+std::string Subcore::preferred_gov(const std::string *pref_govs) {
+	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
+	std::string new_cpu_pref_gov;
+	for (size_t i = 0; i < pref_govs->size(); i++) {
+		for (std::string cpu_avail_gov : cpu_avail_govs) {
+			if (cpu_avail_gov == pref_govs[i]) {
+				return pref_govs[i];
+			}	
+		}
+	}
 
+	// double failsafe
+	return "performance";
+}
 
