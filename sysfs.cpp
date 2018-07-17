@@ -41,7 +41,6 @@ std::vector<std::string> SysFs::Cpu::get_govs() {
 uint8_t SysFs::Cpu::get_loadavg() {
 	long double a[4], b[4], loadavg;
 	FILE *fp;
-	char dump[50];
 
 	fp = std::fopen(PATH_STAT.c_str(), "r");
 	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
