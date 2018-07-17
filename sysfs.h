@@ -17,11 +17,11 @@ class SysFs {
 				const std::string PATH_STAT = "/proc/stat";
 			public:
 				uint16_t STAT_AVG_SLEEP_MS = 3000;
-				const std::string GOV_PREF_POWERSAVE[10] = {
+				const std::string GOV_PREF_LEVEL_0[10] = {
 					"powersave",
 					"performance"
 				};
-				const std::string GOV_PREF_IDLE[10] = {
+				const std::string GOV_PREF_LEVEL_1[10] = {
 					"energy-dcfc",
 					"schedutil",
 					"darkness",
@@ -29,7 +29,7 @@ class SysFs {
 					"conservative",
 					"performance"
 				};
-				const std::string GOV_PREF_LOW_LAT[10] = {
+				const std::string GOV_PREF_LEVEL_2[10] = {
 					"relaxed",
 					"chill",
 					"interactive",
@@ -38,7 +38,7 @@ class SysFs {
 					"interactive",
 					"performance"
 				};
-				const std::string GOV_PREF_PERFORMANCE[10] = {
+				const std::string GOV_PREF_LEVEL_3[10] = {
 					"ondemand",
 					"performance"
 				};
