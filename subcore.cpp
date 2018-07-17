@@ -57,16 +57,19 @@ void Subcore::setup_level_0() {
 		}
 	}
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
+	
 
 	level_0.state = state_level_0;
 	level_0.iosched = "noop";
 	level_0.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_0);
 	level_0.cpu_max_freqs = new_cpu_max_freqs;
+
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
 		level_0.gpu_max_freq = 0;
 	else 
 		level_0.gpu_max_freq = gpu_avail_freqs[2];
+
 	level_0.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_0.swappiness = 10;
 	level_0.readahead = 128;
@@ -90,16 +93,17 @@ void Subcore::setup_level_1() {
 		}
 	}
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
-
 	level_1.state = state_level_1;
 	level_1.iosched = "noop";
 	level_1.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_1);
 	level_1.cpu_max_freqs = new_cpu_max_freqs;
+
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
 		level_1.gpu_max_freq = 0;
 	else 
 		level_1.gpu_max_freq = gpu_avail_freqs[3];
+
 	level_1.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.swappiness = 20;
 	level_1.readahead = 256;
@@ -123,16 +127,17 @@ void Subcore::setup_level_2() {
 		}
 	}
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
-
 	level_2.state = state_level_2;
 	level_2.iosched = "deadline";
 	level_2.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_2);
 	level_2.cpu_max_freqs = new_cpu_max_freqs;
+
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
 		level_2.gpu_max_freq = 0;
 	else 
 		level_2.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
+
 	level_2.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_2.swappiness = 30;
 	level_2.readahead = 512;
@@ -156,16 +161,17 @@ void Subcore::setup_level_3() {
 		}
 	}
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
-
 	level_3.state = state_level_3;
 	level_3.iosched = "deadline";
 	level_3.cpu_gov = preferred_gov(cpu.GOV_PREF_LEVEL_3);
 	level_3.cpu_max_freqs = new_cpu_max_freqs;
+
+	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
 	if (gpu_avail_freqs.size() == 0) 
 		level_3.gpu_max_freq = 0;
 	else 
 		level_3.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+
 	level_3.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_3.swappiness = 40;
 	level_3.readahead = 1024;
