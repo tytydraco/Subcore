@@ -15,7 +15,7 @@ void Subcore::algorithm() {
 	bool display_off = display.get_suspended();
 
 	if (charging) {
-		// alwats use highest load based algorithm
+		// always use highest load based algorithm
 		load = 100;
 	} else if (display_off) {
 		// use minimum load to conserve power
@@ -82,7 +82,7 @@ void Subcore::setup_level_0() {
 	level_0.level_data.dirty_background_ratio = 80;
 	level_0.level_data.entropy_read = 64;
 	level_0.level_data.entropy_write = 128;
-	level_0.level_data.subcore_scan_ms = 5000;
+	level_0.level_data.subcore_scan_ms = 3000;
 }
 
 void Subcore::setup_level_1() {
@@ -126,7 +126,7 @@ void Subcore::setup_level_1() {
 	level_1.level_data.dirty_background_ratio = 70;
 	level_1.level_data.entropy_read = 128;
 	level_1.level_data.entropy_write = 256;
-	level_1.level_data.subcore_scan_ms = 4000;
+	level_1.level_data.subcore_scan_ms = 2000;
 }
 
 void Subcore::setup_level_2() {
@@ -171,7 +171,7 @@ void Subcore::setup_level_2() {
 	level_2.level_data.dirty_background_ratio = 30;
 	level_2.level_data.entropy_read = 512;
 	level_2.level_data.entropy_write = 2048;
-	level_2.level_data.subcore_scan_ms = 3000;
+	level_2.level_data.subcore_scan_ms = 1000;
 }
 
 void Subcore::setup_level_3() {
@@ -212,7 +212,7 @@ void Subcore::setup_level_3() {
 	level_3.level_data.dirty_background_ratio = 20;
 	level_3.level_data.entropy_read = 1024;
 	level_3.level_data.entropy_write = 2048;
-	level_3.level_data.subcore_scan_ms = 2000;
+	level_3.level_data.subcore_scan_ms = 500;
 }
 
 void Subcore::setup_presets() {	
@@ -224,8 +224,37 @@ void Subcore::setup_presets() {
 
 void Subcore::set_sysfs(level_struct level) {
 	// if we are already on this state, do nothing
-	if (current_state == level.state)
+	if (current_state == level.state) {
+
+		bool display_off = display.get_suspended();
+		if (display_off) {
+			// do not count when sleeping to avoid
+			// stutter on wakeup (after +5000ms)
+			same_level_count = 0;
+
+			// we can return now, as thats all we need to do
+			return;
+		}
+
+		// if we're awake, add to the counter
+		same_level_count++;
+
+		// depending on how constant the load is,
+		// add a minor delay to keep it from dipping
+		// too soon (IE loading scene / video pause)
+		cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
+		if (same_level_count >= 5) {
+			cpu.STAT_AVG_SLEEP_MS += 3000;
+			if (debug)
+				std::cout << "+3000ms\t";
+		} else if (same_level_count >= 3) {
+			cpu.STAT_AVG_SLEEP_MS += 1500;
+			if (debug)
+				std::cout << "+1500ms\t";
+			}	
+
 		return;
+	}
 
 	// iosched & readahead
 	std::vector<std::string> blkdevs = block.get_blkdevs();
@@ -262,10 +291,14 @@ void Subcore::set_sysfs(level_struct level) {
 	block.set_entropy_write(level.level_data.entropy_write);
 	
 	// subcore scan ms
-	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
+	// special cases for extended periods
+	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;	
 
 	// set the current state
 	current_state = level.state;
+
+	// reset count
+	same_level_count = 0;
 }
 
 std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {

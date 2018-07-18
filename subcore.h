@@ -5,6 +5,7 @@
 
 class Subcore {
 	private:
+		// objects
 		enum State {
 			state_level_0,
 			state_level_1,
@@ -35,6 +36,7 @@ class Subcore {
 			sysfs_struct level_data;
 		};
 
+		// declarations
 		State current_state;
 
 		SysFs::Cpu cpu;
@@ -43,24 +45,26 @@ class Subcore {
 		SysFs::Battery battery;
 		SysFs::Display display;
 
-		void setup_level_0();
-		void setup_level_1();
-		void setup_level_2();
-		void setup_level_3();
-
-		std::string preferred_gov(std::vector<std::string> pref_govs);
-	public:
-		bool debug = false;
-
-		void algorithm();
-
 		level_struct level_0;
 		level_struct level_1;
 		level_struct level_2;
 		level_struct level_3;
 
-		void setup_presets();
+		// the # of times the same level is selected
+		uint16_t same_level_count = 0;
+
+		// functions
+		void setup_level_0();
+		void setup_level_1();
+		void setup_level_2();
+		void setup_level_3();
+		std::string preferred_gov(std::vector<std::string> pref_govs);
 		void set_sysfs(level_struct level);
+	public:
+		bool debug = false;
+
+		void algorithm();	
+		void setup_presets();	
 };
 
 #endif
