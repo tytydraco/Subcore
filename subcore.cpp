@@ -62,7 +62,7 @@ void Subcore::setup_level_0() {
 		"performance"
 	};
 
-	level_0.load_requirement = 10;
+	level_0.load_requirement = 15;
 	level_0.state = state_level_0;
 	level_0.level_data.iosched = "noop";
 	level_0.level_data.cpu_gov = preferred_gov(level_0.gov_pref);
@@ -106,7 +106,7 @@ void Subcore::setup_level_1() {
 		"performance"
 	};
 
-	level_1.load_requirement = 40;
+	level_1.load_requirement = 30;
 	level_1.state = state_level_1;
 	level_1.level_data.iosched = "noop";
 	level_1.level_data.cpu_gov = preferred_gov(level_1.gov_pref);
@@ -151,7 +151,7 @@ void Subcore::setup_level_2() {
 		"performance"
 	};
 
-	level_2.load_requirement = 80;
+	level_2.load_requirement = 60;
 	level_2.state = state_level_2;
 	level_2.level_data.iosched = "deadline";
 	level_2.level_data.cpu_gov = preferred_gov(level_2.gov_pref);
