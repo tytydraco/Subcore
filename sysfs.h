@@ -59,6 +59,7 @@ class SysFs {
 				const std::string PATH_GPU = "/sys/kernel/gpu";
 			public:
 				std::vector<uint16_t> get_freqs();
+				uint8_t get_load();	
 
 				inline void set_max_freq(uint16_t freq) {
 					IO::write_file(PATH_GPU + "/gpu_max_clock", std::to_string(freq));
@@ -85,13 +86,6 @@ class SysFs {
 				inline std::string get_gov() {
 					std::string str = IO::read_file(PATH_GPU + "/gpu_governor");
 					return str;
-				}
-
-				inline uint8_t get_load() {
-					std::string str = IO::read_file(PATH_GPU + "/gpu_load");
-					std::istringstream iss(str);
-					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-					return stoi(str_split[0]);
 				}
 		};
 
@@ -212,19 +206,8 @@ class SysFs {
 			private:
 				const std::string PATH_MEMINFO = "/proc/meminfo";
 			public:
-				inline uint32_t get_ram_size() {
-					std::string str = IO::read_file(PATH_MEMINFO);
-					std::istringstream iss(str);
-					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-					return stoi(str_split[1]);
-				}
-
-				inline uint32_t get_avail_ram() {
-					std::string str = IO::read_file(PATH_MEMINFO);
-					std::istringstream iss(str);
-					std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-					return stoi(str_split[4]);
-				}
+				uint32_t get_ram_size();
+				uint32_t get_avail_ram();	
 		};
 
 		struct Display {
@@ -233,20 +216,7 @@ class SysFs {
 				const std::string PATH_POWER_SUSPEND = "/sys/kernel/power_suspend";
 				const std::string PATH_FB0 = "/sys/devices/virtual/graphics/fb0";
 			public:
-				inline bool get_suspended() {
-					if (IO::path_exists(PATH_STATE_NOTIFIER)) {
-						std::string str = IO::read_file(PATH_STATE_NOTIFIER + "/state_suspended");
-						return (str.find("Y") != std::string::npos);
-					} else if (IO::path_exists(PATH_POWER_SUSPEND)) {
-						std::string str = IO::read_file(PATH_POWER_SUSPEND + "/power_suspend_state");
-						return (str.find("1") != std::string::npos);
-					} else if (IO::path_exists(PATH_FB0)) {
-						std::string str = IO::read_file(PATH_FB0 + "/idle_notify");
-						return (str.find("yes") != std::string::npos);
-					}
-
-					return false;
-				}
+				bool get_suspended();
 		};
 };
 #endif

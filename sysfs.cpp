@@ -87,6 +87,13 @@ std::vector<uint16_t> SysFs::Gpu::get_freqs() {
 	return freq_list;
 }
 
+uint8_t SysFs::Gpu::get_load() {
+	std::string str = IO::read_file(PATH_GPU + "/gpu_load");
+	std::istringstream iss(str);
+	std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+	return stoi(str_split[0]);
+}
+
 std::vector<std::string> SysFs::Block::get_blkdevs() {
 	DIR* d;
 	std::vector<std::string> usable_blkdevs;
@@ -119,4 +126,33 @@ loopstart:
 
 	return usable_blkdevs;
 }
+
+uint32_t SysFs::Memory::get_ram_size() {
+	std::string str = IO::read_file(PATH_MEMINFO);
+	std::istringstream iss(str);
+	std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+	return stoi(str_split[1]);
+}
+
+uint32_t SysFs::Memory::get_avail_ram() {
+	std::string str = IO::read_file(PATH_MEMINFO);
+	std::istringstream iss(str);
+	std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+	return stoi(str_split[4]);
+}
+
+bool SysFs::Display::get_suspended() {
+					if (IO::path_exists(PATH_STATE_NOTIFIER)) {
+						std::string str = IO::read_file(PATH_STATE_NOTIFIER + "/state_suspended");
+						return (str.find("Y") != std::string::npos);
+					} else if (IO::path_exists(PATH_POWER_SUSPEND)) {
+						std::string str = IO::read_file(PATH_POWER_SUSPEND + "/power_suspend_state");
+						return (str.find("1") != std::string::npos);
+					} else if (IO::path_exists(PATH_FB0)) {
+						std::string str = IO::read_file(PATH_FB0 + "/idle_notify");
+						return (str.find("yes") != std::string::npos);
+					}
+
+					return false;
+				}
 
