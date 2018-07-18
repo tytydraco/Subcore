@@ -75,7 +75,7 @@ void Subcore::setup_level_0() {
 		level_0.level_data.gpu_max_freq = gpu_avail_freqs[2];
 
 	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_0.level_data.swappiness = 10;
+	level_0.level_data.swappiness = 15;
 	level_0.level_data.readahead = 128;
 	level_0.level_data.cache_pressure = 80;
 	level_0.level_data.dirty_ratio = 90;
@@ -151,7 +151,7 @@ void Subcore::setup_level_2() {
 		"performance"
 	};
 
-	level_2.load_requirement = 60;
+	level_2.load_requirement = 80;
 	level_2.state = state_level_2;
 	level_2.level_data.iosched = "deadline";
 	level_2.level_data.cpu_gov = preferred_gov(level_2.gov_pref);
@@ -187,6 +187,7 @@ void Subcore::setup_level_3() {
 	}
 
 	level_3.gov_pref = std::vector<std::string> {
+		"conservative",
 		"ondemand",
 		"performance"
 	};
