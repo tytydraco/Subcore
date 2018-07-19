@@ -62,7 +62,7 @@ void Subcore::setup_level_0() {
 		"performance"
 	};
 
-	level_0.load_requirement = 15;
+	level_0.load_requirement = 20;
 	level_0.state = state_level_0;
 	level_0.level_data.iosched = "noop";
 	level_0.level_data.cpu_gov = preferred_gov(level_0.gov_pref);
