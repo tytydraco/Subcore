@@ -137,7 +137,7 @@ class SysFs {
 				}
 
 				inline void set_cache_pressure(uint8_t pressure) {
-						IO::write_file(PATH_VM + "/vfs_cache_pressure", std::to_string(pressure));
+					IO::write_file(PATH_VM + "/vfs_cache_pressure", std::to_string(pressure));
 				}
 
 				inline uint8_t get_cache_pressure() {
@@ -146,7 +146,7 @@ class SysFs {
 				}
 
 				inline void set_dirty_ratio(uint8_t ratio) {
-						IO::write_file(PATH_VM + "/dirty_ratio", std::to_string(ratio));
+					IO::write_file(PATH_VM + "/dirty_ratio", std::to_string(ratio));
 				}
 
 				inline uint8_t get_dirty_ratio() {
@@ -155,7 +155,7 @@ class SysFs {
 				}
 
 				inline void set_dirty_background_ratio(uint8_t ratio) {
-						IO::write_file(PATH_VM + "/dirty_background_ratio", std::to_string(ratio));
+					IO::write_file(PATH_VM + "/dirty_background_ratio", std::to_string(ratio));
 				}
 
 				inline uint8_t get_dirty_background_ratio() {
@@ -178,6 +178,61 @@ class SysFs {
 
 				inline uint16_t get_entropy_write() {
 					std::string str = IO::read_file(PATH_ENTROPY + "/write_wakeup_threshold");
+					return (uint16_t) stoi(str);
+				}
+
+				inline void set_laptop_mode(uint8_t state) {
+					IO::write_file(PATH_VM + "/laptop_mode", std::to_string(state));
+				}
+
+				inline uint8_t get_latptop_mode() {
+					std::string str = IO::read_file(PATH_VM + "/laptop_mode");
+					return (uint8_t) stoi(str);
+				}
+
+				inline void set_oom_kill_allocating_task(uint8_t state) {
+					IO::write_file(PATH_VM + "/oom_kill_allocating_task", std::to_string(state));
+				}
+
+				inline uint8_t get_oom_kill_allocating_task() {
+					std::string str = IO::read_file(PATH_VM + "/oom_kill_allocating_task");
+					return (uint8_t) stoi(str);
+				}
+
+				inline void set_overcommit_memory(uint8_t state) {
+					IO::write_file(PATH_VM + "/overcommit_memory", std::to_string(state));
+				}
+
+				inline uint8_t get_overcommit_memory() {
+					std::string str = IO::read_file(PATH_VM + "/overcommit_memory");
+					return (uint8_t) stoi(str);
+				}
+
+				inline void set_page_cluster(uint8_t size) {
+					IO::write_file(PATH_VM + "/page-cluster", std::to_string(size));
+				}
+
+				inline uint8_t get_page_cluster() {
+					std::string str = IO::read_file(PATH_VM + "/page-cluster");
+					return (uint8_t) stoi(str);
+				}
+
+				// dirty * centisecs are set by laptop mode
+				inline void set_dirty_expire_centisecs(uint16_t secs) {
+					IO::write_file(PATH_VM + "/dirty_expire_centisecs", std::to_string(secs));
+				}
+
+				inline uint16_t get_dirty_expire_centisecs() {
+					std::string str = IO::read_file(PATH_VM + "/dirty_expire_centisecs");
+					return (uint16_t) stoi(str);
+				}
+
+				inline void set_dirty_writeback_centisecs(uint16_t size) {
+					IO::write_file(PATH_VM + "/dirty_writeback_centisecs", std::to_string(size));
+				}
+
+				inline uint16_t get_dirty_writeback_centisecs() {
+					std::string str = IO::read_file(PATH_VM + "/dirty_writeback_centisecs");
 					return (uint16_t) stoi(str);
 				}
 
