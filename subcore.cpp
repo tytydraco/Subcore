@@ -75,9 +75,9 @@ void Subcore::setup_level_0() {
 		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
 
 	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_0.level_data.swappiness = 15;
-	level_0.level_data.readahead = 128;
-	level_0.level_data.cache_pressure = 80;
+	level_0.level_data.swappiness = 10;
+	level_0.level_data.readahead = 256;
+	level_0.level_data.cache_pressure = 10;
 	level_0.level_data.dirty_ratio = 90;
 	level_0.level_data.dirty_background_ratio = 80;
 	level_0.level_data.entropy_read = 64;
@@ -106,7 +106,7 @@ void Subcore::setup_level_1() {
 		"performance"
 	};
 
-	level_1.load_requirement = 30;
+	level_1.load_requirement = 40;
 	level_1.state = state_level_1;
 	level_1.level_data.iosched = "noop";
 	level_1.level_data.cpu_gov = preferred_gov(level_1.gov_pref);
@@ -120,10 +120,10 @@ void Subcore::setup_level_1() {
 
 	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.level_data.swappiness = 20;
-	level_1.level_data.readahead = 256;
-	level_1.level_data.cache_pressure = 60;
-	level_1.level_data.dirty_ratio = 80;
-	level_1.level_data.dirty_background_ratio = 70;
+	level_1.level_data.readahead = 512;
+	level_1.level_data.cache_pressure = 10;
+	level_1.level_data.dirty_ratio = 90;
+	level_1.level_data.dirty_background_ratio = 80;
 	level_1.level_data.entropy_read = 128;
 	level_1.level_data.entropy_write = 256;
 	level_1.level_data.subcore_scan_ms = 2000;
@@ -165,10 +165,10 @@ void Subcore::setup_level_2() {
 
 	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_2.level_data.swappiness = 30;
-	level_2.level_data.readahead = 512;
-	level_2.level_data.cache_pressure = 50;
-	level_2.level_data.dirty_ratio = 40;
-	level_2.level_data.dirty_background_ratio = 30;
+	level_2.level_data.readahead = 1024;
+	level_2.level_data.cache_pressure = 10;
+	level_2.level_data.dirty_ratio = 90;
+	level_2.level_data.dirty_background_ratio = 80;
 	level_2.level_data.entropy_read = 512;
 	level_2.level_data.entropy_write = 2048;
 	level_2.level_data.subcore_scan_ms = 1000;
@@ -206,10 +206,10 @@ void Subcore::setup_level_3() {
 
 	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_3.level_data.swappiness = 40;
-	level_3.level_data.readahead = 1024;
-	level_3.level_data.cache_pressure = 40;
-	level_3.level_data.dirty_ratio = 30;
-	level_3.level_data.dirty_background_ratio = 20;
+	level_3.level_data.readahead = 2048;
+	level_3.level_data.cache_pressure = 10;
+	level_3.level_data.dirty_ratio = 90;
+	level_3.level_data.dirty_background_ratio = 80;
 	level_3.level_data.entropy_read = 1024;
 	level_3.level_data.entropy_write = 2048;
 	level_3.level_data.subcore_scan_ms = 500;
