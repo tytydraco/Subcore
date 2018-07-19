@@ -69,7 +69,7 @@ void Subcore::setup_level_0() {
 	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
-	if (gpu_avail_freqs.size() == 0) 
+	if (gpu_avail_freqs.size() < 4) 
 		level_0.level_data.gpu_max_freq = 0;
 	else 
 		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
@@ -113,7 +113,7 @@ void Subcore::setup_level_1() {
 	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
-	if (gpu_avail_freqs.size() == 0) 
+	if (gpu_avail_freqs.size() < 5) 
 		level_1.level_data.gpu_max_freq = 0;
 	else 
 		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
