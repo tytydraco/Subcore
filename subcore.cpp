@@ -72,7 +72,7 @@ void Subcore::setup_level_0() {
 	if (gpu_avail_freqs.size() == 0) 
 		level_0.level_data.gpu_max_freq = 0;
 	else 
-		level_0.level_data.gpu_max_freq = gpu_avail_freqs[2];
+		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
 
 	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_0.level_data.swappiness = 15;
@@ -116,7 +116,7 @@ void Subcore::setup_level_1() {
 	if (gpu_avail_freqs.size() == 0) 
 		level_1.level_data.gpu_max_freq = 0;
 	else 
-		level_1.level_data.gpu_max_freq = gpu_avail_freqs[3];
+		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
 
 	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.level_data.swappiness = 20;
