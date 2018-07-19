@@ -27,6 +27,10 @@ class Subcore {
 			uint16_t entropy_read;
 			uint16_t entropy_write;
 			uint16_t subcore_scan_ms;
+			uint8_t laptop_mode;
+			uint8_t oom_kill_allocating_task;
+			uint8_t overcommit_memory;
+			uint8_t page_cluster;
 		};
 
 		struct level_struct {

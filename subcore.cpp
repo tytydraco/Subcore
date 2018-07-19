@@ -83,6 +83,10 @@ void Subcore::setup_level_0() {
 	level_0.level_data.entropy_read = 64;
 	level_0.level_data.entropy_write = 128;
 	level_0.level_data.subcore_scan_ms = 3000;
+	level_0.level_data.laptop_mode = 1;
+	level_0.level_data.oom_kill_allocating_task = 1;
+	level_0.level_data.overcommit_memory = 0;
+	level_0.level_data.page_cluster = 0;
 }
 
 void Subcore::setup_level_1() {
@@ -127,6 +131,10 @@ void Subcore::setup_level_1() {
 	level_1.level_data.entropy_read = 128;
 	level_1.level_data.entropy_write = 256;
 	level_1.level_data.subcore_scan_ms = 2000;
+	level_1.level_data.laptop_mode = 1;
+	level_1.level_data.oom_kill_allocating_task = 1;
+	level_1.level_data.overcommit_memory = 0;
+	level_1.level_data.page_cluster = 0;
 }
 
 void Subcore::setup_level_2() {
@@ -172,6 +180,10 @@ void Subcore::setup_level_2() {
 	level_2.level_data.entropy_read = 512;
 	level_2.level_data.entropy_write = 2048;
 	level_2.level_data.subcore_scan_ms = 1000;
+	level_2.level_data.laptop_mode = 1;
+	level_2.level_data.oom_kill_allocating_task = 1;
+	level_2.level_data.overcommit_memory = 1;
+	level_2.level_data.page_cluster = 3;
 }
 
 void Subcore::setup_level_3() {
@@ -213,6 +225,10 @@ void Subcore::setup_level_3() {
 	level_3.level_data.entropy_read = 1024;
 	level_3.level_data.entropy_write = 2048;
 	level_3.level_data.subcore_scan_ms = 500;
+	level_3.level_data.laptop_mode = 1;
+	level_3.level_data.oom_kill_allocating_task = 1;
+	level_3.level_data.overcommit_memory = 1;
+	level_3.level_data.page_cluster = 3;
 }
 
 void Subcore::setup_presets() {	
@@ -292,7 +308,13 @@ void Subcore::set_sysfs(level_struct level) {
 	
 	// subcore scan ms
 	// special cases for extended periods
-	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;	
+	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
+
+	// other vm tweaks
+	block.set_laptop_mode(level.level_data.laptop_mode);
+	block.set_oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
+	block.set_overcommit_memory(level.level_data.overcommit_memory);
+	block.set_page_cluster(level.level_data.page_cluster);
 
 	// set the current state
 	current_state = level.state;
