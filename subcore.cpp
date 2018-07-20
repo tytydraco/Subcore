@@ -112,7 +112,7 @@ void Subcore::setup_level_1() {
 
 	level_1.load_requirement = 40;
 	level_1.state = state_level_1;
-	level_1.level_data.iosched = "noop";
+	level_1.level_data.iosched = "deadline";
 	level_1.level_data.cpu_gov = preferred_gov(level_1.gov_pref);
 	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
