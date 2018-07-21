@@ -10,15 +10,15 @@ Subcore subcore;
 
 int main(int argc, char** argv) {
 	std::cout << "[*] SubCore Init" << std::endl;
-
-	// setup the presets based on the device
-	subcore.setup_presets();
 	
 	// perform the root check
 	if (!Root::is_root()) {
 		std::cout << "[!] EUID is not 0. Please run this with root privledges." << std::endl;
 		std::exit(1);
 	}
+
+	// setup the presets based on the device
+	subcore.setup_presets();
 	
 	// scan for command line args
 	int opt;
