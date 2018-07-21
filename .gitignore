@@ -31,7 +31,10 @@
 *.exe
 *.out
 *.app
-subcore
+subcore*
+
+# Version
+.version
 
 # VIM
 *.swp

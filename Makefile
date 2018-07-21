@@ -129,6 +129,7 @@ LINK.cxx    = $(CXX) $(EXTRA_CFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS)
 .SUFFIXES:
 
 all: $(PROGRAM)
+	@echo $$(($$(cat .version) + 1)) > .version
 
 # Rules for creating dependency files (.d).
 #------------------------------------------
@@ -216,7 +217,7 @@ ifndef NODEP
 ifneq ($(DEPS),)
   sinclude $(DEPS)
 endif
-endif
+endif	
 
 clean:
 	$(RM) $(OBJS) $(PROGRAM) $(PROGRAM).exe
