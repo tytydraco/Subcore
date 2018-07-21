@@ -84,7 +84,7 @@ void Subcore::setup_level_0() {
 	level_0.level_data.entropy_write = 128;
 	level_0.level_data.subcore_scan_ms = 3000;
 	level_0.level_data.laptop_mode = 1;
-	level_0.level_data.oom_kill_allocating_task = 1;
+	level_0.level_data.oom_kill_allocating_task = 0;
 	level_0.level_data.overcommit_memory = 0;
 	level_0.level_data.page_cluster = 0;
 }
@@ -132,7 +132,7 @@ void Subcore::setup_level_1() {
 	level_1.level_data.entropy_write = 256;
 	level_1.level_data.subcore_scan_ms = 2000;
 	level_1.level_data.laptop_mode = 1;
-	level_1.level_data.oom_kill_allocating_task = 1;
+	level_1.level_data.oom_kill_allocating_task = 0;
 	level_1.level_data.overcommit_memory = 0;
 	level_1.level_data.page_cluster = 0;
 }
@@ -181,7 +181,7 @@ void Subcore::setup_level_2() {
 	level_2.level_data.entropy_write = 2048;
 	level_2.level_data.subcore_scan_ms = 1000;
 	level_2.level_data.laptop_mode = 1;
-	level_2.level_data.oom_kill_allocating_task = 1;
+	level_2.level_data.oom_kill_allocating_task = 0;
 	level_2.level_data.overcommit_memory = 1;
 	level_2.level_data.page_cluster = 3;
 }
@@ -226,7 +226,7 @@ void Subcore::setup_level_3() {
 	level_3.level_data.entropy_write = 2048;
 	level_3.level_data.subcore_scan_ms = 500;
 	level_3.level_data.laptop_mode = 1;
-	level_3.level_data.oom_kill_allocating_task = 1;
+	level_3.level_data.oom_kill_allocating_task = 0;
 	level_3.level_data.overcommit_memory = 1;
 	level_3.level_data.page_cluster = 3;
 }
