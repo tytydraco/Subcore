@@ -29,7 +29,6 @@ int main(int argc, char** argv) {
 				subcore.debug = true;
 				break;
 			case '?':  // unknown option...
-				std::cerr << "[!] Unknown option: '" << char(optopt) << "'!" << std::endl;
 				exit(1);
 				break;
 		}
