@@ -16,49 +16,61 @@
 std::vector<uint32_t> SysFs::Cpu::get_freqs(uint16_t core) {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_available_frequencies");
-	std::istringstream iss(freq_list_str);
-	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
-			std::istream_iterator<std::string>());
-	std::vector<uint32_t> freq_list;
+	try {
+		std::istringstream iss(freq_list_str);
+		std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
+				std::istream_iterator<std::string>());
+		std::vector<uint32_t> freq_list;
 
-	// iterate through freq list
-	for (std::string freq_str : freq_list_split) {
-		freq_list.push_back(atoi(freq_str.c_str()));
+		// iterate through freq list
+		for (std::string freq_str : freq_list_split) {
+			freq_list.push_back(atoi(freq_str.c_str()));
+		}
+
+		// sort from least to greatest
+		std::sort(freq_list.begin(), freq_list.end());
+		return freq_list;
+	} catch (...) {
+		return std::vector<uint32_t> {};
 	}
-
-	// sort from least to greatest
-	std::sort(freq_list.begin(), freq_list.end());
-	return freq_list;
 }
 
 std::vector<std::string> SysFs::Cpu::get_govs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu0" + "/cpufreq/scaling_available_governors");
-	std::istringstream iss(freq_list_str);
-	return std::vector<std::string>((std::istream_iterator<std::string>(iss)),
-			std::istream_iterator<std::string>());
+	try {
+		std::istringstream iss(freq_list_str);
+		return std::vector<std::string>((std::istream_iterator<std::string>(iss)),
+				std::istream_iterator<std::string>());
+	} catch (...) {
+		return std::vector<std::string> {};
+	}
 }
 
 uint8_t SysFs::Cpu::get_loadavg() {
 	long double a[4], b[4], loadavg;
 	FILE *fp;
-
-	// take first measurement
-	fp = std::fopen(PATH_STAT.c_str(), "r");
-	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
-	fclose(fp);
+	try {
+		// take first measurement
+		fp = std::fopen(PATH_STAT.c_str(), "r");
+		fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
+		fclose(fp);
 	
-	// sleep
-	usleep(STAT_AVG_SLEEP_MS * 1000);
+		// sleep
+		usleep(STAT_AVG_SLEEP_MS * 1000);
 
-	// take second measurement
-	fp = std::fopen(PATH_STAT.c_str(), "r");
-	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &b[0], &b[1], &b[2], &b[3]);
-	fclose(fp);
+		// take second measurement
+		fp = std::fopen(PATH_STAT.c_str(), "r");
+		fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &b[0], &b[1], &b[2], &b[3]);
+		fclose(fp);
 
-	// calculate avg based on measurements
-	loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
-	loadavg *= 100;
+		// calculate avg based on measurements
+		loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
+		loadavg *= 100;
+	} catch (...) {
+		std::cout << "[!] Error: get_loadavg() failed. Device may be unsupported." << std::endl;
+		exit(1);
+	}
 
 	// limit bounds
 	if (loadavg > 100)
@@ -72,26 +84,34 @@ uint8_t SysFs::Cpu::get_loadavg() {
 std::vector<uint16_t> SysFs::Gpu::get_freqs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");
-	std::istringstream iss(freq_list_str);
-	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
-			std::istream_iterator<std::string>());
-	std::vector<uint16_t> freq_list;
-
-	// iterate through freq list
-	for (std::string freq_str : freq_list_split) {
-		freq_list.push_back(atoi(freq_str.c_str()));
+	try {
+		std::istringstream iss(freq_list_str);
+		std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
+				std::istream_iterator<std::string>());
+		std::vector<uint16_t> freq_list;
+	
+		// iterate through freq list
+		for (std::string freq_str : freq_list_split) {
+			freq_list.push_back(atoi(freq_str.c_str()));
+		}
+	
+		// sort in order of least to greatest
+		std::sort(freq_list.begin(), freq_list.end());
+		return freq_list;
+	} catch (...) {
+		return std::vector<uint16_t> {};
 	}
-
-	// sort in order of least to greatest
-	std::sort(freq_list.begin(), freq_list.end());
-	return freq_list;
 }
 
 uint8_t SysFs::Gpu::get_load() {
 	std::string str = IO::read_file(PATH_GPU + "/gpu_load");
-	std::istringstream iss(str);
-	std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-	return stoi(str_split[0]);
+	try {
+		std::istringstream iss(str);
+		std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+		return stoi(str_split[0]);
+	} catch (...) {
+		return 0;
+	}
 }
 
 std::vector<std::string> SysFs::Block::get_blkdevs() {
@@ -129,30 +149,43 @@ loopstart:
 
 uint32_t SysFs::Memory::get_ram_size() {
 	std::string str = IO::read_file(PATH_MEMINFO);
-	std::istringstream iss(str);
-	std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-	return stoi(str_split[1]);
+	try {
+		std::istringstream iss(str);
+		std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+		return stoi(str_split[1]);
+	} catch (...) {
+		return 0;
+	}
 }
 
 uint32_t SysFs::Memory::get_avail_ram() {
 	std::string str = IO::read_file(PATH_MEMINFO);
-	std::istringstream iss(str);
-	std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-	return stoi(str_split[4]);
+	try {
+		std::istringstream iss(str);
+		std::vector<std::string> str_split((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+		return stoi(str_split[4]);
+	} catch (...) {
+		return 0;
+	}
 }
 
 bool SysFs::Display::get_suspended() {
-					if (IO::path_exists(PATH_STATE_NOTIFIER)) {
-						std::string str = IO::read_file(PATH_STATE_NOTIFIER + "/state_suspended");
-						return (str.find("Y") != std::string::npos);
-					} else if (IO::path_exists(PATH_POWER_SUSPEND)) {
-						std::string str = IO::read_file(PATH_POWER_SUSPEND + "/power_suspend_state");
-						return (str.find("1") != std::string::npos);
-					} else if (IO::path_exists(PATH_FB0)) {
-						std::string str = IO::read_file(PATH_FB0 + "/idle_notify");
-						return (str.find("yes") != std::string::npos);
-					}
+	try {
+		if (IO::path_exists(PATH_STATE_NOTIFIER)) {
+			std::string str = IO::read_file(PATH_STATE_NOTIFIER + "/state_suspended");
+			return (str.find("Y") != std::string::npos);
+		} else if (IO::path_exists(PATH_POWER_SUSPEND)) {
+			std::string str = IO::read_file(PATH_POWER_SUSPEND + "/power_suspend_state");
+			return (str.find("1") != std::string::npos);
+		} else if (IO::path_exists(PATH_FB0)) {
+			std::string str = IO::read_file(PATH_FB0 + "/idle_notify");
+			return (str.find("yes") != std::string::npos);
+		}
 
-					return false;
-				}
+		// not accessible
+		return false;
+	} catch (...) {
+		return false;
+	}
+}
 
