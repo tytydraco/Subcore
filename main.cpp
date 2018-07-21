@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 	
 	// perform the root check
 	if (!Root::is_root()) {
-		std::cout << "[!] EUID is not 0. Please run this with root privledges." << std::endl;
+		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
 		std::exit(1);
 	}
 
