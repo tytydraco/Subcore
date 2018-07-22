@@ -10,7 +10,8 @@ class Subcore {
 			state_level_0,
 			state_level_1,
 			state_level_2,
-			state_level_3
+			state_level_3,
+			state_init
 		};	
 
 		struct sysfs_struct {
@@ -41,7 +42,7 @@ class Subcore {
 		};
 
 		// declarations
-		State current_state;
+		State current_state = state_init;
 
 		SysFs::Cpu cpu;
 		SysFs::Block block;
