@@ -46,7 +46,7 @@ void Subcore::algorithm() {
 }
 
 void Subcore::setup_level_0() {
-	uint8_t present = cpu.get_present();
+	uint8_t present = cpu.get_online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
@@ -90,7 +90,7 @@ void Subcore::setup_level_0() {
 }
 
 void Subcore::setup_level_1() {
-	uint8_t present = cpu.get_present();
+	uint8_t present = cpu.get_online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
@@ -138,7 +138,7 @@ void Subcore::setup_level_1() {
 }
 
 void Subcore::setup_level_2() {
-	uint8_t present = cpu.get_present();
+	uint8_t present = cpu.get_online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
@@ -187,7 +187,7 @@ void Subcore::setup_level_2() {
 }
 
 void Subcore::setup_level_3() {
-	uint8_t present = cpu.get_present();
+	uint8_t present = cpu.get_online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
@@ -290,7 +290,7 @@ void Subcore::set_sysfs(level_struct level) {
 	block.set_dirty_background_ratio(level.level_data.dirty_background_ratio);
 
 	//cpu gov & max freq
-	uint8_t present = cpu.get_present();
+	uint8_t present = cpu.get_online();
 	for (size_t i = 0; i <= present; i++) {
 		cpu.set_gov(i, level.level_data.cpu_gov);
 		cpu.set_max_freq(i, level.level_data.cpu_max_freqs[i]);

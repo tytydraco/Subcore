@@ -48,8 +48,8 @@ class SysFs {
 					}
 				}
 
-				inline uint8_t get_present() {
-					std::string present_str = IO::read_file(PATH_CPU + "/present");
+				inline uint8_t get_online() {
+					std::string present_str = IO::read_file(PATH_CPU + "/online");
 					try {
 						return ((uint8_t) present_str.at(2) - '0') + 1;
 					} catch (...) {
