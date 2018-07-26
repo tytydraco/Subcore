@@ -48,7 +48,7 @@ void Subcore::algorithm() {
 void Subcore::setup_level_0() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i <= present; i++) {
+	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
@@ -92,7 +92,7 @@ void Subcore::setup_level_0() {
 void Subcore::setup_level_1() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i <= present; i++) {
+	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[3]);
@@ -140,7 +140,7 @@ void Subcore::setup_level_1() {
 void Subcore::setup_level_2() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i <= present; i++) {
+	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
@@ -189,7 +189,7 @@ void Subcore::setup_level_2() {
 void Subcore::setup_level_3() {
 	uint8_t present = cpu.get_present();
 	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i <= present; i++) {
+	for (size_t i = 0; i < present; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
