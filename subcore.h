@@ -67,6 +67,7 @@ class Subcore {
 		void set_sysfs(level_struct level);
 	public:
 		bool debug = false;
+		bool low_mem = false;
 
 		void algorithm();	
 		void setup_presets();	

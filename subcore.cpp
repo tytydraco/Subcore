@@ -272,35 +272,44 @@ void Subcore::set_sysfs(level_struct level) {
 		return;
 	}
 
-	// iosched & readahead
-	std::vector<std::string> blkdevs = block.get_blkdevs();
-	for (std::string blkdev : blkdevs) {
-		block.set_iosched(blkdev, level.level_data.iosched);
-		block.set_read_ahead(blkdev, level.level_data.readahead);
-	}
-
-	// swappiness
-	block.set_swappiness(level.level_data.swappiness);
-
-	// cache pressure
-	block.set_cache_pressure(level.level_data.cache_pressure);
-	
-	// dirty ratios
-	block.set_dirty_ratio(level.level_data.dirty_ratio);
-	block.set_dirty_background_ratio(level.level_data.dirty_background_ratio);
-
 	//cpu gov & max freq
 	uint8_t online = cpu.get_online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.set_gov(i, level.level_data.cpu_gov);
 		cpu.set_max_freq(i, level.level_data.cpu_max_freqs[i]);
 	}
-	
+
 	// gpu max freq
 	gpu.set_max_freq(level.level_data.gpu_max_freq);
+
+	// iosched & readahead
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (std::string blkdev : blkdevs) {
+		block.set_iosched(blkdev, level.level_data.iosched);
+		block.set_read_ahead(blkdev, level.level_data.readahead);
+	}
 	
-	// lmk minfree
-	block.set_lmk(level.level_data.lmk_minfree);
+	// low-memory devices will behave strangely with these tweaks
+	if (!low_mem) {
+		// swappiness
+		block.set_swappiness(level.level_data.swappiness);
+
+		// cache pressure
+		block.set_cache_pressure(level.level_data.cache_pressure);
+	
+		// dirty ratios
+		block.set_dirty_ratio(level.level_data.dirty_ratio);
+		block.set_dirty_background_ratio(level.level_data.dirty_background_ratio);
+
+		// lmk minfree
+		block.set_lmk(level.level_data.lmk_minfree);
+
+		// other vm tweaks
+		block.set_laptop_mode(level.level_data.laptop_mode);
+		block.set_oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
+		block.set_overcommit_memory(level.level_data.overcommit_memory);
+		block.set_page_cluster(level.level_data.page_cluster);
+	}
 
 	// entropy
 	block.set_entropy_read(level.level_data.entropy_read);
@@ -309,12 +318,6 @@ void Subcore::set_sysfs(level_struct level) {
 	// subcore scan ms
 	// special cases for extended periods
 	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
-
-	// other vm tweaks
-	block.set_laptop_mode(level.level_data.laptop_mode);
-	block.set_oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
-	block.set_overcommit_memory(level.level_data.overcommit_memory);
-	block.set_page_cluster(level.level_data.page_cluster);
 
 	// set the current state
 	current_state = level.state;

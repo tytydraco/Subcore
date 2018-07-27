@@ -22,12 +22,15 @@ int main(int argc, char** argv) {
 	
 	// scan for command line args
 	int opt;
-	while ((opt = getopt(argc, argv, "d")) != -1) {
+	while ((opt = getopt(argc, argv, "dm")) != -1) {
 		switch (opt) {
 			case 'd':
 				std::cout << "[*] Debug enabled" << std::endl;
 				subcore.debug = true;
 				break;
+			case 'm':
+				std::cout << "[*] Low-Memory enabled" << std::endl;
+				subcore.low_mem = true;
 			case '?':  // unknown option...
 				exit(1);
 				break;
