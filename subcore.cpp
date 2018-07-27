@@ -291,7 +291,7 @@ void Subcore::set_sysfs(level_struct level) {
 
 	//cpu gov & max freq
 	uint8_t present = cpu.get_online();
-	for (size_t i = 0; i <= present; i++) {
+	for (size_t i = 0; i < present; i++) {
 		cpu.set_gov(i, level.level_data.cpu_gov);
 		cpu.set_max_freq(i, level.level_data.cpu_max_freqs[i]);
 	}
