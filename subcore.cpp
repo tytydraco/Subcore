@@ -146,31 +146,26 @@ void Subcore::algorithm() {
 	}
 }
 
-void Subcore::setup_level_0() {
-	uint8_t online = cpu.get_online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
-		if (cpu_avail_freqs.size() > 0) {
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
-		} else {
-			new_cpu_max_freqs.push_back(0);
-		}
-	}
+void Subcore::setup_level_0() {	
+	level_0.load_requirement = 20;
+	level_0.state = state_level_0;
 
 	level_0.gov_pref = std::vector<std::string> {
 		"powersave",
 		"performance"
 	};
-
-	level_0.load_requirement = 20;
-	level_0.state = state_level_0;
-	
+		
+	uint8_t online = cpu.get_online();
+	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_0.gov_pref);
 	for (size_t i = 0; i < online; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		if (cpu_avail_freqs.size() > 0) 
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+		else
+			new_cpu_max_freqs.push_back(0);
 		level_0.level_data.cpu_govs.push_back(pref_gov);
-	}
-		
+	}	
 	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -179,15 +174,14 @@ void Subcore::setup_level_0() {
 	else 
 		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
 
-	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_0.level_data.swappiness = 10;
-
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_0.level_data.readaheads.push_back(256);
 		level_0.level_data.ioscheds.push_back("noop");
 	}
 
+	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_0.level_data.swappiness = 10;
 	level_0.level_data.cache_pressure = 10;
 	level_0.level_data.dirty_ratio = 90;
 	level_0.level_data.dirty_background_ratio = 80;
@@ -200,17 +194,9 @@ void Subcore::setup_level_0() {
 	level_0.level_data.page_cluster = 0;
 }
 
-void Subcore::setup_level_1() {
-	uint8_t online = cpu.get_online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
-		if (cpu_avail_freqs.size() > 0) {
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[3]);
-		} else {
-			new_cpu_max_freqs.push_back(0);
-		}
-	}
+void Subcore::setup_level_1() {	
+	level_1.load_requirement = 40;
+	level_1.state = state_level_1;
 
 	level_1.gov_pref = std::vector<std::string> {
 		"energy-dcfc",
@@ -221,14 +207,17 @@ void Subcore::setup_level_1() {
 		"performance"
 	};
 
-	level_1.load_requirement = 40;
-	level_1.state = state_level_1;
-
+	uint8_t online = cpu.get_online();
+	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_1.gov_pref);
 	for (size_t i = 0; i < online; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		if (cpu_avail_freqs.size() > 0) 
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+		else
+			new_cpu_max_freqs.push_back(0);
 		level_1.level_data.cpu_govs.push_back(pref_gov);
 	}
-
 	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -237,15 +226,14 @@ void Subcore::setup_level_1() {
 	else 
 		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
 
-	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_1.level_data.swappiness = 20;
-
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_1.level_data.readaheads.push_back(512);
 		level_1.level_data.ioscheds.push_back("dealine");
 	}
 
+	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_1.level_data.swappiness = 20;
 	level_1.level_data.cache_pressure = 10;
 	level_1.level_data.dirty_ratio = 90;
 	level_1.level_data.dirty_background_ratio = 80;
@@ -258,17 +246,9 @@ void Subcore::setup_level_1() {
 	level_1.level_data.page_cluster = 0;
 }
 
-void Subcore::setup_level_2() {
-	uint8_t online = cpu.get_online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
-		if (cpu_avail_freqs.size() > 0) {
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
-		} else {
-			new_cpu_max_freqs.push_back(0);
-		}
-	}
+void Subcore::setup_level_2() {	
+	level_2.load_requirement = 60;
+	level_2.state = state_level_2;
 
 	level_2.gov_pref = std::vector<std::string> {
 		"relaxed",
@@ -280,14 +260,17 @@ void Subcore::setup_level_2() {
 		"performance"
 	};
 
-	level_2.load_requirement = 60;
-	level_2.state = state_level_2;
-
+	uint8_t online = cpu.get_online();
+	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_2.gov_pref);
 	for (size_t i = 0; i < online; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		if (cpu_avail_freqs.size() > 0) 
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+		else
+			new_cpu_max_freqs.push_back(0);
 		level_2.level_data.cpu_govs.push_back(pref_gov);
 	}
-
 	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -296,15 +279,14 @@ void Subcore::setup_level_2() {
 	else 
 		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 
-	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_2.level_data.swappiness = 30;
-
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_2.level_data.readaheads.push_back(1024);
 		level_2.level_data.ioscheds.push_back("dealine");
 	}
 
+	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_2.level_data.swappiness = 30;
 	level_2.level_data.cache_pressure = 10;
 	level_2.level_data.dirty_ratio = 90;
 	level_2.level_data.dirty_background_ratio = 80;
@@ -318,16 +300,8 @@ void Subcore::setup_level_2() {
 }
 
 void Subcore::setup_level_3() {
-	uint8_t online = cpu.get_online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
-		if (cpu_avail_freqs.size() > 0) {
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
-		} else {
-			new_cpu_max_freqs.push_back(0);
-		}
-	}
+	level_3.load_requirement = 100;
+	level_3.state = state_level_3;
 
 	level_3.gov_pref = std::vector<std::string> {
 		"conservative",
@@ -335,14 +309,17 @@ void Subcore::setup_level_3() {
 		"performance"
 	};
 
-	level_3.load_requirement = 100;
-	level_3.state = state_level_3;
-
+	uint8_t online = cpu.get_online();
+	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_3.gov_pref);
 	for (size_t i = 0; i < online; i++) {
+		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		if (cpu_avail_freqs.size() > 0) 
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+		else
+			new_cpu_max_freqs.push_back(0);
 		level_3.level_data.cpu_govs.push_back(pref_gov);
 	}
-
 	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -351,15 +328,14 @@ void Subcore::setup_level_3() {
 	else 
 		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 
-	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
-	level_3.level_data.swappiness = 40;
-
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_3.level_data.readaheads.push_back(2048);
 		level_3.level_data.ioscheds.push_back("dealine");
 	}
 
+	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_3.level_data.swappiness = 40;
 	level_3.level_data.cache_pressure = 10;
 	level_3.level_data.dirty_ratio = 90;
 	level_3.level_data.dirty_background_ratio = 80;
