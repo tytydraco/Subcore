@@ -13,7 +13,7 @@
 #include "misc.h"
 #include "sysfs.h"
 
-std::vector<uint32_t> SysFs::Cpu::get_freqs(uint16_t core) {
+std::vector<uint32_t> SysFs::Cpu::freqs(uint16_t core) {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_available_frequencies");
 	try {
@@ -35,7 +35,7 @@ std::vector<uint32_t> SysFs::Cpu::get_freqs(uint16_t core) {
 	}
 }
 
-std::vector<std::string> SysFs::Cpu::get_govs() {
+std::vector<std::string> SysFs::Cpu::govs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu0" + "/cpufreq/scaling_available_governors");
 	try {
@@ -47,7 +47,7 @@ std::vector<std::string> SysFs::Cpu::get_govs() {
 	}
 }
 
-uint8_t SysFs::Cpu::get_loadavg() {
+uint8_t SysFs::Cpu::loadavg() {
 	long double a[4], b[4], loadavg;
 	FILE *fp;
 	try {
@@ -68,7 +68,7 @@ uint8_t SysFs::Cpu::get_loadavg() {
 		loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
 		loadavg *= 100;
 	} catch (...) {
-		std::cout << "[!] Error: get_loadavg() failed. Device may be unsupported." << std::endl;
+		std::cout << "[!] Error: loadavg() failed. Device may be unsupported." << std::endl;
 		exit(1);
 	}
 
@@ -81,7 +81,7 @@ uint8_t SysFs::Cpu::get_loadavg() {
 	return (uint8_t) (loadavg);
 }
 
-std::vector<uint16_t> SysFs::Gpu::get_freqs() {
+std::vector<uint16_t> SysFs::Gpu::freqs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");
 	try {
@@ -103,7 +103,7 @@ std::vector<uint16_t> SysFs::Gpu::get_freqs() {
 	}
 }
 
-uint8_t SysFs::Gpu::get_load() {
+uint8_t SysFs::Gpu::load() {
 	std::string str = IO::read_file(PATH_GPU + "/gpu_load");
 	try {
 		std::istringstream iss(str);
@@ -114,7 +114,7 @@ uint8_t SysFs::Gpu::get_load() {
 	}
 }
 
-std::vector<std::string> SysFs::Block::get_blkdevs() {
+std::vector<std::string> SysFs::Block::blkdevs() {
 	DIR* d;
 	std::vector<std::string> usable_blkdevs;
 	struct dirent* dir;
@@ -147,7 +147,7 @@ loopstart:
 	return usable_blkdevs;
 }
 
-uint32_t SysFs::Memory::get_ram_size() {
+uint32_t SysFs::Memory::ram_size() {
 	std::string str = IO::read_file(PATH_MEMINFO);
 	try {
 		std::istringstream iss(str);
@@ -158,7 +158,7 @@ uint32_t SysFs::Memory::get_ram_size() {
 	}
 }
 
-uint32_t SysFs::Memory::get_avail_ram() {
+uint32_t SysFs::Memory::avail_ram() {
 	std::string str = IO::read_file(PATH_MEMINFO);
 	try {
 		std::istringstream iss(str);
@@ -169,7 +169,7 @@ uint32_t SysFs::Memory::get_avail_ram() {
 	}
 }
 
-bool SysFs::Display::get_suspended() {
+bool SysFs::Display::suspended() {
 	try {
 		if (IO::path_exists(PATH_STATE_NOTIFIER)) {
 			std::string str = IO::read_file(PATH_STATE_NOTIFIER + "/state_suspended");

@@ -8,25 +8,25 @@ void Subcore::UserSettings::save() {
 	//cpu gov & max freq
 	std::vector<uint32_t> freqs;
 	std::vector<std::string> govs;
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
-		freqs.push_back(cpu.get_max_freq(i));
-		govs.push_back(cpu.get_gov(i));
+		freqs.push_back(cpu.max_freq(i));
+		govs.push_back(cpu.gov(i));
 	}
 
 	backup_settings.cpu_max_freqs = freqs;
 	backup_settings.cpu_govs = govs;	
 
 	// gpu max freq
-	backup_settings.gpu_max_freq = gpu.get_max_freq();
+	backup_settings.gpu_max_freq = gpu.max_freq();
 
 	// iosched & readahead
 	std::vector<std::string> ioscheds;
 	std::vector<uint16_t> readaheads;
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (std::string blkdev : blkdevs) {
-		ioscheds.push_back(block.get_iosched(blkdev));
-		readaheads.push_back(block.get_read_ahead(blkdev));
+		ioscheds.push_back(block.iosched(blkdev));
+		readaheads.push_back(block.read_ahead(blkdev));
 	}
 
 	backup_settings.ioscheds = ioscheds;
@@ -35,85 +35,85 @@ void Subcore::UserSettings::save() {
 	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
 		// swappiness
-		backup_settings.swappiness = block.get_swappiness();
+		backup_settings.swappiness = block.swappiness();
 
 		// cache pressure
-		backup_settings.cache_pressure = block.get_cache_pressure();
+		backup_settings.cache_pressure = block.cache_pressure();
 	
 		// dirty ratios
-		backup_settings.dirty_ratio = block.get_dirty_ratio();
-		backup_settings.dirty_background_ratio = block.get_dirty_background_ratio();
+		backup_settings.dirty_ratio = block.dirty_ratio();
+		backup_settings.dirty_background_ratio = block.dirty_background_ratio();
 
 		// lmk minfree
-		backup_settings.lmk_minfree = block.get_lmk();
+		backup_settings.lmk_minfree = block.lmk();
 
 		// other vm tweaks
-		backup_settings.laptop_mode = block.get_laptop_mode();
-		backup_settings.oom_kill_allocating_task = block.get_oom_kill_allocating_task();
-		backup_settings.overcommit_memory = block.get_overcommit_memory();
-		backup_settings.page_cluster = block.get_page_cluster();
+		backup_settings.laptop_mode = block.laptop_mode();
+		backup_settings.oom_kill_allocating_task = block.oom_kill_allocating_task();
+		backup_settings.overcommit_memory = block.overcommit_memory();
+		backup_settings.page_cluster = block.page_cluster();
 	}
 
 	// entropy
-	backup_settings.entropy_read = block.get_entropy_read();
-	backup_settings.entropy_write = block.get_entropy_write();
+	backup_settings.entropy_read = block.entropy_read();
+	backup_settings.entropy_write = block.entropy_write();
 }
 
 void Subcore::UserSettings::load() {
 	//cpu gov & max freq
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
-		cpu.set_gov(i, backup_settings.cpu_govs[i]);
-		cpu.set_max_freq(i, backup_settings.cpu_max_freqs[i]);
+		cpu.gov(i, backup_settings.cpu_govs[i]);
+		cpu.max_freq(i, backup_settings.cpu_max_freqs[i]);
 	}
 
 	// gpu max freq
-	gpu.set_max_freq(backup_settings.gpu_max_freq);
+	gpu.max_freq(backup_settings.gpu_max_freq);
 
 	// iosched & readahead
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		block.set_iosched(blkdevs[i], backup_settings.ioscheds[i]);
-		block.set_read_ahead(blkdevs[i], backup_settings.readaheads[i]);
+		block.iosched(blkdevs[i], backup_settings.ioscheds[i]);
+		block.read_ahead(blkdevs[i], backup_settings.readaheads[i]);
 	}
 	
 	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
 		// swappiness
-		block.set_swappiness(backup_settings.swappiness);
+		block.swappiness(backup_settings.swappiness);
 
 		// cache pressure
-		block.set_cache_pressure(backup_settings.cache_pressure);
+		block.cache_pressure(backup_settings.cache_pressure);
 	
 		// dirty ratios
-		block.set_dirty_ratio(backup_settings.dirty_ratio);
-		block.set_dirty_background_ratio(backup_settings.dirty_background_ratio);
+		block.dirty_ratio(backup_settings.dirty_ratio);
+		block.dirty_background_ratio(backup_settings.dirty_background_ratio);
 
 		// lmk minfree
-		block.set_lmk(backup_settings.lmk_minfree);
+		block.lmk(backup_settings.lmk_minfree);
 
 		// other vm tweaks
-		block.set_laptop_mode(backup_settings.laptop_mode);
-		block.set_oom_kill_allocating_task(backup_settings.oom_kill_allocating_task);
-		block.set_overcommit_memory(backup_settings.overcommit_memory);
-		block.set_page_cluster(backup_settings.page_cluster);
+		block.laptop_mode(backup_settings.laptop_mode);
+		block.oom_kill_allocating_task(backup_settings.oom_kill_allocating_task);
+		block.overcommit_memory(backup_settings.overcommit_memory);
+		block.page_cluster(backup_settings.page_cluster);
 	}
 
 	// entropy
-	block.set_entropy_read(backup_settings.entropy_read);
-	block.set_entropy_write(backup_settings.entropy_write);
+	block.entropy_read(backup_settings.entropy_read);
+	block.entropy_write(backup_settings.entropy_write);
 
 }
 
 void Subcore::algorithm() {
-	uint8_t load = cpu.get_loadavg();
+	uint8_t load = cpu.loadavg();
 	
 	if (debug)
 		std::cout << "[*] Load: " << std::to_string(load) << "\t";
 	
 	//special cases
 	bool charging = battery.charging();
-	bool display_off = display.get_suspended();
+	bool display_off = display.suspended();
 
 	if (charging) {
 		// always use highest load based algorithm
@@ -155,11 +155,11 @@ void Subcore::setup_level_0() {
 		"performance"
 	};
 		
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_0.gov_pref);
 	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
 		else
@@ -168,13 +168,13 @@ void Subcore::setup_level_0() {
 	}	
 	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
 	if (gpu_avail_freqs.size() < 4) 
 		level_0.level_data.gpu_max_freq = 0;
 	else 
 		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
 
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_0.level_data.readaheads.push_back(256);
 		level_0.level_data.ioscheds.push_back("noop");
@@ -207,11 +207,11 @@ void Subcore::setup_level_1() {
 		"performance"
 	};
 
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_1.gov_pref);
 	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
 		else
@@ -220,13 +220,13 @@ void Subcore::setup_level_1() {
 	}
 	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
 	if (gpu_avail_freqs.size() < 5) 
 		level_1.level_data.gpu_max_freq = 0;
 	else 
 		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
 
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_1.level_data.readaheads.push_back(512);
 		level_1.level_data.ioscheds.push_back("dealine");
@@ -260,11 +260,11 @@ void Subcore::setup_level_2() {
 		"performance"
 	};
 
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_2.gov_pref);
 	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
 		else
@@ -273,13 +273,13 @@ void Subcore::setup_level_2() {
 	}
 	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
 	if (gpu_avail_freqs.size() == 0) 
 		level_2.level_data.gpu_max_freq = 0;
 	else 
 		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
 
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_2.level_data.readaheads.push_back(1024);
 		level_2.level_data.ioscheds.push_back("dealine");
@@ -309,11 +309,11 @@ void Subcore::setup_level_3() {
 		"performance"
 	};
 
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	std::vector<uint32_t> new_cpu_max_freqs;
 	std::string pref_gov = preferred_gov(level_3.gov_pref);
 	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.get_freqs(i);
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
 		else
@@ -322,13 +322,13 @@ void Subcore::setup_level_3() {
 	}
 	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
-	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
+	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
 	if (gpu_avail_freqs.size() == 0) 
 		level_3.level_data.gpu_max_freq = 0;
 	else 
 		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_3.level_data.readaheads.push_back(2048);
 		level_3.level_data.ioscheds.push_back("dealine");
@@ -359,7 +359,7 @@ void Subcore::set_sysfs(level_struct level) {
 	// if we are already on this state, do nothing
 	if (current_state == level.state) {
 
-		bool display_off = display.get_suspended();
+		bool display_off = display.suspended();
 		if (display_off) {
 			// do not count when sleeping to avoid
 			// stutter on wakeup (after +5000ms)
@@ -390,47 +390,47 @@ void Subcore::set_sysfs(level_struct level) {
 	}
 
 	//cpu gov & max freq
-	uint8_t online = cpu.get_online();
+	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
-		cpu.set_gov(i, level.level_data.cpu_govs[i]);
-		cpu.set_max_freq(i, level.level_data.cpu_max_freqs[i]);
+		cpu.gov(i, level.level_data.cpu_govs[i]);
+		cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
 	}
 
 	// gpu max freq
-	gpu.set_max_freq(level.level_data.gpu_max_freq);
+	gpu.max_freq(level.level_data.gpu_max_freq);
 
 	// iosched & readahead
-	std::vector<std::string> blkdevs = block.get_blkdevs();
+	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		block.set_iosched(blkdevs[i], level.level_data.ioscheds[i]);
-		block.set_read_ahead(blkdevs[i], level.level_data.readaheads[i]);
+		block.iosched(blkdevs[i], level.level_data.ioscheds[i]);
+		block.read_ahead(blkdevs[i], level.level_data.readaheads[i]);
 	}
 	
 	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
 		// swappiness
-		block.set_swappiness(level.level_data.swappiness);
+		block.swappiness(level.level_data.swappiness);
 
 		// cache pressure
-		block.set_cache_pressure(level.level_data.cache_pressure);
+		block.cache_pressure(level.level_data.cache_pressure);
 	
 		// dirty ratios
-		block.set_dirty_ratio(level.level_data.dirty_ratio);
-		block.set_dirty_background_ratio(level.level_data.dirty_background_ratio);
+		block.dirty_ratio(level.level_data.dirty_ratio);
+		block.dirty_background_ratio(level.level_data.dirty_background_ratio);
 
 		// lmk minfree
-		block.set_lmk(level.level_data.lmk_minfree);
+		block.lmk(level.level_data.lmk_minfree);
 
 		// other vm tweaks
-		block.set_laptop_mode(level.level_data.laptop_mode);
-		block.set_oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
-		block.set_overcommit_memory(level.level_data.overcommit_memory);
-		block.set_page_cluster(level.level_data.page_cluster);
+		block.laptop_mode(level.level_data.laptop_mode);
+		block.oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
+		block.overcommit_memory(level.level_data.overcommit_memory);
+		block.page_cluster(level.level_data.page_cluster);
 	}
 
 	// entropy
-	block.set_entropy_read(level.level_data.entropy_read);
-	block.set_entropy_write(level.level_data.entropy_write);
+	block.entropy_read(level.level_data.entropy_read);
+	block.entropy_write(level.level_data.entropy_write);
 	
 	// subcore scan ms
 	// special cases for extended periods
@@ -444,7 +444,7 @@ void Subcore::set_sysfs(level_struct level) {
 }
 
 std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
-	std::vector<std::string> cpu_avail_govs = cpu.get_govs();
+	std::vector<std::string> cpu_avail_govs = cpu.govs();
 	std::string new_cpu_pref_gov;
 	for (std::string pref_gov : pref_govs) {
 		for (std::string cpu_avail_gov : cpu_avail_govs) {
