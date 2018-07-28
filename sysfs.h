@@ -249,7 +249,7 @@ class SysFs {
 					IO::write_file(PATH_VM + "/laptop_mode", std::to_string(state));
 				}
 
-				inline uint8_t get_latptop_mode() {
+				inline uint8_t get_laptop_mode() {
 					std::string str = IO::read_file(PATH_VM + "/laptop_mode");
 					try {
 						return (uint8_t) stoi(str);

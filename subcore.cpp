@@ -4,6 +4,104 @@
 
 #include "subcore.h"
 
+void Subcore::UserSettings::save() {
+	//cpu gov & max freq
+	std::vector<uint32_t> freqs;
+	uint8_t online = cpu.get_online();
+	for (size_t i = 0; i < online; i++) {
+		freqs.push_back(cpu.get_max_freq(i));
+	}
+	backup_settings.cpu_max_freqs = freqs;
+
+	//TODO: add support for cluster-independant CPU governors
+	backup_settings.cpu_gov = cpu.get_gov(0);
+
+	// gpu max freq
+	backup_settings.gpu_max_freq = gpu.get_max_freq();
+
+	// iosched & readahead
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (std::string blkdev : blkdevs) {
+		backup_settings.iosched = block.get_iosched(blkdev);
+		backup_settings.readahead = block.get_read_ahead(blkdev);
+
+		//TODO: add support for blkdev-independant ioscheds / readaheads
+		break;
+	}
+	
+	// low-memory devices will behave strangely with these tweaks
+	if (!low_mem) {
+		// swappiness
+		backup_settings.swappiness = block.get_swappiness();
+
+		// cache pressure
+		backup_settings.cache_pressure = block.get_cache_pressure();
+	
+		// dirty ratios
+		backup_settings.dirty_ratio = block.get_dirty_ratio();
+		backup_settings.dirty_background_ratio = block.get_dirty_background_ratio();
+
+		// lmk minfree
+		backup_settings.lmk_minfree = block.get_lmk();
+
+		// other vm tweaks
+		backup_settings.laptop_mode = block.get_laptop_mode();
+		backup_settings.oom_kill_allocating_task = block.get_oom_kill_allocating_task();
+		backup_settings.overcommit_memory = block.get_overcommit_memory();
+		backup_settings.page_cluster = block.get_page_cluster();
+	}
+
+	// entropy
+	backup_settings.entropy_read = block.get_entropy_read();
+	backup_settings.entropy_write = block.get_entropy_write();
+}
+
+void Subcore::UserSettings::load() {
+	//cpu gov & max freq
+	uint8_t online = cpu.get_online();
+	for (size_t i = 0; i < online; i++) {
+		cpu.set_gov(i, backup_settings.cpu_gov);
+		cpu.set_max_freq(i, backup_settings.cpu_max_freqs[i]);
+	}
+
+	// gpu max freq
+	gpu.set_max_freq(backup_settings.gpu_max_freq);
+
+	// iosched & readahead
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (std::string blkdev : blkdevs) {
+		block.set_iosched(blkdev, backup_settings.iosched);
+		block.set_read_ahead(blkdev, backup_settings.readahead);
+	}
+	
+	// low-memory devices will behave strangely with these tweaks
+	if (!low_mem) {
+		// swappiness
+		block.set_swappiness(backup_settings.swappiness);
+
+		// cache pressure
+		block.set_cache_pressure(backup_settings.cache_pressure);
+	
+		// dirty ratios
+		block.set_dirty_ratio(backup_settings.dirty_ratio);
+		block.set_dirty_background_ratio(backup_settings.dirty_background_ratio);
+
+		// lmk minfree
+		block.set_lmk(backup_settings.lmk_minfree);
+
+		// other vm tweaks
+		block.set_laptop_mode(backup_settings.laptop_mode);
+		block.set_oom_kill_allocating_task(backup_settings.oom_kill_allocating_task);
+		block.set_overcommit_memory(backup_settings.overcommit_memory);
+		block.set_page_cluster(backup_settings.page_cluster);
+	}
+
+	// entropy
+	block.set_entropy_read(backup_settings.entropy_read);
+	block.set_entropy_write(backup_settings.entropy_write);
+
+}
+
 void Subcore::algorithm() {
 	uint8_t load = cpu.get_loadavg();
 	

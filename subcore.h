@@ -41,6 +41,21 @@ class Subcore {
 			sysfs_struct level_data;
 		};
 
+		class UserSettings {
+			private:
+				sysfs_struct backup_settings;
+				SysFs::Cpu &cpu;
+				SysFs::Block &block;
+				SysFs::Gpu &gpu;
+				bool low_mem;
+			public:
+				void save();
+				void load();
+
+				UserSettings(SysFs::Cpu &_cpu, SysFs::Block &_block, SysFs::Gpu &_gpu)
+					: cpu(_cpu), block(_block), gpu(_gpu) {}
+		};
+
 		// declarations
 		State current_state = state_init;
 
@@ -49,6 +64,8 @@ class Subcore {
 		SysFs::Gpu gpu;
 		SysFs::Battery battery;
 		SysFs::Display display;
+		
+		UserSettings user_settings = UserSettings(cpu, block, gpu);
 
 		level_struct level_0;
 		level_struct level_1;
