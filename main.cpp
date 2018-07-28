@@ -39,6 +39,7 @@ int main(int argc, char** argv) {
 			case 'm':
 				std::cout << "[*] Low-Memory enabled" << std::endl;
 				subcore.low_mem = true;
+				break;
 			case '?':  // unknown option...
 				exit(1);
 				break;
