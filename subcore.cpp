@@ -7,27 +7,30 @@
 void Subcore::UserSettings::save() {
 	//cpu gov & max freq
 	std::vector<uint32_t> freqs;
+	std::vector<std::string> govs;
 	uint8_t online = cpu.get_online();
 	for (size_t i = 0; i < online; i++) {
 		freqs.push_back(cpu.get_max_freq(i));
+		govs.push_back(cpu.get_gov(i));
 	}
-	backup_settings.cpu_max_freqs = freqs;
 
-	//TODO: add support for cluster-independant CPU governors
-	backup_settings.cpu_gov = cpu.get_gov(0);
+	backup_settings.cpu_max_freqs = freqs;
+	backup_settings.cpu_govs = govs;	
 
 	// gpu max freq
 	backup_settings.gpu_max_freq = gpu.get_max_freq();
 
 	// iosched & readahead
+	std::vector<std::string> ioscheds;
+	std::vector<uint16_t> readaheads;
 	std::vector<std::string> blkdevs = block.get_blkdevs();
 	for (std::string blkdev : blkdevs) {
-		backup_settings.iosched = block.get_iosched(blkdev);
-		backup_settings.readahead = block.get_read_ahead(blkdev);
-
-		//TODO: add support for blkdev-independant ioscheds / readaheads
-		break;
+		ioscheds.push_back(block.get_iosched(blkdev));
+		readaheads.push_back(block.get_read_ahead(blkdev));
 	}
+
+	backup_settings.ioscheds = ioscheds;
+	backup_settings.readaheads = readaheads;
 	
 	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
@@ -60,7 +63,7 @@ void Subcore::UserSettings::load() {
 	//cpu gov & max freq
 	uint8_t online = cpu.get_online();
 	for (size_t i = 0; i < online; i++) {
-		cpu.set_gov(i, backup_settings.cpu_gov);
+		cpu.set_gov(i, backup_settings.cpu_govs[i]);
 		cpu.set_max_freq(i, backup_settings.cpu_max_freqs[i]);
 	}
 
@@ -69,9 +72,9 @@ void Subcore::UserSettings::load() {
 
 	// iosched & readahead
 	std::vector<std::string> blkdevs = block.get_blkdevs();
-	for (std::string blkdev : blkdevs) {
-		block.set_iosched(blkdev, backup_settings.iosched);
-		block.set_read_ahead(blkdev, backup_settings.readahead);
+	for (size_t i = 0; i < blkdevs.size(); i++) {
+		block.set_iosched(blkdevs[i], backup_settings.ioscheds[i]);
+		block.set_read_ahead(blkdevs[i], backup_settings.readaheads[i]);
 	}
 	
 	// low-memory devices will behave strangely with these tweaks
@@ -162,8 +165,12 @@ void Subcore::setup_level_0() {
 
 	level_0.load_requirement = 20;
 	level_0.state = state_level_0;
-	level_0.level_data.iosched = "noop";
-	level_0.level_data.cpu_gov = preferred_gov(level_0.gov_pref);
+	
+	std::string pref_gov = preferred_gov(level_0.gov_pref);
+	for (size_t i = 0; i < online; i++) {
+		level_0.level_data.cpu_govs.push_back(pref_gov);
+	}
+		
 	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -174,7 +181,13 @@ void Subcore::setup_level_0() {
 
 	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_0.level_data.swappiness = 10;
-	level_0.level_data.readahead = 256;
+
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (size_t i = 0; i < blkdevs.size(); i++) {
+		level_0.level_data.readaheads.push_back(256);
+		level_0.level_data.ioscheds.push_back("noop");
+	}
+
 	level_0.level_data.cache_pressure = 10;
 	level_0.level_data.dirty_ratio = 90;
 	level_0.level_data.dirty_background_ratio = 80;
@@ -210,8 +223,12 @@ void Subcore::setup_level_1() {
 
 	level_1.load_requirement = 40;
 	level_1.state = state_level_1;
-	level_1.level_data.iosched = "deadline";
-	level_1.level_data.cpu_gov = preferred_gov(level_1.gov_pref);
+
+	std::string pref_gov = preferred_gov(level_1.gov_pref);
+	for (size_t i = 0; i < online; i++) {
+		level_1.level_data.cpu_govs.push_back(pref_gov);
+	}
+
 	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -222,7 +239,13 @@ void Subcore::setup_level_1() {
 
 	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.level_data.swappiness = 20;
-	level_1.level_data.readahead = 512;
+
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (size_t i = 0; i < blkdevs.size(); i++) {
+		level_1.level_data.readaheads.push_back(512);
+		level_1.level_data.ioscheds.push_back("dealine");
+	}
+
 	level_1.level_data.cache_pressure = 10;
 	level_1.level_data.dirty_ratio = 90;
 	level_1.level_data.dirty_background_ratio = 80;
@@ -259,8 +282,12 @@ void Subcore::setup_level_2() {
 
 	level_2.load_requirement = 60;
 	level_2.state = state_level_2;
-	level_2.level_data.iosched = "deadline";
-	level_2.level_data.cpu_gov = preferred_gov(level_2.gov_pref);
+
+	std::string pref_gov = preferred_gov(level_2.gov_pref);
+	for (size_t i = 0; i < online; i++) {
+		level_2.level_data.cpu_govs.push_back(pref_gov);
+	}
+
 	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -271,7 +298,13 @@ void Subcore::setup_level_2() {
 
 	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_2.level_data.swappiness = 30;
-	level_2.level_data.readahead = 1024;
+
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (size_t i = 0; i < blkdevs.size(); i++) {
+		level_2.level_data.readaheads.push_back(1024);
+		level_2.level_data.ioscheds.push_back("dealine");
+	}
+
 	level_2.level_data.cache_pressure = 10;
 	level_2.level_data.dirty_ratio = 90;
 	level_2.level_data.dirty_background_ratio = 80;
@@ -304,8 +337,12 @@ void Subcore::setup_level_3() {
 
 	level_3.load_requirement = 100;
 	level_3.state = state_level_3;
-	level_3.level_data.iosched = "deadline";
-	level_3.level_data.cpu_gov = preferred_gov(level_3.gov_pref);
+
+	std::string pref_gov = preferred_gov(level_3.gov_pref);
+	for (size_t i = 0; i < online; i++) {
+		level_3.level_data.cpu_govs.push_back(pref_gov);
+	}
+
 	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.get_freqs();
@@ -316,7 +353,13 @@ void Subcore::setup_level_3() {
 
 	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_3.level_data.swappiness = 40;
-	level_3.level_data.readahead = 2048;
+
+	std::vector<std::string> blkdevs = block.get_blkdevs();
+	for (size_t i = 0; i < blkdevs.size(); i++) {
+		level_3.level_data.readaheads.push_back(2048);
+		level_3.level_data.ioscheds.push_back("dealine");
+	}
+
 	level_3.level_data.cache_pressure = 10;
 	level_3.level_data.dirty_ratio = 90;
 	level_3.level_data.dirty_background_ratio = 80;
@@ -373,7 +416,7 @@ void Subcore::set_sysfs(level_struct level) {
 	//cpu gov & max freq
 	uint8_t online = cpu.get_online();
 	for (size_t i = 0; i < online; i++) {
-		cpu.set_gov(i, level.level_data.cpu_gov);
+		cpu.set_gov(i, level.level_data.cpu_govs[i]);
 		cpu.set_max_freq(i, level.level_data.cpu_max_freqs[i]);
 	}
 
@@ -382,9 +425,9 @@ void Subcore::set_sysfs(level_struct level) {
 
 	// iosched & readahead
 	std::vector<std::string> blkdevs = block.get_blkdevs();
-	for (std::string blkdev : blkdevs) {
-		block.set_iosched(blkdev, level.level_data.iosched);
-		block.set_read_ahead(blkdev, level.level_data.readahead);
+	for (size_t i = 0; i < blkdevs.size(); i++) {
+		block.set_iosched(blkdevs[i], level.level_data.ioscheds[i]);
+		block.set_read_ahead(blkdevs[i], level.level_data.readaheads[i]);
 	}
 	
 	// low-memory devices will behave strangely with these tweaks

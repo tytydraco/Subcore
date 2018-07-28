@@ -15,12 +15,12 @@ class Subcore {
 		};	
 
 		struct sysfs_struct {
-			std::string iosched;
-			std::string cpu_gov;
+			std::vector<std::string> ioscheds;
+			std::vector<std::string> cpu_govs;
 			std::vector<uint32_t> cpu_max_freqs;
 			uint16_t gpu_max_freq;
 			std::string lmk_minfree;
-			uint16_t readahead;
+			std::vector<uint16_t> readaheads;
 			uint8_t swappiness;
 			uint8_t cache_pressure;
 			uint8_t dirty_ratio;
