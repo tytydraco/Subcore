@@ -213,7 +213,7 @@ void Subcore::setup_level_1() {
 	for (size_t i = 0; i < online; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[3]);
 		else
 			new_cpu_max_freqs.push_back(0);
 		level_1.level_data.cpu_govs.push_back(pref_gov);
@@ -266,7 +266,7 @@ void Subcore::setup_level_2() {
 	for (size_t i = 0; i < online; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
 		else
 			new_cpu_max_freqs.push_back(0);
 		level_2.level_data.cpu_govs.push_back(pref_gov);
@@ -315,7 +315,7 @@ void Subcore::setup_level_3() {
 	for (size_t i = 0; i < online; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 		else
 			new_cpu_max_freqs.push_back(0);
 		level_3.level_data.cpu_govs.push_back(pref_gov);
