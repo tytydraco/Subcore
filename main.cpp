@@ -2,11 +2,19 @@
 #include <string>
 #include <vector>
 #include <unistd.h>
+#include <signal.h>
 
 #include "sysfs.h"
 #include "subcore.h"
 
 Subcore subcore;
+
+void onexit_handler(int signum) {
+	if (subcore.debug)
+		std::cout << "[*] Restoring user settings" << std::endl;
+	subcore.user_settings.load();
+	std::exit(signum);
+}
 
 int main(int argc, char** argv) {
 	std::cout << "[*] SubCore Init" << std::endl;
@@ -36,6 +44,15 @@ int main(int argc, char** argv) {
 				break;
 		}
 	}
+
+	// user settings managenent
+	if (subcore.debug)
+		std::cout << "[*] Saving user settings" << std::endl;
+	subcore.user_settings.save();
+
+	// register exit handler to restore settings
+	signal(SIGINT, onexit_handler);
+	signal(SIGTERM, onexit_handler);
 
 	// start the algorithm itself
 	while (1) {

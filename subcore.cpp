@@ -352,7 +352,7 @@ void Subcore::setup_presets() {
 	setup_level_0();	
 	setup_level_1();
 	setup_level_2();
-	setup_level_3();	
+	setup_level_3();
 }
 
 void Subcore::set_sysfs(level_struct level) {

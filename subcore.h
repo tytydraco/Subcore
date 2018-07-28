@@ -63,9 +63,7 @@ class Subcore {
 		SysFs::Block block;
 		SysFs::Gpu gpu;
 		SysFs::Battery battery;
-		SysFs::Display display;
-		
-		UserSettings user_settings = UserSettings(cpu, block, gpu);
+		SysFs::Display display;	
 
 		level_struct level_0;
 		level_struct level_1;
@@ -85,6 +83,8 @@ class Subcore {
 	public:
 		bool debug = false;
 		bool low_mem = false;
+
+		UserSettings user_settings = UserSettings(cpu, block, gpu);
 
 		void algorithm();	
 		void setup_presets();	
