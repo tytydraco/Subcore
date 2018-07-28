@@ -212,7 +212,7 @@ void Subcore::setup_level_1() {
 	std::string pref_gov = preferred_gov(level_1.gov_pref);
 	for (size_t i = 0; i < online; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 0) 
+		if (cpu_avail_freqs.size() > 4) 
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[3]);
 		else
 			new_cpu_max_freqs.push_back(0);
@@ -265,7 +265,7 @@ void Subcore::setup_level_2() {
 	std::string pref_gov = preferred_gov(level_2.gov_pref);
 	for (size_t i = 0; i < online; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 0) 
+		if (cpu_avail_freqs.size() > 2) 
 			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
 		else
 			new_cpu_max_freqs.push_back(0);
