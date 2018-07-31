@@ -45,10 +45,10 @@ class SysFs {
 				}
 
 				inline uint8_t online() {
-					std::string online_str = IO::read_file(PATH_CPU + "/online");
+					std::string str = IO::read_file(PATH_CPU + "/online");
 					if (str == "")
 						return 0;
-					return ((uint8_t) online_str.at(2) - '0') + 1;
+					return ((uint8_t) str.at(2) - '0') + 1;
 				}
 
 				inline void gov(uint16_t core, std::string gov) {
@@ -278,15 +278,15 @@ class SysFs {
 				const std::string PATH_BATTERY = "/sys/class/power_supply/battery";
 			public:
 				inline uint8_t capacity() {
-					std::string capacity_str = IO::read_file(PATH_BATTERY + "/capacity");
+					std::string str = IO::read_file(PATH_BATTERY + "/capacity");
 					if (str == "")
 						return 100;
-					return (uint8_t) stoi(capacity_str);
+					return (uint8_t) stoi(str);
 				}
 
 				inline bool charging() {
-					std::string status_str = IO::read_file(PATH_BATTERY + "/status");
-					return (status_str.find("Charging") != std::string::npos);
+					std::string str = IO::read_file(PATH_BATTERY + "/status");
+					return (str.find("Charging") != std::string::npos);
 				}
 		};
 

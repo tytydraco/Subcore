@@ -16,7 +16,7 @@
 std::vector<uint32_t> SysFs::Cpu::freqs(uint16_t core) {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_available_frequencies");
-	if (str == "")
+	if (freq_list_str == "")
 		return std::vector<uint32_t> {};
 	std::istringstream iss(freq_list_str);
 	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
@@ -36,7 +36,7 @@ std::vector<uint32_t> SysFs::Cpu::freqs(uint16_t core) {
 std::vector<std::string> SysFs::Cpu::govs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu0" + "/cpufreq/scaling_available_governors");
-	if (str == "")
+	if (freq_list_str == "")
 		return std::vector<std::string> {};
 	std::istringstream iss(freq_list_str);
 	return std::vector<std::string>((std::istream_iterator<std::string>(iss)),
@@ -80,7 +80,7 @@ uint8_t SysFs::Cpu::loadavg() {
 std::vector<uint16_t> SysFs::Gpu::freqs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");
-	if (str == "")
+	if (freq_list_str == "")
 		return std::vector<uint16_t> {};
 	std::istringstream iss(freq_list_str);
 	std::vector<std::string> freq_list_split((std::istream_iterator<std::string>(iss)),
