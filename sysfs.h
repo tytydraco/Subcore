@@ -28,11 +28,9 @@ class SysFs {
 
 				inline uint32_t max_freq(uint16_t core) {
 					std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq");
-					try {
-						return (uint32_t) atoi(str.c_str());
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint32_t) atoi(str.c_str());
 				}
 
 				inline void min_freq(uint16_t core, uint32_t freq) {
@@ -41,20 +39,16 @@ class SysFs {
 
 				inline uint32_t min_freq(uint16_t core) {
 					std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq");
-					try {
-						return (uint32_t) atoi(str.c_str());
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint32_t) atoi(str.c_str());
 				}
 
 				inline uint8_t online() {
 					std::string online_str = IO::read_file(PATH_CPU + "/online");
-					try {
-						return ((uint8_t) online_str.at(2) - '0') + 1;
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return ((uint8_t) online_str.at(2) - '0') + 1;
 				}
 
 				inline void gov(uint16_t core, std::string gov) {
@@ -62,11 +56,7 @@ class SysFs {
 				}
 
 				inline std::string gov(uint16_t core) {
-					try {
-						return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
-					} catch (...) {
-						return "";
-					}
+					return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
 				}	
 		};
 
@@ -83,11 +73,9 @@ class SysFs {
 
 				inline uint16_t max_freq() {
 					std::string str = IO::read_file(PATH_GPU + "/gpu_max_clock");
-					try {
-						return (uint16_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 				inline void min_freq(uint16_t freq) {
@@ -96,11 +84,9 @@ class SysFs {
 
 				inline uint16_t min_freq() {
 					std::string str = IO::read_file(PATH_GPU + "/gpu_min_clock");
-					try {
-						return (uint16_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 				inline void gov(std::string gov) {
@@ -108,12 +94,7 @@ class SysFs {
 				}
 
 				inline std::string gov() {
-					std::string str = IO::read_file(PATH_GPU + "/gpu_governor");
-					try {
-						return str;
-					} catch (...) {
-						return "";
-					}
+					return IO::read_file(PATH_GPU + "/gpu_governor");
 				}
 		};
 
@@ -135,11 +116,7 @@ class SysFs {
 				}
 
 				inline std::string iosched(std::string blkdev) {
-					try {
-						return IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler");
-					} catch (...) {
-						return "";
-					}
+					return IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler");
 				}
 
 				inline void lmk(std::string minfree) {
@@ -147,11 +124,7 @@ class SysFs {
 				}
 
 				inline std::string lmk() {
-					try {
-						return IO::read_file(PATH_LMK + "/minfree");
-					} catch (...) {
-						return "";
-					}
+					return IO::read_file(PATH_LMK + "/minfree");
 				}
 
 				inline void read_ahead(std::string blkdev, uint16_t read_ahead) {
@@ -160,11 +133,9 @@ class SysFs {
 
 				inline uint16_t read_ahead(std::string blkdev) {
 					std::string str = IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb");
-					try {
-						return (uint16_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 				inline void swappiness(uint8_t swappiness) {
@@ -173,11 +144,9 @@ class SysFs {
 
 				inline uint8_t swappiness() {
 					std::string str = IO::read_file(PATH_VM + "/swappiness");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				inline void cache_pressure(uint8_t pressure) {
@@ -186,11 +155,9 @@ class SysFs {
 
 				inline uint8_t cache_pressure() {
 					std::string str = IO::read_file(PATH_VM + "/vfs_cache_pressure");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				inline void dirty_ratio(uint8_t ratio) {
@@ -199,11 +166,9 @@ class SysFs {
 
 				inline uint8_t dirty_ratio() {
 					std::string str = IO::read_file(PATH_VM + "/dirty_ratio");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				inline void dirty_background_ratio(uint8_t ratio) {
@@ -212,11 +177,9 @@ class SysFs {
 
 				inline uint8_t dirty_background_ratio() {
 					std::string str = IO::read_file(PATH_VM + "/dirty_background_ratio");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				inline void entropy_read(uint16_t entropy) {
@@ -225,11 +188,9 @@ class SysFs {
 
 				inline uint16_t entropy_read() {
 					std::string str = IO::read_file(PATH_ENTROPY + "/read_wakeup_threshold");
-					try {
-						return (uint16_t) stoi(str);
-				 	} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 				inline void entropy_write(uint16_t entropy) {
@@ -238,11 +199,9 @@ class SysFs {
 
 				inline uint16_t entropy_write() {
 					std::string str = IO::read_file(PATH_ENTROPY + "/write_wakeup_threshold");
-					try {
-						return (uint16_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 				inline void laptop_mode(uint8_t state) {
@@ -251,11 +210,9 @@ class SysFs {
 
 				inline uint8_t laptop_mode() {
 					std::string str = IO::read_file(PATH_VM + "/laptop_mode");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}	
+					return (uint8_t) stoi(str);	
 				}
 
 				inline void oom_kill_allocating_task(uint8_t state) {
@@ -264,11 +221,9 @@ class SysFs {
 
 				inline uint8_t oom_kill_allocating_task() {
 					std::string str = IO::read_file(PATH_VM + "/oom_kill_allocating_task");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				inline void overcommit_memory(uint8_t state) {
@@ -277,11 +232,9 @@ class SysFs {
 
 				inline uint8_t overcommit_memory() {
 					std::string str = IO::read_file(PATH_VM + "/overcommit_memory");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				inline void page_cluster(uint8_t size) {
@@ -290,11 +243,9 @@ class SysFs {
 
 				inline uint8_t page_cluster() {
 					std::string str = IO::read_file(PATH_VM + "/page-cluster");
-					try {
-						return (uint8_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint8_t) stoi(str);
 				}
 
 				// dirty * centisecs are set by laptop mode
@@ -304,11 +255,9 @@ class SysFs {
 
 				inline uint16_t dirty_expire_centisecs() {
 					std::string str = IO::read_file(PATH_VM + "/dirty_expire_centisecs");
-					try {
-						return (uint16_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 				inline void dirty_writeback_centisecs(uint16_t size) {
@@ -317,11 +266,9 @@ class SysFs {
 
 				inline uint16_t dirty_writeback_centisecs() {
 					std::string str = IO::read_file(PATH_VM + "/dirty_writeback_centisecs");
-					try {
-						return (uint16_t) stoi(str);
-					} catch (...) {
+					if (str == "")
 						return 0;
-					}
+					return (uint16_t) stoi(str);
 				}
 
 		};
@@ -332,22 +279,14 @@ class SysFs {
 			public:
 				inline uint8_t capacity() {
 					std::string capacity_str = IO::read_file(PATH_BATTERY + "/capacity");
-					// return 100 if there is no valid capacity
-
-					try {
-						return (uint8_t) stoi(capacity_str);
-					} catch (...) {
+					if (str == "")
 						return 100;
-					}
+					return (uint8_t) stoi(capacity_str);
 				}
 
 				inline bool charging() {
 					std::string status_str = IO::read_file(PATH_BATTERY + "/status");
-					try {
-						return (status_str.find("Charging") != std::string::npos);
-					} catch (...) {
-						return false;
-					}
+					return (status_str.find("Charging") != std::string::npos);
 				}
 		};
 
