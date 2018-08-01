@@ -147,7 +147,7 @@ void Subcore::algorithm() {
 }
 
 void Subcore::setup_level_0() {	
-	level_0.load_requirement = 20;
+	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
 
 	level_0.gov_pref = std::vector<std::string> {
@@ -176,18 +176,18 @@ void Subcore::setup_level_0() {
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_0.level_data.readaheads.push_back(256);
+		level_0.level_data.readaheads.push_back(1024);
 		level_0.level_data.ioscheds.push_back("noop");
 	}
 
 	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_0.level_data.swappiness = 10;
-	level_0.level_data.cache_pressure = 10;
+	level_0.level_data.swappiness = 0;
+	level_0.level_data.cache_pressure = 50;
 	level_0.level_data.dirty_ratio = 90;
 	level_0.level_data.dirty_background_ratio = 80;
-	level_0.level_data.entropy_read = 64;
-	level_0.level_data.entropy_write = 128;
-	level_0.level_data.subcore_scan_ms = 3000;
+	level_0.level_data.entropy_read = 1024;
+	level_0.level_data.entropy_write = 2048;
+	level_0.level_data.subcore_scan_ms = 1000;
 	level_0.level_data.laptop_mode = 1;
 	level_0.level_data.oom_kill_allocating_task = 0;
 	level_0.level_data.overcommit_memory = 0;
@@ -195,7 +195,7 @@ void Subcore::setup_level_0() {
 }
 
 void Subcore::setup_level_1() {	
-	level_1.load_requirement = 40;
+	level_1.load_requirement = 20;
 	level_1.state = state_level_1;
 
 	level_1.gov_pref = std::vector<std::string> {
@@ -228,18 +228,18 @@ void Subcore::setup_level_1() {
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_1.level_data.readaheads.push_back(512);
+		level_1.level_data.readaheads.push_back(2048);
 		level_1.level_data.ioscheds.push_back("dealine");
 	}
 
 	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_1.level_data.swappiness = 20;
-	level_1.level_data.cache_pressure = 10;
+	level_1.level_data.cache_pressure = 60;
 	level_1.level_data.dirty_ratio = 90;
 	level_1.level_data.dirty_background_ratio = 80;
-	level_1.level_data.entropy_read = 128;
-	level_1.level_data.entropy_write = 256;
-	level_1.level_data.subcore_scan_ms = 2000;
+	level_1.level_data.entropy_read = 1024;
+	level_1.level_data.entropy_write = 2048;
+	level_1.level_data.subcore_scan_ms = 1500;
 	level_1.level_data.laptop_mode = 1;
 	level_1.level_data.oom_kill_allocating_task = 0;
 	level_1.level_data.overcommit_memory = 0;
@@ -247,7 +247,7 @@ void Subcore::setup_level_1() {
 }
 
 void Subcore::setup_level_2() {	
-	level_2.load_requirement = 60;
+	level_2.load_requirement = 40;
 	level_2.state = state_level_2;
 
 	level_2.gov_pref = std::vector<std::string> {
@@ -281,18 +281,18 @@ void Subcore::setup_level_2() {
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_2.level_data.readaheads.push_back(1024);
+		level_2.level_data.readaheads.push_back(2048);
 		level_2.level_data.ioscheds.push_back("dealine");
 	}
 
 	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_2.level_data.swappiness = 30;
-	level_2.level_data.cache_pressure = 10;
+	level_2.level_data.cache_pressure = 70;
 	level_2.level_data.dirty_ratio = 90;
 	level_2.level_data.dirty_background_ratio = 80;
 	level_2.level_data.entropy_read = 512;
 	level_2.level_data.entropy_write = 2048;
-	level_2.level_data.subcore_scan_ms = 1000;
+	level_2.level_data.subcore_scan_ms = 2000;
 	level_2.level_data.laptop_mode = 1;
 	level_2.level_data.oom_kill_allocating_task = 0;
 	level_2.level_data.overcommit_memory = 1;
@@ -336,12 +336,12 @@ void Subcore::setup_level_3() {
 
 	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_3.level_data.swappiness = 40;
-	level_3.level_data.cache_pressure = 10;
+	level_3.level_data.cache_pressure = 80;
 	level_3.level_data.dirty_ratio = 90;
 	level_3.level_data.dirty_background_ratio = 80;
 	level_3.level_data.entropy_read = 1024;
 	level_3.level_data.entropy_write = 2048;
-	level_3.level_data.subcore_scan_ms = 500;
+	level_3.level_data.subcore_scan_ms = 2500;
 	level_3.level_data.laptop_mode = 1;
 	level_3.level_data.oom_kill_allocating_task = 0;
 	level_3.level_data.overcommit_memory = 1;
