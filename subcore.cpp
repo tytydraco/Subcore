@@ -427,7 +427,7 @@ void Subcore::set_sysfs(level_struct level) {
 		block.dirty_background_ratio(level.level_data.dirty_background_ratio);
 
 		// lmk minfree
-		uint32_t ram_size = memory.ram_size() / 25;
+		uint32_t ram_size = memory.ram_size() / 400;
 		std::stringstream lmk_minfree_stream(level.level_data.lmk_minfree);
 		std::string new_lmk_minfree;
 		int offset;
