@@ -16,7 +16,7 @@ class SysFs {
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
 			public:
-				uint16_t STAT_AVG_SLEEP_MS = 3000;
+				uint16_t STAT_AVG_SLEEP_MS = 1000;
 
 				std::vector<uint32_t> freqs(uint16_t core);
 				std::vector<std::string> govs();
