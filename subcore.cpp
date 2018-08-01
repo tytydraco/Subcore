@@ -180,7 +180,7 @@ void Subcore::setup_level_0() {
 		level_0.level_data.ioscheds.push_back("noop");
 	}
 
-	level_0.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_0.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_0.level_data.swappiness = 0;
 	level_0.level_data.cache_pressure = 50;
 	level_0.level_data.dirty_ratio = 90;
@@ -233,7 +233,7 @@ void Subcore::setup_level_1() {
 		level_1.level_data.ioscheds.push_back("dealine");
 	}
 
-	level_1.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_1.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
 	level_1.level_data.swappiness = 20;
 	level_1.level_data.cache_pressure = 60;
 	level_1.level_data.dirty_ratio = 90;
@@ -287,7 +287,7 @@ void Subcore::setup_level_2() {
 		level_2.level_data.ioscheds.push_back("dealine");
 	}
 
-	level_2.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_2.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_2.level_data.swappiness = 30;
 	level_2.level_data.cache_pressure = 70;
 	level_2.level_data.dirty_ratio = 90;
@@ -337,7 +337,7 @@ void Subcore::setup_level_3() {
 		level_3.level_data.ioscheds.push_back("dealine");
 	}
 
-	level_3.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_3.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_3.level_data.swappiness = 40;
 	level_3.level_data.cache_pressure = 80;
 	level_3.level_data.dirty_ratio = 90;
