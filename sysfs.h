@@ -107,8 +107,11 @@ class SysFs {
 				const std::string PATH_ENTROPY = "/proc/sys/kernel/random";
 				const std::string PATH_MM = "/sys/kernel/mm";
 			public:
-				const std::string LMK_VERY_LIGHT = "9169,18338,27507,36676,45845,55014";
-				const std::string LMK_AGGRESSIVE = "18338,27507,55014,91690,128366,137535";
+				const std::string LMK_VERY_LIGHT = "1,2,3,4,5,6";
+				const std::string LMK_LIGHT = "2,3,4,5,6,7";
+				const std::string LMK_MEDIUM = "3,4,5,6,7,9";
+				const std::string LMK_AGGRESSIVE = "2,3,6,10,14,15";
+				const std::string LMK_VERY_AGGRESSIVE = "3,4,5,11,15,16";
 
 				std::vector<std::string> blkdevs();
 

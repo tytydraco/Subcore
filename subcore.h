@@ -62,6 +62,7 @@ class Subcore {
 
 		SysFs::Cpu cpu;
 		SysFs::Block block;
+		SysFs::Memory memory;
 		SysFs::Gpu gpu;
 		SysFs::Battery battery;
 		SysFs::Display display;	

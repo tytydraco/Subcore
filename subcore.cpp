@@ -423,7 +423,17 @@ void Subcore::set_sysfs(level_struct level) {
 		block.dirty_background_ratio(level.level_data.dirty_background_ratio);
 
 		// lmk minfree
-		block.lmk(level.level_data.lmk_minfree);
+		uint32_t ram_size = memory.ram_size() / 100 / 4;
+		std::stringstream lmk_minfree_stream(level.level_data.lmk_minfree);
+		std::string new_lmk_minfree;
+		int offset;
+		while (lmk_minfree_stream >> offset) {
+			new_lmk_minfree += std::to_string(offset * ram_size) + ",";
+			if (lmk_minfree_stream.peek() == ',')
+				lmk_minfree_stream.ignore();
+		}
+		new_lmk_minfree.erase(new_lmk_minfree.size() - 1);
+		block.lmk(new_lmk_minfree);
 
 		// other vm tweaks
 		block.laptop_mode(level.level_data.laptop_mode);
