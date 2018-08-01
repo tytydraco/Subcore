@@ -192,6 +192,7 @@ void Subcore::setup_level_0() {
 	level_0.level_data.oom_kill_allocating_task = 0;
 	level_0.level_data.overcommit_memory = 0;
 	level_0.level_data.page_cluster = 0;
+	level_0.level_data.ksm = 0;
 }
 
 void Subcore::setup_level_1() {	
@@ -244,6 +245,7 @@ void Subcore::setup_level_1() {
 	level_1.level_data.oom_kill_allocating_task = 0;
 	level_1.level_data.overcommit_memory = 0;
 	level_1.level_data.page_cluster = 0;
+	level_1.level_data.ksm = 0;
 }
 
 void Subcore::setup_level_2() {	
@@ -297,6 +299,7 @@ void Subcore::setup_level_2() {
 	level_2.level_data.oom_kill_allocating_task = 0;
 	level_2.level_data.overcommit_memory = 1;
 	level_2.level_data.page_cluster = 3;
+	level_2.level_data.ksm = 0;
 }
 
 void Subcore::setup_level_3() {
@@ -346,6 +349,7 @@ void Subcore::setup_level_3() {
 	level_3.level_data.oom_kill_allocating_task = 0;
 	level_3.level_data.overcommit_memory = 1;
 	level_3.level_data.page_cluster = 3;
+	level_3.level_data.ksm = 0;
 }
 
 void Subcore::setup_presets() {	
@@ -426,6 +430,9 @@ void Subcore::set_sysfs(level_struct level) {
 		block.oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
 		block.overcommit_memory(level.level_data.overcommit_memory);
 		block.page_cluster(level.level_data.page_cluster);
+
+		// ksm
+		block.ksm(level.level_data.ksm);
 	}
 
 	// entropy

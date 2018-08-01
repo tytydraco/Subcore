@@ -32,6 +32,7 @@ class Subcore {
 			uint8_t oom_kill_allocating_task;
 			uint8_t overcommit_memory;
 			uint8_t page_cluster;
+			uint8_t ksm;
 		};
 
 		struct level_struct {
