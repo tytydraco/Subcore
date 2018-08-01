@@ -106,22 +106,26 @@ void Subcore::UserSettings::load() {
 }
 
 void Subcore::algorithm() {
-	uint8_t load = cpu.loadavg();
-	
-	if (debug)
-		std::cout << "[*] Load: " << std::to_string(load) << "\t";
+	uint8_t load = cpu.loadavg();	
 	
 	//special cases
-	bool charging = battery.charging();
-	bool display_off = display.suspended();
-
-	if (charging) {
-		// always use highest load based algorithm
-		load = 100;
-	} else if (display_off) {
+	if (display.suspended()) {
 		// use minimum load to conserve power
 		load = 0;
+	} else if (power_aware) {
+		// conserve power at lower battery percentages
+		uint8_t capacity = battery.capacity();
+		bool charging = battery.charging();
+		if (charging)
+			load = 100;
+		else if (capacity <= 5)
+			load = 0;
+		else if (capacity <= 15)
+			load /= 2;
 	}
+
+	if (debug)
+		std::cout << "[*] Load: " << std::to_string(load) << "\t";
 
 	// load based algorithm
 	if (load <= level_0.load_requirement) {

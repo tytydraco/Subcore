@@ -85,6 +85,7 @@ class Subcore {
 	public:
 		bool debug = false;
 		bool low_mem = false;
+		bool power_aware = true;
 
 		UserSettings user_settings = UserSettings(cpu, block, gpu);
 
