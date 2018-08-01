@@ -290,7 +290,7 @@ void Subcore::setup_level_2() {
 	level_2.level_data.cache_pressure = 70;
 	level_2.level_data.dirty_ratio = 90;
 	level_2.level_data.dirty_background_ratio = 80;
-	level_2.level_data.entropy_read = 512;
+	level_2.level_data.entropy_read = 1024;
 	level_2.level_data.entropy_write = 2048;
 	level_2.level_data.subcore_scan_ms = 2000;
 	level_2.level_data.laptop_mode = 1;

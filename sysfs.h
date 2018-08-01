@@ -105,6 +105,7 @@ class SysFs {
 				const std::string PATH_LMK = "/sys/module/lowmemorykiller/parameters";
 				const std::string PATH_VM = "/proc/sys/vm";
 				const std::string PATH_ENTROPY = "/proc/sys/kernel/random";
+				const std::string PATH_MM = "/sys/kernel/mm";
 			public:
 				const std::string LMK_VERY_LIGHT = "9169,18338,27507,36676,45845,55014";
 				const std::string LMK_AGGRESSIVE = "18338,27507,55014,91690,128366,137535";
@@ -269,6 +270,17 @@ class SysFs {
 					if (str == "")
 						return 0;
 					return (uint16_t) stoi(str);
+				}
+
+				inline void ksm(uint8_t state) {
+					IO::write_file(PATH_MM + "/ksm/run", std::to_string(state));
+				}
+
+				inline uint8_t ksm() {
+					std::string str = IO::read_file(PATH_MM + "/ksm/run");
+					if (str == "")
+						return 0;
+					return (uint8_t) stoi(str);
 				}
 
 		};
