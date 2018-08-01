@@ -247,7 +247,7 @@ void Subcore::setup_level_1() {
 }
 
 void Subcore::setup_level_2() {	
-	level_2.load_requirement = 40;
+	level_2.load_requirement = 60;
 	level_2.state = state_level_2;
 
 	level_2.gov_pref = std::vector<std::string> {
