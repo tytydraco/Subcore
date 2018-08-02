@@ -67,7 +67,7 @@ void Subcore::UserSettings::save() {
 		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
 		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
-			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive)";
+			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive";
 		else {
 			backup_settings.interactives.push_back(interactive);
 			continue;
@@ -136,7 +136,7 @@ void Subcore::UserSettings::load() {
 		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
 		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
-			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive)";
+			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive";
 		else
 			continue;
 
@@ -578,7 +578,7 @@ void Subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 	if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
 	else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive"))
-		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive)";
+		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive";
 	else
 		return;
 
