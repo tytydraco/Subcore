@@ -5,7 +5,6 @@
 #include "subcore.h"
 
 void Subcore::UserSettings::save() {
-	//cpu gov & max freq
 	std::vector<uint32_t> freqs;
 	std::vector<std::string> govs;
 	uint8_t online = cpu.online();
@@ -13,14 +12,9 @@ void Subcore::UserSettings::save() {
 		freqs.push_back(cpu.max_freq(i));
 		govs.push_back(cpu.gov(i));
 	}
-
 	backup_settings.cpu_max_freqs = freqs;
 	backup_settings.cpu_govs = govs;	
-
-	// gpu max freq
 	backup_settings.gpu_max_freq = gpu.max_freq();
-
-	// iosched & readahead
 	std::vector<std::string> ioscheds;
 	std::vector<uint16_t> readaheads;
 	std::vector<std::string> blkdevs = block.blkdevs();
@@ -28,42 +22,27 @@ void Subcore::UserSettings::save() {
 		ioscheds.push_back(block.iosched(blkdev));
 		readaheads.push_back(block.read_ahead(blkdev));
 	}
-
 	backup_settings.ioscheds = ioscheds;
 	backup_settings.readaheads = readaheads;
 	
-	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
-		// swappiness
 		backup_settings.swappiness = block.swappiness();
-
-		// cache pressure
 		backup_settings.cache_pressure = block.cache_pressure();
-	
-		// dirty ratios
 		backup_settings.dirty_ratio = block.dirty_ratio();
 		backup_settings.dirty_background_ratio = block.dirty_background_ratio();
-
-		// lmk minfree
 		backup_settings.lmk_minfree = block.lmk();
-
-		// other vm tweaks
 		backup_settings.laptop_mode = block.laptop_mode();
 		backup_settings.oom_kill_allocating_task = block.oom_kill_allocating_task();
 		backup_settings.overcommit_memory = block.overcommit_memory();
 		backup_settings.page_cluster = block.page_cluster();
 		backup_settings.ksm = block.ksm();
 	}
-
-	// entropy
 	backup_settings.entropy_read = block.entropy_read();
 	backup_settings.entropy_write = block.entropy_write();
 
 	for (size_t i = 0; i < online; i++) {
 		interactive_struct interactive;
 		std::string PATH_INTERACTIVE;
-	
-		// SMP
 		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
 		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
@@ -72,7 +51,6 @@ void Subcore::UserSettings::save() {
 			backup_settings.interactives.push_back(interactive);
 			continue;
 		}
-
 		interactive.go_hispeed_load = (uint8_t) stoi(IO::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
 		interactive.above_hispeed_delay = IO::read_file(PATH_INTERACTIVE + "/above_hispeed_delay");
 		interactive.timer_rate = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_rate"));
@@ -82,64 +60,43 @@ void Subcore::UserSettings::save() {
 		interactive.target_loads = IO::read_file(PATH_INTERACTIVE + "/target_loads");
 		backup_settings.interactives.push_back(interactive);
 	}
-
 }
 
 void Subcore::UserSettings::load() {
-	//cpu gov & max freq
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.max_freq(i, backup_settings.cpu_max_freqs[i]);
 	}
-
-	// gpu max freq
 	gpu.max_freq(backup_settings.gpu_max_freq);
-
-	// iosched & readahead
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		block.iosched(blkdevs[i], backup_settings.ioscheds[i]);
 		block.read_ahead(blkdevs[i], backup_settings.readaheads[i]);
 	}
-	
-	// low-memory devices will behave strangely with these tweaks
-	if (!low_mem) {
-		// swappiness
-		block.swappiness(backup_settings.swappiness);
 
-		// cache pressure
+	if (!low_mem) {
+		block.swappiness(backup_settings.swappiness);
 		block.cache_pressure(backup_settings.cache_pressure);
-	
-		// dirty ratios
 		block.dirty_ratio(backup_settings.dirty_ratio);
 		block.dirty_background_ratio(backup_settings.dirty_background_ratio);
-
-		// lmk minfree
 		block.lmk(backup_settings.lmk_minfree);
-
-		// other vm tweaks
 		block.laptop_mode(backup_settings.laptop_mode);
 		block.oom_kill_allocating_task(backup_settings.oom_kill_allocating_task);
 		block.overcommit_memory(backup_settings.overcommit_memory);
 		block.page_cluster(backup_settings.page_cluster);
 		block.ksm(backup_settings.ksm);
 	}
-
-	// entropy
 	block.entropy_read(backup_settings.entropy_read);
 	block.entropy_write(backup_settings.entropy_write);
 
 	for (uint8_t i = 0; i < online; i++) {
 		std::string PATH_INTERACTIVE;
-	
-		// SMP
 		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
 		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive";
 		else
 			continue;
-
 		IO::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(backup_settings.interactives[i].go_hispeed_load));
 		IO::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", backup_settings.interactives[i].above_hispeed_delay);
 		IO::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(backup_settings.interactives[i].timer_rate));
@@ -147,11 +104,8 @@ void Subcore::UserSettings::load() {
 		IO::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
 		IO::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
 		IO::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
-	
-		// restore after tunables restored	
 		cpu.gov(i, backup_settings.cpu_govs[i]);
 	}
-
 }
 
 void Subcore::algorithm() {
