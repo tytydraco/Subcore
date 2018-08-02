@@ -97,10 +97,6 @@ class Subcore {
 		uint16_t same_level_count = 0;
 
 		// functions
-		void setup_level_0();
-		void setup_level_1();
-		void setup_level_2();
-		void setup_level_3();
 		void set_sysfs(level_struct level);
 		void set_interactive(uint8_t core, interactive_struct interactive);
 		std::string preferred_gov(std::vector<std::string> pref_govs);
@@ -112,7 +108,7 @@ class Subcore {
 		UserSettings user_settings = UserSettings(cpu, block, gpu);
 
 		void algorithm();	
-		void setup_presets();	
+		void setup_levels();
 };
 
 #endif

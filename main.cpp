@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 	}
 
 	// setup the presets based on the device
-	subcore.setup_presets();
+	subcore.setup_levels();
 	
 	// scan for command line args
 	int opt;

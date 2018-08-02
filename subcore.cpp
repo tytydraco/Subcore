@@ -199,39 +199,88 @@ void Subcore::algorithm() {
 	}
 }
 
-void Subcore::setup_level_0() {	
+void Subcore::setup_levels() {	
 	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
-
+	level_1.load_requirement = 40;
+	level_1.state = state_level_1;
+	level_2.load_requirement = 70;
+	level_2.state = state_level_2;
+	level_3.load_requirement = 100;
+	level_3.state = state_level_3;
+	
 	level_0.gov_pref = std::vector<std::string> {
 		"powersave",
 		"schedutil",
 		"performance"
 	};
+	level_1.gov_pref = std::vector<std::string> {
+		"interactive",
+		"schedutil",
+		"performance"
+	};
+	level_2.gov_pref = std::vector<std::string> {
+		"interactive",
+		"schedutil",
+		"performance"
+	};
+	level_3.gov_pref = std::vector<std::string> {
+		"interactive",
+		"schedutil",
+		"performance"
+	};
 		
 	uint8_t online = cpu.online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	std::string pref_gov = preferred_gov(level_0.gov_pref);
+	std::vector<uint32_t> new_cpu_max_freqs_0;
+	std::vector<uint32_t> new_cpu_max_freqs_1;
+	std::vector<uint32_t> new_cpu_max_freqs_2;
+	std::vector<uint32_t> new_cpu_max_freqs_3;
 	for (size_t i = 0; i < online; i++) {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 0) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[0]);
-		else
-			new_cpu_max_freqs.push_back(0);
-		level_0.level_data.cpu_govs.push_back(pref_gov);
-	}	
-	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs;
+		if (cpu_avail_freqs.size() > 0) {
+			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);
+			new_cpu_max_freqs_1.push_back(cpu_avail_freqs[3]);
+			new_cpu_max_freqs_2.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
+			new_cpu_max_freqs_3.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
+		} else {
+			new_cpu_max_freqs_0.push_back(0);
+			new_cpu_max_freqs_1.push_back(0);
+			new_cpu_max_freqs_2.push_back(0);
+			new_cpu_max_freqs_3.push_back(0);
+		}
+		level_0.level_data.cpu_govs.push_back(preferred_gov(level_0.gov_pref));
+		level_1.level_data.cpu_govs.push_back(preferred_gov(level_1.gov_pref));
+		level_2.level_data.cpu_govs.push_back(preferred_gov(level_2.gov_pref));
+		level_3.level_data.cpu_govs.push_back(preferred_gov(level_3.gov_pref));
+	}
+	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs_0;
+	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs_1;
+	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs_2;
+	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs_3;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
-	if (gpu_avail_freqs.size() < 4) 
-		level_0.level_data.gpu_max_freq = 0;
-	else 
+	if (gpu_avail_freqs.size() > 4) {
 		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
+		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
+		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+	} else {
+		level_0.level_data.gpu_max_freq = 0;
+		level_1.level_data.gpu_max_freq = 0;
+		level_2.level_data.gpu_max_freq = 0;
+		level_3.level_data.gpu_max_freq = 0;
+	}
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		level_0.level_data.readaheads.push_back(1024);
 		level_0.level_data.ioscheds.push_back("noop");
+		level_1.level_data.readaheads.push_back(2048);
+		level_1.level_data.ioscheds.push_back("dealine");
+		level_2.level_data.readaheads.push_back(2048);
+		level_2.level_data.ioscheds.push_back("dealine");
+		level_3.level_data.readaheads.push_back(2048);
+		level_3.level_data.ioscheds.push_back("dealine");
 	}
 
 	level_0.level_data.lmk_minfree = block.LMK_LIGHT;
@@ -247,43 +296,6 @@ void Subcore::setup_level_0() {
 	level_0.level_data.overcommit_memory = 0;
 	level_0.level_data.page_cluster = 0;
 	level_0.level_data.ksm = 0;	
-}
-
-void Subcore::setup_level_1() {	
-	level_1.load_requirement = 40;
-	level_1.state = state_level_1;
-
-	level_1.gov_pref = std::vector<std::string> {
-		"interactive",
-		"schedutil",
-		"performance"
-	};
-
-	uint8_t online = cpu.online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	std::string pref_gov = preferred_gov(level_1.gov_pref);
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 4) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[3]);
-		else
-			new_cpu_max_freqs.push_back(0);
-		level_1.level_data.cpu_govs.push_back(pref_gov);
-	}
-	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs;
-
-	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
-	if (gpu_avail_freqs.size() < 5) 
-		level_1.level_data.gpu_max_freq = 0;
-	else 
-		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
-
-	std::vector<std::string> blkdevs = block.blkdevs();
-	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_1.level_data.readaheads.push_back(2048);
-		level_1.level_data.ioscheds.push_back("dealine");
-	}
-
 	level_1.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_1.level_data.swappiness = 20;
 	level_1.level_data.cache_pressure = 60;
@@ -297,65 +309,6 @@ void Subcore::setup_level_1() {
 	level_1.level_data.overcommit_memory = 0;
 	level_1.level_data.page_cluster = 0;
 	level_1.level_data.ksm = 0;
-
-	for (size_t i = 0; i < online; i++) {
-		interactive_struct interactive;
-		// universal
-		interactive.go_hispeed_load = 99;
-		interactive.above_hispeed_delay = "80000";
-		interactive.timer_rate = 20000;
-		interactive.timer_slack = 40000;
-		interactive.min_sample_time = 100000;
-
-		// per cpu
-		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() >= 4) {
-			interactive.hispeed_freq = cpu_avail_freqs[1];
-			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << cpu_avail_freqs[1] << ":97 " << cpu_avail_freqs[2] << ":99")).str();
-		} else {
-			interactive.hispeed_freq = 0;
-			interactive.target_loads = "";
-		}
-
-		level_1.level_data.interactives.push_back(interactive);
-	}
-}
-
-void Subcore::setup_level_2() {	
-	level_2.load_requirement = 70;
-	level_2.state = state_level_2;
-
-	level_2.gov_pref = std::vector<std::string> {
-		"interactive",
-		"schedutil",
-		"performance"
-	};
-
-	uint8_t online = cpu.online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	std::string pref_gov = preferred_gov(level_2.gov_pref);
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 2) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
-		else
-			new_cpu_max_freqs.push_back(0);
-		level_2.level_data.cpu_govs.push_back(pref_gov);
-	}
-	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs;
-
-	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
-	if (gpu_avail_freqs.size() == 0) 
-		level_2.level_data.gpu_max_freq = 0;
-	else 
-		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
-
-	std::vector<std::string> blkdevs = block.blkdevs();
-	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_2.level_data.readaheads.push_back(2048);
-		level_2.level_data.ioscheds.push_back("dealine");
-	}
-
 	level_2.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_2.level_data.swappiness = 30;
 	level_2.level_data.cache_pressure = 70;
@@ -369,65 +322,6 @@ void Subcore::setup_level_2() {
 	level_2.level_data.overcommit_memory = 1;
 	level_2.level_data.page_cluster = 3;
 	level_2.level_data.ksm = 0;
-
-	for (size_t i = 0; i < online; i++) {
-		interactive_struct interactive;
-		// universal
-		interactive.go_hispeed_load = 80;
-		interactive.above_hispeed_delay = "80000";
-		interactive.timer_rate = 20000;
-		interactive.timer_slack = 20000;
-		interactive.min_sample_time = 80000;
-
-		// per cpu
-		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() >= 5) {
-			interactive.hispeed_freq = cpu_avail_freqs[2];
-			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[2] << ":80 " << cpu_avail_freqs[3] << ":85 " << cpu_avail_freqs[4] << ":99")).str();
-		} else {
-			interactive.hispeed_freq = 0;
-			interactive.target_loads = "";
-		}
-		
-		level_2.level_data.interactives.push_back(interactive);
-	}
-}
-
-void Subcore::setup_level_3() {
-	level_3.load_requirement = 100;
-	level_3.state = state_level_3;
-
-	level_3.gov_pref = std::vector<std::string> {
-		"interactive",
-		"schedutil",
-		"performance"
-	};
-
-	uint8_t online = cpu.online();
-	std::vector<uint32_t> new_cpu_max_freqs;
-	std::string pref_gov = preferred_gov(level_3.gov_pref);
-	for (size_t i = 0; i < online; i++) {
-		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 0) 
-			new_cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
-		else
-			new_cpu_max_freqs.push_back(0);
-		level_3.level_data.cpu_govs.push_back(pref_gov);
-	}
-	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs;
-
-	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
-	if (gpu_avail_freqs.size() == 0) 
-		level_3.level_data.gpu_max_freq = 0;
-	else 
-		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
-
-	std::vector<std::string> blkdevs = block.blkdevs();
-	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_3.level_data.readaheads.push_back(2048);
-		level_3.level_data.ioscheds.push_back("dealine");
-	}
-
 	level_3.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_3.level_data.swappiness = 40;
 	level_3.level_data.cache_pressure = 80;
@@ -443,33 +337,48 @@ void Subcore::setup_level_3() {
 	level_3.level_data.ksm = 0;
 
 	for (size_t i = 0; i < online; i++) {
-		interactive_struct interactive;
+		interactive_struct interactive_1;
+		interactive_struct interactive_2;
+		interactive_struct interactive_3;
 		// universal
-		interactive.go_hispeed_load = 75;
-		interactive.above_hispeed_delay = "40000";
-		interactive.timer_rate = 20000;
-		interactive.timer_slack = 40000;
-		interactive.min_sample_time = 80000;
+		interactive_1.go_hispeed_load = 99;
+		interactive_1.above_hispeed_delay = "80000";
+		interactive_1.timer_rate = 20000;
+		interactive_1.timer_slack = 40000;
+		interactive_1.min_sample_time = 100000;
+		interactive_2.go_hispeed_load = 80;
+		interactive_2.above_hispeed_delay = "80000";
+		interactive_2.timer_rate = 20000;
+		interactive_2.timer_slack = 20000;
+		interactive_2.min_sample_time = 80000;
+		interactive_3.go_hispeed_load = 75;
+		interactive_3.above_hispeed_delay = "40000";
+		interactive_3.timer_rate = 20000;
+		interactive_3.timer_slack = 40000;
+		interactive_3.min_sample_time = 80000;
 
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() >= 5) {
-			interactive.hispeed_freq = cpu_avail_freqs[3];
-			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << cpu_avail_freqs[3] << ":75 " << cpu_avail_freqs[5] << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
+		if (cpu_avail_freqs.size() >= 4) {
+			interactive_1.hispeed_freq = cpu_avail_freqs[1];
+			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << cpu_avail_freqs[1] << ":97 " << cpu_avail_freqs[2] << ":99")).str();
+			interactive_2.hispeed_freq = cpu_avail_freqs[2];
+			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[2] << ":80 " << cpu_avail_freqs[3] << ":85 " << cpu_avail_freqs[4] << ":99")).str();
+			interactive_3.hispeed_freq = cpu_avail_freqs[3];
+			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << cpu_avail_freqs[3] << ":75 " << cpu_avail_freqs[5] << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
-			interactive.hispeed_freq = 0;
-			interactive.target_loads = "";
+			interactive_1.hispeed_freq = 0;
+			interactive_1.target_loads = "";
+			interactive_2.hispeed_freq = 0;
+			interactive_2.target_loads = "";
+			interactive_3.hispeed_freq = 0;
+			interactive_3.target_loads = "";
 		}
-		
-		level_3.level_data.interactives.push_back(interactive);
+		level_1.level_data.interactives.push_back(interactive_1);
+		level_2.level_data.interactives.push_back(interactive_2);
+		level_3.level_data.interactives.push_back(interactive_3);
 	}
-}
 
-void Subcore::setup_presets() {	
-	setup_level_0();	
-	setup_level_1();
-	setup_level_2();
-	setup_level_3();
 }
 
 void Subcore::set_sysfs(level_struct level) {
