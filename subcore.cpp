@@ -73,12 +73,12 @@ void Subcore::UserSettings::save() {
 			continue;
 		}
 
-		interactive.go_hispeed_load = stoi(IO::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
+		interactive.go_hispeed_load = (uint8_t) stoi(IO::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
 		interactive.above_hispeed_delay = IO::read_file(PATH_INTERACTIVE + "/above_hispeed_delay");
-		interactive.timer_rate = stoi(IO::read_file(PATH_INTERACTIVE + "/timer_rate"));
-		interactive.timer_slack = stoi(IO::read_file(PATH_INTERACTIVE + "/timer_slack"));
-		interactive.min_sample_time = stoi(IO::read_file(PATH_INTERACTIVE + "/min_sample_time"));
-		interactive.hispeed_freq = stoi(IO::read_file(PATH_INTERACTIVE + "/hispeed_freq"));
+		interactive.timer_rate = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_rate"));
+		interactive.timer_slack = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_slack"));
+		interactive.min_sample_time = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/min_sample_time"));
+		interactive.hispeed_freq = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/hispeed_freq"));
 		interactive.target_loads = IO::read_file(PATH_INTERACTIVE + "/target_loads");
 		backup_settings.interactives.push_back(interactive);
 	}
@@ -89,7 +89,6 @@ void Subcore::UserSettings::load() {
 	//cpu gov & max freq
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
-		cpu.gov(i, backup_settings.cpu_govs[i]);
 		cpu.max_freq(i, backup_settings.cpu_max_freqs[i]);
 	}
 
@@ -148,6 +147,9 @@ void Subcore::UserSettings::load() {
 		IO::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
 		IO::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
 		IO::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
+	
+		// restore after tunables restored	
+		cpu.gov(i, backup_settings.cpu_govs[i]);
 	}
 
 }
@@ -231,7 +233,7 @@ void Subcore::setup_level_0() {
 		level_0.level_data.ioscheds.push_back("noop");
 	}
 
-	level_0.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_0.level_data.lmk_minfree = block.LMK_LIGHT;
 	level_0.level_data.swappiness = 0;
 	level_0.level_data.cache_pressure = 50;
 	level_0.level_data.dirty_ratio = 90;
@@ -280,7 +282,7 @@ void Subcore::setup_level_1() {
 		level_1.level_data.ioscheds.push_back("dealine");
 	}
 
-	level_1.level_data.lmk_minfree = block.LMK_VERY_LIGHT;
+	level_1.level_data.lmk_minfree = block.LMK_LIGHT;
 	level_1.level_data.swappiness = 20;
 	level_1.level_data.cache_pressure = 60;
 	level_1.level_data.dirty_ratio = 90;
@@ -312,7 +314,7 @@ void Subcore::setup_level_1() {
 			interactive.hispeed_freq = 0;
 			interactive.target_loads = "";
 		}
-		
+
 		level_1.level_data.interactives.push_back(interactive);
 	}
 }
