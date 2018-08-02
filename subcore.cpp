@@ -57,6 +57,31 @@ void Subcore::UserSettings::save() {
 	// entropy
 	backup_settings.entropy_read = block.entropy_read();
 	backup_settings.entropy_write = block.entropy_write();
+
+	for (size_t i = 0; i < online; i++) {
+		interactive_struct interactive;
+		std::string PATH_INTERACTIVE;
+	
+		// SMP
+		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
+			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
+		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
+			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive)";
+		else {
+			backup_settings.interactives.push_back(interactive);
+			continue;
+		}
+
+		interactive.go_hispeed_load = stoi(IO::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
+		interactive.above_hispeed_delay = IO::read_file(PATH_INTERACTIVE + "/above_hispeed_delay");
+		interactive.timer_rate = stoi(IO::read_file(PATH_INTERACTIVE + "/timer_rate"));
+		interactive.timer_slack = stoi(IO::read_file(PATH_INTERACTIVE + "/timer_slack"));
+		interactive.min_sample_time = stoi(IO::read_file(PATH_INTERACTIVE + "/min_sample_time"));
+		interactive.hispeed_freq = stoi(IO::read_file(PATH_INTERACTIVE + "/hispeed_freq"));
+		interactive.target_loads = IO::read_file(PATH_INTERACTIVE + "/target_loads");
+		backup_settings.interactives.push_back(interactive);
+	}
+
 }
 
 void Subcore::UserSettings::load() {
@@ -102,6 +127,26 @@ void Subcore::UserSettings::load() {
 	// entropy
 	block.entropy_read(backup_settings.entropy_read);
 	block.entropy_write(backup_settings.entropy_write);
+
+	for (uint8_t i = 0; i < online; i++) {
+		std::string PATH_INTERACTIVE;
+	
+		// SMP
+		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
+			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
+		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
+			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive)";
+		else
+			continue;
+
+		IO::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(backup_settings.interactives[i].go_hispeed_load));
+		IO::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", backup_settings.interactives[i].above_hispeed_delay);
+		IO::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(backup_settings.interactives[i].timer_rate));
+		IO::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(backup_settings.interactives[i].timer_slack));
+		IO::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
+		IO::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
+		IO::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
+	}
 
 }
 
@@ -526,13 +571,12 @@ void Subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 	std::string PATH_INTERACTIVE;
 	
 	// SMP
-	if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive")) {
+	if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
-	} else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive")) {
+	else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive"))
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive)";
-	} else {
+	else
 		return;
-	}
 
 	IO::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(interactive.go_hispeed_load));
 	IO::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", interactive.above_hispeed_delay);

@@ -63,7 +63,7 @@ class Subcore {
 			sysfs_struct level_data;
 		};
 
-		class UserSettings {
+		struct UserSettings {
 			private:
 				sysfs_struct backup_settings;
 				SysFs::Cpu &cpu;
