@@ -250,7 +250,7 @@ void Subcore::setup_level_0() {
 }
 
 void Subcore::setup_level_1() {	
-	level_1.load_requirement = 35;
+	level_1.load_requirement = 40;
 	level_1.state = state_level_1;
 
 	level_1.gov_pref = std::vector<std::string> {
@@ -284,14 +284,14 @@ void Subcore::setup_level_1() {
 		level_1.level_data.ioscheds.push_back("dealine");
 	}
 
-	level_1.level_data.lmk_minfree = block.LMK_LIGHT;
+	level_1.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_1.level_data.swappiness = 20;
 	level_1.level_data.cache_pressure = 60;
 	level_1.level_data.dirty_ratio = 90;
 	level_1.level_data.dirty_background_ratio = 80;
 	level_1.level_data.entropy_read = 1024;
 	level_1.level_data.entropy_write = 2048;
-	level_1.level_data.subcore_scan_ms = 1750;
+	level_1.level_data.subcore_scan_ms = 2000;
 	level_1.level_data.laptop_mode = 1;
 	level_1.level_data.oom_kill_allocating_task = 0;
 	level_1.level_data.overcommit_memory = 0;
@@ -304,8 +304,8 @@ void Subcore::setup_level_1() {
 		interactive.go_hispeed_load = 99;
 		interactive.above_hispeed_delay = "80000";
 		interactive.timer_rate = 20000;
-		interactive.timer_slack = 20000;
-		interactive.min_sample_time = 80000;
+		interactive.timer_slack = 40000;
+		interactive.min_sample_time = 100000;
 
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
