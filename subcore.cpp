@@ -249,7 +249,7 @@ void Subcore::setup_level_0() {
 }
 
 void Subcore::setup_level_1() {	
-	level_1.load_requirement = 40;
+	level_1.load_requirement = 35;
 	level_1.state = state_level_1;
 
 	level_1.gov_pref = std::vector<std::string> {
@@ -289,7 +289,7 @@ void Subcore::setup_level_1() {
 	level_1.level_data.dirty_background_ratio = 80;
 	level_1.level_data.entropy_read = 1024;
 	level_1.level_data.entropy_write = 2048;
-	level_1.level_data.subcore_scan_ms = 1500;
+	level_1.level_data.subcore_scan_ms = 1750;
 	level_1.level_data.laptop_mode = 1;
 	level_1.level_data.oom_kill_allocating_task = 0;
 	level_1.level_data.overcommit_memory = 0;
@@ -309,7 +309,7 @@ void Subcore::setup_level_1() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
 			interactive.hispeed_freq = cpu_avail_freqs[1];
-			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "90 " << cpu_avail_freqs[1] << ":93 " << cpu_avail_freqs[2] << ":95 " << cpu_avail_freqs[3] << ":99")).str();
+			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "93 " << cpu_avail_freqs[1] << ":95 " << cpu_avail_freqs[2] << ":97 " << cpu_avail_freqs[3] << ":99")).str();
 		} else {
 			interactive.hispeed_freq = 0;
 			interactive.target_loads = "";
@@ -320,7 +320,7 @@ void Subcore::setup_level_1() {
 }
 
 void Subcore::setup_level_2() {	
-	level_2.load_requirement = 60;
+	level_2.load_requirement = 70;
 	level_2.state = state_level_2;
 
 	level_2.gov_pref = std::vector<std::string> {
@@ -345,7 +345,7 @@ void Subcore::setup_level_2() {
 	if (gpu_avail_freqs.size() == 0) 
 		level_2.level_data.gpu_max_freq = 0;
 	else 
-		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 2];
+		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
@@ -380,7 +380,7 @@ void Subcore::setup_level_2() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 5) {
 			interactive.hispeed_freq = cpu_avail_freqs[2];
-			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "80 " << cpu_avail_freqs[2] << ":85 " << cpu_avail_freqs[3] << ":95 " << cpu_avail_freqs[4] << ":99")).str();
+			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[2] << ":80 " << cpu_avail_freqs[3] << ":85 " << cpu_avail_freqs[4] << ":99")).str();
 		} else {
 			interactive.hispeed_freq = 0;
 			interactive.target_loads = "";
@@ -451,7 +451,7 @@ void Subcore::setup_level_3() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 5) {
 			interactive.hispeed_freq = cpu_avail_freqs[3];
-			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[3] << ":80 " << cpu_avail_freqs[5] << ":85 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":90")).str();
+			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << cpu_avail_freqs[3] << ":75 " << cpu_avail_freqs[5] << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
 			interactive.hispeed_freq = 0;
 			interactive.target_loads = "";
