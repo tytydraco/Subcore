@@ -387,17 +387,10 @@ void Subcore::set_sysfs(level_struct level) {
 	
 	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
-		// swappiness
 		block.swappiness(level.level_data.swappiness);
-
-		// cache pressure
 		block.cache_pressure(level.level_data.cache_pressure);
-	
-		// dirty ratios
 		block.dirty_ratio(level.level_data.dirty_ratio);
 		block.dirty_background_ratio(level.level_data.dirty_background_ratio);
-
-		// lmk minfree
 		uint32_t ram_size = memory.ram_size() / 400;
 		std::stringstream lmk_minfree_stream(level.level_data.lmk_minfree);
 		std::string new_lmk_minfree;
@@ -409,29 +402,16 @@ void Subcore::set_sysfs(level_struct level) {
 		}
 		new_lmk_minfree.erase(new_lmk_minfree.size() - 1);
 		block.lmk(new_lmk_minfree);
-
-		// other vm tweaks
 		block.laptop_mode(level.level_data.laptop_mode);
 		block.oom_kill_allocating_task(level.level_data.oom_kill_allocating_task);
 		block.overcommit_memory(level.level_data.overcommit_memory);
 		block.page_cluster(level.level_data.page_cluster);
-
-		// ksm
 		block.ksm(level.level_data.ksm);
 	}
-
-	// entropy
 	block.entropy_read(level.level_data.entropy_read);
 	block.entropy_write(level.level_data.entropy_write);
-	
-	// subcore scan ms
-	// special cases for extended periods
 	cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
-
-	// set the current state
 	current_state = level.state;
-
-	// reset count
 	same_level_count = 0;
 }
 
