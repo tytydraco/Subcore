@@ -378,15 +378,12 @@ void Subcore::setup_levels() {
 		level_2.level_data.interactives.push_back(interactive_2);
 		level_3.level_data.interactives.push_back(interactive_3);
 	}
-
 }
 
 void Subcore::set_sysfs(level_struct level) {
 	// if we are already on this state, do nothing
 	if (current_state == level.state) {
-
-		bool display_off = display.suspended();
-		if (display_off) {
+		if (display.suspended()) {
 			// do not count when sleeping to avoid
 			// stutter on wakeup (after +5000ms)
 			same_level_count = 0;
@@ -507,13 +504,10 @@ void Subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	std::vector<std::string> cpu_avail_govs = cpu.govs();
 	std::string new_cpu_pref_gov;
-	for (std::string pref_gov : pref_govs) {
-		for (std::string cpu_avail_gov : cpu_avail_govs) {
-			if (cpu_avail_gov == pref_gov) {
+	for (std::string pref_gov : pref_govs)
+		for (std::string cpu_avail_gov : cpu_avail_govs)
+			if (cpu_avail_gov == pref_gov)
 				return pref_gov;
-			}	
-		}
-	}
 
 	// double failsafe
 	return "performance";
