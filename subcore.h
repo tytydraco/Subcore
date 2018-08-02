@@ -12,11 +12,32 @@ class Subcore {
 			state_level_2,
 			state_level_3,
 			state_init
-		};	
+		};
+
+		struct interactive_struct {
+			uint8_t go_hispeed_load;
+			std::string above_hispeed_delay;
+			uint32_t timer_rate;
+			uint32_t hispeed_freq;
+			uint32_t timer_slack;
+			std::string target_loads;
+			uint32_t min_sample_time;
+			uint8_t ignore_hispeed_on_notif;
+			uint8_t powersave_bias;
+			uint8_t fast_ramp_down;
+			uint8_t align_windows;
+			uint8_t use_migration_notif;
+			uint8_t enable_prediction;
+			uint32_t screen_off_maxfreq;
+			uint8_t use_sched_load;
+			uint8_t max_freq_hysteresis;
+			uint32_t boostpulse_duration;
+		};
 
 		struct sysfs_struct {
 			std::vector<std::string> ioscheds;
 			std::vector<std::string> cpu_govs;
+			std::vector<interactive_struct> interactives;
 			std::vector<uint32_t> cpu_max_freqs;
 			uint16_t gpu_max_freq;
 			std::string lmk_minfree;
@@ -80,8 +101,9 @@ class Subcore {
 		void setup_level_1();
 		void setup_level_2();
 		void setup_level_3();
-		std::string preferred_gov(std::vector<std::string> pref_govs);
 		void set_sysfs(level_struct level);
+		void set_interactive(uint8_t core, interactive_struct interactive);
+		std::string preferred_gov(std::vector<std::string> pref_govs);
 	public:
 		bool debug = false;
 		bool low_mem = false;

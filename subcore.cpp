@@ -196,7 +196,7 @@ void Subcore::setup_level_0() {
 	level_0.level_data.oom_kill_allocating_task = 0;
 	level_0.level_data.overcommit_memory = 0;
 	level_0.level_data.page_cluster = 0;
-	level_0.level_data.ksm = 0;
+	level_0.level_data.ksm = 0;	
 }
 
 void Subcore::setup_level_1() {	
@@ -204,11 +204,7 @@ void Subcore::setup_level_1() {
 	level_1.state = state_level_1;
 
 	level_1.gov_pref = std::vector<std::string> {
-		"energy-dcfc",
-		"schedutil",
-		"darkness",
-		"nightmare",
-		"conservative",
+		"interactive",
 		"performance"
 	};
 
@@ -250,6 +246,28 @@ void Subcore::setup_level_1() {
 	level_1.level_data.overcommit_memory = 0;
 	level_1.level_data.page_cluster = 0;
 	level_1.level_data.ksm = 0;
+
+	for (size_t i = 0; i < online; i++) {
+		interactive_struct interactive;
+		// universal
+		interactive.go_hispeed_load = 99;
+		interactive.above_hispeed_delay = "80000";
+		interactive.timer_rate = 20000;
+		interactive.timer_slack = 20000;
+		interactive.min_sample_time = 80000;
+
+		// per cpu
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
+		if (cpu_avail_freqs.size() >= 4) {
+			interactive.hispeed_freq = cpu_avail_freqs[1];
+			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("90 ") << cpu_avail_freqs[1] << ":93 " << cpu_avail_freqs[2] << ":95 " << cpu_avail_freqs[3] << ":99")).str();
+		} else {
+			interactive.hispeed_freq = 0;
+			interactive.target_loads = "";
+		}
+		
+		level_1.level_data.interactives.push_back(interactive);
+	}
 }
 
 void Subcore::setup_level_2() {	
@@ -257,11 +275,6 @@ void Subcore::setup_level_2() {
 	level_2.state = state_level_2;
 
 	level_2.gov_pref = std::vector<std::string> {
-		"relaxed",
-		"chill",
-		"interactive",
-		"helix_schedutil",
-		"schedutil",
 		"interactive",
 		"performance"
 	};
@@ -304,6 +317,28 @@ void Subcore::setup_level_2() {
 	level_2.level_data.overcommit_memory = 1;
 	level_2.level_data.page_cluster = 3;
 	level_2.level_data.ksm = 0;
+
+	for (size_t i = 0; i < online; i++) {
+		interactive_struct interactive;
+		// universal
+		interactive.go_hispeed_load = 80;
+		interactive.above_hispeed_delay = "80000";
+		interactive.timer_rate = 20000;
+		interactive.timer_slack = 20000;
+		interactive.min_sample_time = 80000;
+
+		// per cpu
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
+		if (cpu_avail_freqs.size() >= 5) {
+			interactive.hispeed_freq = cpu_avail_freqs[2];
+			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("80 ") << cpu_avail_freqs[2] << ":85 " << cpu_avail_freqs[3] << ":95 " << cpu_avail_freqs[4] << ":99")).str();
+		} else {
+			interactive.hispeed_freq = 0;
+			interactive.target_loads = "";
+		}
+		
+		level_2.level_data.interactives.push_back(interactive);
+	}
 }
 
 void Subcore::setup_level_3() {
@@ -311,8 +346,7 @@ void Subcore::setup_level_3() {
 	level_3.state = state_level_3;
 
 	level_3.gov_pref = std::vector<std::string> {
-		"conservative",
-		"ondemand",
+		"interactive",
 		"performance"
 	};
 
@@ -354,6 +388,28 @@ void Subcore::setup_level_3() {
 	level_3.level_data.overcommit_memory = 1;
 	level_3.level_data.page_cluster = 3;
 	level_3.level_data.ksm = 0;
+
+	for (size_t i = 0; i < online; i++) {
+		interactive_struct interactive;
+		// universal
+		interactive.go_hispeed_load = 75;
+		interactive.above_hispeed_delay = "40000";
+		interactive.timer_rate = 20000;
+		interactive.timer_slack = 40000;
+		interactive.min_sample_time = 80000;
+
+		// per cpu
+		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
+		if (cpu_avail_freqs.size() >= 5) {
+			interactive.hispeed_freq = cpu_avail_freqs[3];
+			interactive.target_loads = ((std::ostringstream&) (std::ostringstream("75 ") << cpu_avail_freqs[3] << ":80 " << cpu_avail_freqs[5] << ":85 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":90")).str();
+		} else {
+			interactive.hispeed_freq = 0;
+			interactive.target_loads = "";
+		}
+		
+		level_3.level_data.interactives.push_back(interactive);
+	}
 }
 
 void Subcore::setup_presets() {	
@@ -402,6 +458,8 @@ void Subcore::set_sysfs(level_struct level) {
 	for (size_t i = 0; i < online; i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
 		cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
+		if (level.level_data.cpu_govs[i] == "interactive")
+			set_interactive(i, level.level_data.interactives[i]);
 	}
 
 	// gpu max freq
@@ -462,6 +520,27 @@ void Subcore::set_sysfs(level_struct level) {
 
 	// reset count
 	same_level_count = 0;
+}
+
+void Subcore::set_interactive(uint8_t core, interactive_struct interactive) {
+	std::string PATH_INTERACTIVE;
+	
+	// SMP
+	if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive")) {
+		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
+	} else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "interactive")) {
+		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "interactive)";
+	} else {
+		return;
+	}
+
+	IO::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(interactive.go_hispeed_load));
+	IO::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", interactive.above_hispeed_delay);
+	IO::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(interactive.timer_rate));
+	IO::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(interactive.timer_slack));
+	IO::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(interactive.min_sample_time));
+	IO::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(interactive.hispeed_freq));
+	IO::write_file(PATH_INTERACTIVE + "/target_loads", interactive.target_loads);
 }
 
 std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
