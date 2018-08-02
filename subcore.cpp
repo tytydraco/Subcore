@@ -52,6 +52,7 @@ void Subcore::UserSettings::save() {
 		backup_settings.oom_kill_allocating_task = block.oom_kill_allocating_task();
 		backup_settings.overcommit_memory = block.overcommit_memory();
 		backup_settings.page_cluster = block.page_cluster();
+		backup_settings.ksm = block.ksm();
 	}
 
 	// entropy
@@ -122,6 +123,7 @@ void Subcore::UserSettings::load() {
 		block.oom_kill_allocating_task(backup_settings.oom_kill_allocating_task);
 		block.overcommit_memory(backup_settings.overcommit_memory);
 		block.page_cluster(backup_settings.page_cluster);
+		block.ksm(backup_settings.ksm);
 	}
 
 	// entropy
