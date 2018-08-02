@@ -205,6 +205,7 @@ void Subcore::setup_level_0() {
 
 	level_0.gov_pref = std::vector<std::string> {
 		"powersave",
+		"schedutil",
 		"performance"
 	};
 		
@@ -254,6 +255,7 @@ void Subcore::setup_level_1() {
 
 	level_1.gov_pref = std::vector<std::string> {
 		"interactive",
+		"schedutil",
 		"performance"
 	};
 
@@ -325,6 +327,7 @@ void Subcore::setup_level_2() {
 
 	level_2.gov_pref = std::vector<std::string> {
 		"interactive",
+		"schedutil",
 		"performance"
 	};
 
@@ -396,6 +399,7 @@ void Subcore::setup_level_3() {
 
 	level_3.gov_pref = std::vector<std::string> {
 		"interactive",
+		"schedutil",
 		"performance"
 	};
 
