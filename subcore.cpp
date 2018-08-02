@@ -528,8 +528,8 @@ void Subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 	// SMP
 	if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive")) {
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
-	} else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "interactive")) {
-		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "interactive)";
+	} else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive")) {
+		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive)";
 	} else {
 		return;
 	}
