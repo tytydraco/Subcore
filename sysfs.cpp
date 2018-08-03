@@ -77,6 +77,39 @@ uint8_t SysFs::Cpu::loadavg() {
 	return (uint8_t) (loadavg);
 }
 
+void SysFs::Cpu::hotplug(std::string name, bool state) {
+	std::string new_state = state ? "1" : "0";
+	if (name == "thunderplug")
+		IO::write_file("/sys/kernel/thunderplug/hotplug_enabled", new_state);
+	else if (name == "autosmp")
+		IO::write_file("/sys/kernel/autosmp/conf/online", new_state);	
+	else if (name == "blu_plug")
+		IO::write_file("/sys/module/blu_plug/parameters/enabled", new_state);	
+	else if (name == "msm_hotplug")
+		IO::write_file("/sys/module/msm_hotplug/msm_enabled", new_state);	
+	else if (name == "intelli_plug")
+		IO::write_file("/sys/kernel/intelli_plug/intelli_plug_active", new_state);	
+	else if (name == "lazyplug")
+		IO::write_file("/sys/module/lazyplug/parameters/lazyplug_active", new_state);	
+}
+
+std::string SysFs::Cpu::hotplug() {
+	if (IO::read_file("/sys/kernel/thunderplug/hotplug_enabled") == "1")
+		return "thunderplug";
+	else if (IO::read_file("/sys/kernel/autosmp/conf/online") == "1")
+		return "autosmp";
+	else if (IO::read_file("/sys/module/blu_plug/parameters/enabled") == "1")
+		return "blu_plug";
+	else if (IO::read_file("/sys/module/msm_hotplug/msm_enabled") == "1")
+		return "msm_hotplug";
+	else if (IO::read_file("/sys/kernel/intelli_plug/intelli_plug_active") == "1")
+		return "intelli_plug";
+	else if (IO::read_file("/sys/module/lazyplug/parameters/lazyplug_active") =="1")
+		return "lazyplug";
+
+	return "";
+}
+
 std::vector<uint16_t> SysFs::Gpu::freqs() {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_GPU + "/gpu_freq_table");

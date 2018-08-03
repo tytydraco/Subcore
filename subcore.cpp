@@ -5,6 +5,7 @@
 #include "subcore.h"
 
 void Subcore::UserSettings::save() {
+	hotplug = cpu.hotplug();
 	std::vector<uint32_t> freqs;
 	std::vector<std::string> govs;
 	uint8_t online = cpu.online();
@@ -63,6 +64,7 @@ void Subcore::UserSettings::save() {
 }
 
 void Subcore::UserSettings::load() {
+	cpu.hotplug(hotplug, true);
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.max_freq(i, backup_settings.cpu_max_freqs[i]);
@@ -153,7 +155,11 @@ void Subcore::algorithm() {
 	}
 }
 
-void Subcore::setup_levels() {	
+void Subcore::setup_levels() {
+	std::string hotplug = cpu.hotplug();
+	while (hotplug != "")
+		cpu.hotplug(hotplug, false);
+
 	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
 	level_1.load_requirement = 40;

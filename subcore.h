@@ -66,6 +66,7 @@ class Subcore {
 		struct UserSettings {
 			private:
 				sysfs_struct backup_settings;
+				std::string hotplug;
 				SysFs::Cpu &cpu;
 				SysFs::Block &block;
 				SysFs::Gpu &gpu;

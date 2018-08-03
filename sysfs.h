@@ -21,6 +21,8 @@ class SysFs {
 				std::vector<uint32_t> freqs(uint16_t core);
 				std::vector<std::string> govs();
 				uint8_t loadavg();
+				void hotplug(std::string name, bool state);
+				std::string hotplug();
 
 				inline void max_freq(uint16_t core, uint32_t freq) {
 					IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq", std::to_string(freq));
@@ -57,7 +59,7 @@ class SysFs {
 
 				inline std::string gov(uint16_t core) {
 					return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
-				}	
+				}
 		};
 
 		struct Gpu {
