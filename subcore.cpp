@@ -302,18 +302,18 @@ void Subcore::setup_levels() {
 		// universal
 		interactive_1.go_hispeed_load = 99;
 		interactive_1.above_hispeed_delay = "80000";
-		interactive_1.timer_rate = 20000;
-		interactive_1.timer_slack = 40000;
+		interactive_1.timer_rate = 40000;
+		interactive_1.timer_slack = -1;
 		interactive_1.min_sample_time = 100000;
 		interactive_2.go_hispeed_load = 80;
 		interactive_2.above_hispeed_delay = "80000";
 		interactive_2.timer_rate = 20000;
-		interactive_2.timer_slack = 20000;
+		interactive_2.timer_slack = -1;
 		interactive_2.min_sample_time = 80000;
 		interactive_3.go_hispeed_load = 75;
 		interactive_3.above_hispeed_delay = "40000";
 		interactive_3.timer_rate = 20000;
-		interactive_3.timer_slack = 40000;
+		interactive_3.timer_slack = -1;
 		interactive_3.min_sample_time = 80000;
 
 		// per cpu
