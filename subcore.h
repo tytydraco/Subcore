@@ -19,7 +19,7 @@ class Subcore {
 			std::string above_hispeed_delay;
 			uint32_t timer_rate;
 			uint32_t hispeed_freq;
-			int32_t timer_slack;
+			int timer_slack;
 			std::string target_loads;
 			uint32_t min_sample_time;
 			uint8_t ignore_hispeed_on_notif;
