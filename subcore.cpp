@@ -55,7 +55,7 @@ void Subcore::UserSettings::save() {
 		interactive.go_hispeed_load = (uint8_t) stoi(IO::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
 		interactive.above_hispeed_delay = IO::read_file(PATH_INTERACTIVE + "/above_hispeed_delay");
 		interactive.timer_rate = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_rate"));
-		interactive.timer_slack = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_slack"));
+		interactive.timer_slack = (int32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_slack"));
 		interactive.min_sample_time = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/min_sample_time"));
 		interactive.hispeed_freq = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/hispeed_freq"));
 		interactive.target_loads = IO::read_file(PATH_INTERACTIVE + "/target_loads");
