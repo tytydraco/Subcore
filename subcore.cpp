@@ -236,11 +236,11 @@ void Subcore::setup_levels() {
 		level_0.level_data.readaheads.push_back(1024);
 		level_0.level_data.ioscheds.push_back("noop");
 		level_1.level_data.readaheads.push_back(2048);
-		level_1.level_data.ioscheds.push_back("dealine");
+		level_1.level_data.ioscheds.push_back("deadline");
 		level_2.level_data.readaheads.push_back(2048);
-		level_2.level_data.ioscheds.push_back("dealine");
+		level_2.level_data.ioscheds.push_back("deadline");
 		level_3.level_data.readaheads.push_back(2048);
-		level_3.level_data.ioscheds.push_back("dealine");
+		level_3.level_data.ioscheds.push_back("deadline");
 	}
 
 	level_0.level_data.lmk_minfree = block.LMK_LIGHT;
