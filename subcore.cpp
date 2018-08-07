@@ -199,7 +199,7 @@ void Subcore::setup_levels() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);
-			new_cpu_max_freqs_1.push_back(cpu_avail_freqs[3]);
+			new_cpu_max_freqs_1.push_back(cpu_avail_freqs[1]);
 			new_cpu_max_freqs_2.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
 			new_cpu_max_freqs_3.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 		} else {
@@ -295,7 +295,6 @@ void Subcore::setup_levels() {
 	level_3.level_data.overcommit_memory = 1;
 	level_3.level_data.page_cluster = 3;
 	level_3.level_data.ksm = 0;
-
 	for (size_t i = 0; i < online; i++) {
 		interactive_struct interactive_1;
 		interactive_struct interactive_2;
@@ -321,11 +320,11 @@ void Subcore::setup_levels() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
 			interactive_1.hispeed_freq = cpu_avail_freqs[1];
-			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << cpu_avail_freqs[1] << ":97 " << cpu_avail_freqs[2] << ":99")).str();
+			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "97 " << cpu_avail_freqs[1] << ":99 ").str();
 			interactive_2.hispeed_freq = cpu_avail_freqs[2];
-			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[2] << ":80 " << cpu_avail_freqs[3] << ":85 " << cpu_avail_freqs[4] << ":99")).str();
+			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[1] << ":80 " << cpu_avail_freqs[2] << ":85 " << cpu_avail_freqs[3] << ":99")).str();
 			interactive_3.hispeed_freq = cpu_avail_freqs[3];
-			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << cpu_avail_freqs[3] << ":75 " << cpu_avail_freqs[5] << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
+			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << cpu_avail_freqs[1] << ":75 " << cpu_avail_freqs[3] << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
 			interactive_1.hispeed_freq = 0;
 			interactive_1.target_loads = "";
