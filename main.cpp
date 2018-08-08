@@ -38,28 +38,16 @@ void deamon() {
 
 	umask(0);
 	chdir("/");
-  for (int32_t x = sysconf(_SC_OPEN_MAX); x >= 0; x--) {
+	for (int32_t x = sysconf(_SC_OPEN_MAX); x >= 0; x--)
 		close (x);
-  }
 
 }
 
-int main(int argc, char** argv) {
-	// fork self
-	deamon();
-
-	// perform the root check
-	if (!Root::is_root()) {
-		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
-		std::exit(1);
-	}
-
-	// setup the presets based on the device
-	subcore.setup_levels();
-	
+int main(int argc, char** argv) {	
 	// scan for command line args
-	int opt;
-	while ((opt = getopt(argc, argv, "dmp")) != -1) {
+	int16_t opt;
+	bool fork = true;
+	while ((opt = getopt(argc, argv, "dmpf")) != -1) {
 		switch (opt) {
 			case 'd':
 				std::cout << "[*] Debug enabled" << std::endl;
@@ -75,23 +63,40 @@ int main(int argc, char** argv) {
 					std::cout << "[*] Power-Aware disabled" << std::endl;
 				subcore.power_aware = false;
 				break;
+			case 'f':
+				if (subcore.debug)
+					std::cout << "[*] Not forking" << std::endl;
+				fork = false;
+				break;
 			case '?':  // unknown option...
 				exit(1);
 				break;
 		}
 	}
 
-	// user settings managenent
-	if (subcore.debug)
-		std::cout << "[*] Saving user settings" << std::endl;
-	subcore.user_settings.save();
+	if (fork)
+		deamon();
 
 	// register exit handler to restore settings
 	signal(SIGINT, onexit_handler);
 	signal(SIGTERM, onexit_handler);
 
+	// perform the root check
+	if (!Root::is_root()) {
+		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
+		std::exit(1);
+	}
+
 	if (subcore.debug)
 		std::cout << "[*] SubCore Init" << std::endl;
+
+	// user settings managenent
+	if (subcore.debug)
+		std::cout << "[*] Saving user settings" << std::endl;
+	subcore.user_settings.save();
+
+	// setup the presets based on the device
+	subcore.setup_levels();
 
 	// start the algorithm itself
 	while (1) {
