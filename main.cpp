@@ -16,9 +16,7 @@ void onexit_handler(int signum) {
 	std::exit(signum);
 }
 
-int main(int argc, char** argv) {
-	std::cout << "[*] SubCore Init" << std::endl;
-	
+int main(int argc, char** argv) {	
 	// perform the root check
 	if (!Root::is_root()) {
 		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
@@ -60,6 +58,9 @@ int main(int argc, char** argv) {
 	// register exit handler to restore settings
 	signal(SIGINT, onexit_handler);
 	signal(SIGTERM, onexit_handler);
+
+	if (subcore.debug)
+		std::cout << "[*] SubCore Init" << std::endl;
 
 	// start the algorithm itself
 	while (1) {
