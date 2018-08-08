@@ -38,7 +38,7 @@ void deamon() {
 
 	umask(0);
 	chdir("/");
-  for (uint16_t x = sysconf(_SC_OPEN_MAX); x >= 0; x--) {
+  for (int32_t x = sysconf(_SC_OPEN_MAX); x >= 0; x--) {
 		close (x);
   }
 
