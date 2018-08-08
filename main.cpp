@@ -16,7 +16,38 @@ void onexit_handler(int signum) {
 	std::exit(signum);
 }
 
-int main(int argc, char** argv) {	
+void deamon() {
+	pid_t pid = fork();
+
+	if (pid < 0)
+		exit(EXIT_FAILURE);
+	else if (pid > 0)
+		exit(EXIT_SUCCESS);
+	
+	if (setsid() < 0)
+		exit(EXIT_FAILURE);
+
+	signal(SIGCHLD, SIG_IGN);
+	signal(SIGHUP, SIG_IGN);
+
+	pid = fork();
+	if (pid < 0)
+		exit(EXIT_FAILURE);
+	else if (pid > 0)
+		exit(EXIT_SUCCESS);
+
+	umask(0);
+	chdir("/");
+  for (uint16_t x = sysconf(_SC_OPEN_MAX); x >= 0; x--) {
+		close (x);
+  }
+
+}
+
+int main(int argc, char** argv) {
+	// fork self
+	deamon();
+
 	// perform the root check
 	if (!Root::is_root()) {
 		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
