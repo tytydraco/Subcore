@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <math.h>
 
 #include "subcore.h"
 
@@ -454,7 +455,7 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 
 uint16_t Subcore::freq_from_percent(uint8_t core, uint8_t percent) {
 	std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(core);
-	uint16_t index = cpu_avail_freqs.size() * ((float) percent / 100) - 1;
+	uint16_t index = round(cpu_avail_freqs.size() * ((float) percent / 100)) - 1;
 	if (index < 0)
 		index = 0;
 	return cpu_avail_freqs[index];
