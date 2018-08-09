@@ -199,7 +199,7 @@ void Subcore::setup_levels() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);
-			new_cpu_max_freqs_1.push_back(cpu_avail_freqs[1]);
+			new_cpu_max_freqs_1.push_back(cpu_avail_freqs[2]);
 			new_cpu_max_freqs_2.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 3]);
 			new_cpu_max_freqs_3.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 		} else {
@@ -320,7 +320,7 @@ void Subcore::setup_levels() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
 			interactive_1.hispeed_freq = cpu_avail_freqs[1];
-			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "97 " << cpu_avail_freqs[1] << ":99")).str();
+			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << cpu_avail_freqs[1] << ":97 " << cpu_avail_freqs[2] << ":99")).str();
 			interactive_2.hispeed_freq = cpu_avail_freqs[2];
 			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << cpu_avail_freqs[1] << ":80 " << cpu_avail_freqs[2] << ":85 " << cpu_avail_freqs[3] << ":99")).str();
 			interactive_3.hispeed_freq = cpu_avail_freqs[3];
@@ -450,5 +450,13 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 
 	// double failsafe
 	return "performance";
+}
+
+uint16_t Subcore::freq_from_percent(uint8_t core, uint8_t percent) {
+	std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(core);
+	uint16_t index = cpu_avail_freqs.size() * ((float) percent / 100) - 1;
+	if (index < 0)
+		index = 0;
+	return cpu_avail_freqs[index];
 }
 
