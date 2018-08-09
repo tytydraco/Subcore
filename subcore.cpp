@@ -200,8 +200,8 @@ void Subcore::setup_levels() {
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);
-			new_cpu_max_freqs_1.push_back(freq_from_percent(i, 30));
-			new_cpu_max_freqs_2.push_back(freq_from_percent(i, 60));
+			new_cpu_max_freqs_1.push_back(freq_from_percent(cpu_avail_freqs, 30));
+			new_cpu_max_freqs_2.push_back(freq_from_percent(cpu_avail_freqs, 60));
 			new_cpu_max_freqs_3.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 		} else {
 			new_cpu_max_freqs_0.push_back(0);
@@ -220,9 +220,9 @@ void Subcore::setup_levels() {
 	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs_3;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
-	if (gpu_avail_freqs.size() > 4) {
-		level_0.level_data.gpu_max_freq = gpu_avail_freqs[3];
-		level_1.level_data.gpu_max_freq = gpu_avail_freqs[4];
+	if (gpu_avail_freqs.size() > 1) {
+		level_0.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 50);
+		level_1.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 70);
 		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 	} else {
@@ -320,12 +320,12 @@ void Subcore::setup_levels() {
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
-			interactive_1.hispeed_freq = freq_from_percent(i, 15);
-			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(i, 15) << ":97 " << freq_from_percent(i, 30) << ":99")).str();
-			interactive_2.hispeed_freq = freq_from_percent(i, 30);
-			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(i, 15) << ":80 " << freq_from_percent(i, 30) << ":85 " << freq_from_percent(i, 45) << ":99")).str();
-			interactive_3.hispeed_freq = freq_from_percent(i, 45);
-			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(i, 15) << ":75 " << freq_from_percent(i, 45) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
+			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 15);
+			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 15) << ":97 " << freq_from_percent(cpu_avail_freqs, 30) << ":99")).str();
+			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30);
+			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 15) << ":80 " << freq_from_percent(cpu_avail_freqs, 30) << ":85 " << freq_from_percent(cpu_avail_freqs, 45) << ":99")).str();
+			interactive_3.hispeed_freq = freq_from_percent(cpu_avail_freqs, 45);
+			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 15) << ":75 " << freq_from_percent(cpu_avail_freqs, 45) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
 			interactive_1.hispeed_freq = 0;
 			interactive_1.target_loads = "";
@@ -453,11 +453,17 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	return "performance";
 }
 
-uint32_t Subcore::freq_from_percent(uint8_t core, uint8_t percent) {
-	std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(core);
-	uint16_t index = round(cpu_avail_freqs.size() * ((float) percent / 100)) - 1;
+uint32_t Subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent) {
+	uint16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
 	if (index < 0)
 		index = 0;
-	return cpu_avail_freqs[index];
+	return avail_freqs[index];
+}
+
+uint32_t Subcore::freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent) {
+	uint16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
+	if (index < 0)
+		index = 0;
+	return avail_freqs[index];
 }
 
