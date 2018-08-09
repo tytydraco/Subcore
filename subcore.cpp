@@ -453,7 +453,7 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	return "performance";
 }
 
-uint16_t Subcore::freq_from_percent(uint8_t core, uint8_t percent) {
+uint32_t Subcore::freq_from_percent(uint8_t core, uint8_t percent) {
 	std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(core);
 	uint16_t index = round(cpu_avail_freqs.size() * ((float) percent / 100)) - 1;
 	if (index < 0)

@@ -101,7 +101,7 @@ class Subcore {
 		void set_sysfs(level_struct level);
 		void set_interactive(uint8_t core, interactive_struct interactive);
 		std::string preferred_gov(std::vector<std::string> pref_govs);
-		uint16_t freq_from_percent(uint8_t core, uint8_t percent);
+		uint32_t freq_from_percent(uint8_t core, uint8_t percent);
 	public:
 		bool debug = false;
 		bool low_mem = false;
