@@ -454,14 +454,14 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 }
 
 uint32_t Subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent) {
-	uint16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
+	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
 	if (index < 0)
 		index = 0;
 	return avail_freqs[index];
 }
 
 uint32_t Subcore::freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent) {
-	uint16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
+	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
 	if (index < 0)
 		index = 0;
 	return avail_freqs[index];
