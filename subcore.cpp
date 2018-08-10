@@ -112,14 +112,14 @@ void Subcore::UserSettings::load() {
 }
 
 void Subcore::algorithm() {
-	uint8_t load = cpu.loadavg();	
+	uint8_t load = cpu.loadavg();
+	if (cpu.online() <= 4)
+		load *= 1.5;
 	
 	//special cases
 	if (display.suspended()) {
-		// use minimum load to conserve power
 		load = 0;
 	} else if (power_aware) {
-		// conserve power at lower battery percentages
 		uint8_t capacity = battery.capacity();
 		bool charging = battery.charging();
 		if (charging)
