@@ -123,7 +123,7 @@ std::string SysFs::Cpu::hotplug() {
 	else if (IO::read_file("/sys/kernel/bricked_hotplug/conf/enabled") =="1")
 		return "bricked_hotplug";
 	else if (IO::read_file("/sys/class/misc/mako_hotplug_control/enabled") =="1")
-		return "mako_hitpkug_control";
+		return "mako_hotpkug_control";
 	else if (IO::read_file("/sys/module/lazyplug/parameters/lazyplug_active") =="1")
 		return "zen_decision";
 

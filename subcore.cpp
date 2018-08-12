@@ -164,7 +164,7 @@ void Subcore::setup_levels() {
 		cpu.hotplug(hotplug, false);
 		hotplug = cpu.hotplug();
 	}
-	//TODO: online all cores
+	
 	uint16_t mp_pid = IO::get_pid("mpdecision");
 	if (mp_pid != 0)
 		kill(mp_pid, SIGTERM);
@@ -205,6 +205,7 @@ void Subcore::setup_levels() {
 	std::vector<uint32_t> new_cpu_max_freqs_2;
 	std::vector<uint32_t> new_cpu_max_freqs_3;
 	for (size_t i = 0; i < online; i++) {
+		cpu.online(i, true);
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() > 0) {
 			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);

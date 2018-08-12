@@ -23,6 +23,16 @@ class SysFs {
 				uint8_t loadavg();
 				void hotplug(std::string name, bool state);
 				std::string hotplug();
+				
+				inline void online(uint8_t core, bool state) {
+					uint8_t new_state = state ? 1 : 0;
+					IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/online", std::to_string(new_state));
+				}
+				
+				inline bool online(uint8_t core) {
+					std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/online");
+					return (str == "1");
+				}
 
 				inline void max_freq(uint16_t core, uint32_t freq) {
 					IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq", std::to_string(freq));
