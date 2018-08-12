@@ -82,7 +82,7 @@ void SysFs::Cpu::hotplug(std::string name, bool state) {
 	if (name == "thunderplug")
 		IO::write_file("/sys/kernel/thunderplug/hotplug_enabled", new_state);
 	else if (name == "autosmp")
-		IO::write_file("/sys/kernel/autosmp/conf/online", new_state);	
+		IO::write_file("/sys/kernel/autosmp/conf/online", state ? "Y" : "N");	
 	else if (name == "blu_plug")
 		IO::write_file("/sys/module/blu_plug/parameters/enabled", new_state);	
 	else if (name == "msm_hotplug")
@@ -106,7 +106,7 @@ void SysFs::Cpu::hotplug(std::string name, bool state) {
 std::string SysFs::Cpu::hotplug() {
 	if (IO::read_file("/sys/kernel/thunderplug/hotplug_enabled") == "1")
 		return "thunderplug";
-	else if (IO::read_file("/sys/kernel/autosmp/conf/online") == "1")
+	else if (IO::read_file("/sys/kernel/autosmp/conf/online") == "Y")
 		return "autosmp";
 	else if (IO::read_file("/sys/module/blu_plug/parameters/enabled") == "1")
 		return "blu_plug";
