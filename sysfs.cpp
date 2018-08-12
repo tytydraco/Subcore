@@ -13,7 +13,7 @@
 #include "misc.h"
 #include "sysfs.h"
 
-std::vector<uint32_t> SysFs::Cpu::freqs(uint16_t core) {
+std::vector<uint32_t> SysFs::Cpu::freqs(uint8_t core) {
 	// read and split avail freqs
 	std::string freq_list_str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_available_frequencies");
 	if (freq_list_str == "")
