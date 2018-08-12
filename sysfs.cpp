@@ -90,7 +90,17 @@ void SysFs::Cpu::hotplug(std::string name, bool state) {
 	else if (name == "intelli_plug")
 		IO::write_file("/sys/kernel/intelli_plug/intelli_plug_active", new_state);	
 	else if (name == "lazyplug")
-		IO::write_file("/sys/module/lazyplug/parameters/lazyplug_active", new_state);	
+		IO::write_file("/sys/module/lazyplug/parameters/lazyplug_active", new_state);
+	else if (name == "AiO_HotPlug")
+		IO::write_file("/sys/kernel/AiO_HotPlug/toggle", new_state);
+	else if (name == "alucard_hotplug")
+		IO::write_file("/sys/kernel/alucard_hotplug/hotplug_enable", new_state);
+	else if (name == "bricked_hotplug")
+		IO::write_file("/sys/kernel/bricked_hotplug/conf/enabled", new_state);
+	else if (name == "mako_hotplug_control")
+		IO::write_file("/sys/class/misc/mako_hotplug_control/enabled", new_state);
+	else if (name == "zen_decision")
+		IO::write_file("/sys/kernel/zen_decision/enabled", new_state);
 }
 
 std::string SysFs::Cpu::hotplug() {
@@ -106,6 +116,16 @@ std::string SysFs::Cpu::hotplug() {
 		return "intelli_plug";
 	else if (IO::read_file("/sys/module/lazyplug/parameters/lazyplug_active") =="1")
 		return "lazyplug";
+	else if (IO::read_file("/sys/kernel/AiO_HotPlug/toggle") =="1")
+		return "AiO_HotPlug";
+	else if (IO::read_file("/sys/kernel/alucard_hotplug/hotplug_enable") =="1")
+		return "alucard_hotplug";
+	else if (IO::read_file("/sys/kernel/bricked_hotplug/conf/enabled") =="1")
+		return "bricked_hotplug";
+	else if (IO::read_file("/sys/class/misc/mako_hotplug_control/enabled") =="1")
+		return "mako_hitpkug_control";
+	else if (IO::read_file("/sys/module/lazyplug/parameters/lazyplug_active") =="1")
+		return "zen_decision";
 
 	return "";
 }
