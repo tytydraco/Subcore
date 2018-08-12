@@ -158,8 +158,10 @@ void Subcore::algorithm() {
 
 void Subcore::setup_levels() {
 	std::string hotplug = cpu.hotplug();
-	while (hotplug != "")
+	while (hotplug != "") {
 		cpu.hotplug(hotplug, false);
+		hotplug = cpu.hotplug();
+	}
 
 	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
