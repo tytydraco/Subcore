@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <math.h>
+#include <sys/types.h>
+#include <signal.h>
 
 #include "subcore.h"
 
@@ -162,6 +164,10 @@ void Subcore::setup_levels() {
 		cpu.hotplug(hotplug, false);
 		hotplug = cpu.hotplug();
 	}
+	//TODO: online all cores
+	uint16_t mp_pid = IO::get_pid("mpdecision");
+	if (mp_pid != 0)
+		kill(mp_pid, SIGTERM);
 
 	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
