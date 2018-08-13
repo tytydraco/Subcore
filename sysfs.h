@@ -11,7 +11,7 @@
 
 class SysFs {
 	public:
-		struct Cpu {
+		class Cpu {
 			private:
 				const std::string PATH_CPU = "/sys/devices/system/cpu";
 				const std::string PATH_STAT = "/proc/stat";
@@ -72,7 +72,7 @@ class SysFs {
 				}
 		};
 
-		struct Gpu {
+		class Gpu {
 			private:
 				const std::string PATH_GPU = "/sys/kernel/gpu";
 			public:
@@ -110,7 +110,7 @@ class SysFs {
 				}
 		};
 
-		struct Block {
+		class Block {
 			private:
 				const std::string PATH_BLOCK = "/sys/block";
 				const std::string PATH_MOUNTS = "/proc/mounts";
@@ -300,7 +300,7 @@ class SysFs {
 
 		};
 
-		struct Battery {
+		class Battery {
 			private:
 				const std::string PATH_BATTERY = "/sys/class/power_supply/battery";
 			public:
@@ -317,7 +317,7 @@ class SysFs {
 				}
 		};
 
-		struct Memory {
+		class Memory {
 			private:
 				const std::string PATH_MEMINFO = "/proc/meminfo";
 			public:
@@ -325,7 +325,7 @@ class SysFs {
 				uint32_t avail_ram();	
 		};
 
-		struct Display {
+		class Display {
 			private:
 				const std::string PATH_STATE_NOTIFIER = "/sys/module/state_notifier/parameters";				
 				const std::string PATH_POWER_SUSPEND = "/sys/kernel/power_suspend";
