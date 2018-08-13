@@ -1,5 +1,4 @@
-#ifndef STATS_H
-#define STATS_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -334,5 +333,4 @@ class SysFs {
 				bool suspended();
 		};
 };
-#endif
 

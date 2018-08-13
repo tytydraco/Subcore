@@ -1,5 +1,4 @@
-#ifndef SUBCORE_H
-#define SUBCORE_H
+#pragma once
 
 #include "sysfs.h"
 
@@ -63,7 +62,7 @@ class Subcore {
 			sysfs_struct level_data;
 		};
 
-		struct UserSettings {
+		class UserSettings {
 			private:
 				sysfs_struct backup_settings;
 				std::string hotplug;
@@ -113,6 +112,4 @@ class Subcore {
 		void algorithm();	
 		void setup_levels();
 };
-
-#endif
 

@@ -1,5 +1,4 @@
-#ifndef MISC_H
-#define MISC_H
+#pragma once
 
 #include <string>
 #include <sys/stat.h>
@@ -21,6 +20,4 @@ namespace Root {
 		return (geteuid() == 0);
 	}
 }
-
-#endif
 
