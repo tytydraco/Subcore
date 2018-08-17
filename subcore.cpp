@@ -368,11 +368,11 @@ void Subcore::set_sysfs(level_struct level) {
 		// add a minor delay to keep it from dipping
 		// too soon (IE loading scene / video pause)
 		cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
-		if (same_level_count >= 5) {
+		if (same_level_count >= 10) {
 			cpu.STAT_AVG_SLEEP_MS += 3000;
 			if (debug)
 				std::cout << "+3000ms\t";
-		} else if (same_level_count >= 3) {
+		} else if (same_level_count >= 5) {
 			cpu.STAT_AVG_SLEEP_MS += 1500;
 			if (debug)
 				std::cout << "+1500ms\t";
