@@ -171,7 +171,7 @@ void Subcore::setup_levels() {
 
 	level_0.load_requirement = 10;
 	level_0.state = state_level_0;
-	level_1.load_requirement = 50;
+	level_1.load_requirement = 40;
 	level_1.state = state_level_1;
 	level_2.load_requirement = 70;
 	level_2.state = state_level_2;
