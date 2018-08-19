@@ -40,6 +40,7 @@ class Subcore {
 			std::vector<uint32_t> cpu_max_freqs;
 			std::vector<uint32_t> cpu_min_freqs;
 			uint16_t gpu_max_freq;
+			uint16_t gpu_min_freq;
 			std::string lmk_minfree;
 			std::vector<uint16_t> readaheads;
 			uint8_t swappiness;
@@ -97,8 +98,9 @@ class Subcore {
 		// the # of times the same level is selected
 		uint16_t same_level_count = 0;
 
-		// min freq offset
-		std::vector<uint8_t> freq_offsets;
+		// min freq offsets
+		std::vector<uint8_t> cpu_freq_offsets;
+		std::vector<uint8_t> gpu_freq_offsets;
 
 		// functions
 		void set_sysfs(level_struct level);

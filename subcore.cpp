@@ -17,6 +17,7 @@ void Subcore::UserSettings::save() {
 		backup_settings.cpu_govs.push_back(cpu.gov(i));
 	}
 	backup_settings.gpu_max_freq = gpu.max_freq();
+	backup_settings.gpu_min_freq = gpu.min_freq();
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (std::string blkdev : blkdevs) {
@@ -69,6 +70,8 @@ void Subcore::UserSettings::load() {
 		cpu.min_freq(i, backup_settings.cpu_min_freqs[i]);
 	}
 	gpu.max_freq(backup_settings.gpu_max_freq);
+	gpu.min_freq(backup_settings.gpu_min_freq);
+
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		block.iosched(blkdevs[i], backup_settings.ioscheds[i]);
@@ -202,7 +205,7 @@ void Subcore::setup_levels() {
 		if (cpu_avail_freqs.size() > 0) {					
 			std::vector<uint32_t>::iterator itr = std::find(cpu_avail_freqs.begin(), cpu_avail_freqs.end(), cpu.min_freq(i));
 			uint8_t offset = std::distance(cpu_avail_freqs.begin(), itr);
-			freq_offsets.push_back(offset);
+			cpu_freq_offsets.push_back(offset);
 
 			level_0.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[0]);
 			level_1.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
@@ -227,15 +230,29 @@ void Subcore::setup_levels() {
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
 	if (gpu_avail_freqs.size() > 1) {
-		level_0.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 50);
-		level_1.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 70);
+		std::vector<uint16_t>::iterator itr = std::find(gpu_avail_freqs.begin(), gpu_avail_freqs.end(), gpu.min_freq());
+		uint8_t offset = std::distance(gpu_avail_freqs.begin(), itr);
+		gpu_freq_offsets.push_back(offset);
+
+		level_0.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 50, offset);
+		level_1.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 70, offset);
 		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+
+		level_0.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_1.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_2.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_3.level_data.gpu_min_freq = gpu_avail_freqs[0];
 	} else {
 		level_0.level_data.gpu_max_freq = 0;
 		level_1.level_data.gpu_max_freq = 0;
 		level_2.level_data.gpu_max_freq = 0;
 		level_3.level_data.gpu_max_freq = 0;
+		
+		level_0.level_data.gpu_min_freq = 0;
+		level_1.level_data.gpu_min_freq = 0;
+		level_2.level_data.gpu_min_freq = 0;
+		level_3.level_data.gpu_min_freq = 0;
 	}
 
 	std::vector<std::string> blkdevs = block.blkdevs();
@@ -326,12 +343,12 @@ void Subcore::setup_levels() {
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
-			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]);
-			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, freq_offsets[i]) << ":99")).str();
-			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30, freq_offsets[i]);
-			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]) << ":80 " << freq_from_percent(cpu_avail_freqs, 30, freq_offsets[i]) << ":85 " << freq_from_percent(cpu_avail_freqs, 45, freq_offsets[i]) << ":99")).str();
+			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]);
+			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":99")).str();
+			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]);
+			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":80 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":85 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":99")).str();
 			interactive_3.hispeed_freq = freq_from_percent(cpu_avail_freqs, 45);
-			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]) << ":75 " << freq_from_percent(cpu_avail_freqs, 45, freq_offsets[i]) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
+			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":75 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
 			interactive_1.hispeed_freq = 0;
 			interactive_1.target_loads = "";
@@ -390,6 +407,7 @@ void Subcore::set_sysfs(level_struct level) {
 
 	// gpu max freq
 	gpu.max_freq(level.level_data.gpu_max_freq);
+	gpu.min_freq(level.level_data.gpu_min_freq);
 
 	// iosched & readahead
 	std::vector<std::string> blkdevs = block.blkdevs();
