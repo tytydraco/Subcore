@@ -38,6 +38,7 @@ class Subcore {
 			std::vector<std::string> cpu_govs;
 			std::vector<interactive_struct> interactives;
 			std::vector<uint32_t> cpu_max_freqs;
+			std::vector<uint32_t> cpu_min_freqs;
 			uint16_t gpu_max_freq;
 			std::string lmk_minfree;
 			std::vector<uint16_t> readaheads;

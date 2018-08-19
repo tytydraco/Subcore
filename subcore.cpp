@@ -10,25 +10,19 @@
 
 void Subcore::UserSettings::save() {
 	hotplug = cpu.hotplug();
-	std::vector<uint32_t> freqs;
-	std::vector<std::string> govs;
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
-		freqs.push_back(cpu.max_freq(i));
-		govs.push_back(cpu.gov(i));
+		backup_settings.cpu_max_freqs.push_back(cpu.max_freq(i));
+		backup_settings.cpu_min_freqs.push_back(cpu.min_freq(i));
+		backup_settings.cpu_govs.push_back(cpu.gov(i));
 	}
-	backup_settings.cpu_max_freqs = freqs;
-	backup_settings.cpu_govs = govs;	
 	backup_settings.gpu_max_freq = gpu.max_freq();
-	std::vector<std::string> ioscheds;
-	std::vector<uint16_t> readaheads;
+
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (std::string blkdev : blkdevs) {
-		ioscheds.push_back(block.iosched(blkdev));
-		readaheads.push_back(block.read_ahead(blkdev));
+		backup_settings.ioscheds.push_back(block.iosched(blkdev));
+		backup_settings.readaheads.push_back(block.read_ahead(blkdev));
 	}
-	backup_settings.ioscheds = ioscheds;
-	backup_settings.readaheads = readaheads;
 	
 	if (!low_mem) {
 		backup_settings.swappiness = block.swappiness();
@@ -72,6 +66,7 @@ void Subcore::UserSettings::load() {
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.max_freq(i, backup_settings.cpu_max_freqs[i]);
+		cpu.min_freq(i, backup_settings.cpu_min_freqs[i]);
 	}
 	gpu.max_freq(backup_settings.gpu_max_freq);
 	std::vector<std::string> blkdevs = block.blkdevs();
@@ -201,10 +196,6 @@ void Subcore::setup_levels() {
 	};
 		
 	uint8_t online = cpu.online();
-	std::vector<uint32_t> new_cpu_max_freqs_0;
-	std::vector<uint32_t> new_cpu_max_freqs_1;
-	std::vector<uint32_t> new_cpu_max_freqs_2;
-	std::vector<uint32_t> new_cpu_max_freqs_3;
 	for (size_t i = 0; i < online; i++) {
 		cpu.online(i, true);
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
@@ -213,25 +204,26 @@ void Subcore::setup_levels() {
 			uint8_t offset = std::distance(cpu_avail_freqs.begin(), itr);
 			freq_offsets.push_back(offset);
 
-			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);
-			new_cpu_max_freqs_1.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
-			new_cpu_max_freqs_2.push_back(freq_from_percent(cpu_avail_freqs, 60, offset));
-			new_cpu_max_freqs_3.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
+			level_0.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+			level_1.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
+			level_2.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 60, offset));
+			level_3.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
+
+			level_0.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
+			level_1.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
+			level_2.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
+			level_3.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
 		} else {
-			new_cpu_max_freqs_0.push_back(0);
-			new_cpu_max_freqs_1.push_back(0);
-			new_cpu_max_freqs_2.push_back(0);
-			new_cpu_max_freqs_3.push_back(0);
+			level_0.level_data.cpu_min_freqs.push_back(0);
+			level_1.level_data.cpu_min_freqs.push_back(0);
+			level_2.level_data.cpu_min_freqs.push_back(0);
+			level_3.level_data.cpu_min_freqs.push_back(0);
 		}
 		level_0.level_data.cpu_govs.push_back(preferred_gov(level_0.gov_pref));
 		level_1.level_data.cpu_govs.push_back(preferred_gov(level_1.gov_pref));
 		level_2.level_data.cpu_govs.push_back(preferred_gov(level_2.gov_pref));
 		level_3.level_data.cpu_govs.push_back(preferred_gov(level_3.gov_pref));
 	}
-	level_0.level_data.cpu_max_freqs = new_cpu_max_freqs_0;
-	level_1.level_data.cpu_max_freqs = new_cpu_max_freqs_1;
-	level_2.level_data.cpu_max_freqs = new_cpu_max_freqs_2;
-	level_3.level_data.cpu_max_freqs = new_cpu_max_freqs_3;
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
 	if (gpu_avail_freqs.size() > 1) {
@@ -391,6 +383,7 @@ void Subcore::set_sysfs(level_struct level) {
 	for (size_t i = 0; i < online; i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
 		cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
+		cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
 		if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
 	}
