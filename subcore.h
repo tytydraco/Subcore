@@ -96,12 +96,15 @@ class Subcore {
 		// the # of times the same level is selected
 		uint16_t same_level_count = 0;
 
+		// min freq offset
+		std::vector<uint8_t> freq_offsets;
+
 		// functions
 		void set_sysfs(level_struct level);
 		void set_interactive(uint8_t core, interactive_struct interactive);
 		std::string preferred_gov(std::vector<std::string> pref_govs);
-		uint32_t freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent);
-		uint32_t freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent);
+		uint32_t freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent, uint8_t offset = 0);
+		uint32_t freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent, uint8_t offset = 0);
 	public:
 		bool debug = false;
 		bool low_mem = false;

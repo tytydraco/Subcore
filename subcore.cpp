@@ -4,6 +4,7 @@
 #include <math.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <algorithm>
 
 #include "subcore.h"
 
@@ -207,10 +208,14 @@ void Subcore::setup_levels() {
 	for (size_t i = 0; i < online; i++) {
 		cpu.online(i, true);
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-		if (cpu_avail_freqs.size() > 0) {
+		if (cpu_avail_freqs.size() > 0) {					
+			std::vector<uint32_t>::iterator itr = std::find(cpu_avail_freqs.begin(), cpu_avail_freqs.end(), cpu.min_freq(i));
+			uint8_t offset = std::distance(cpu_avail_freqs.begin(), itr);
+			freq_offsets.push_back(offset);
+
 			new_cpu_max_freqs_0.push_back(cpu_avail_freqs[0]);
-			new_cpu_max_freqs_1.push_back(freq_from_percent(cpu_avail_freqs, 30));
-			new_cpu_max_freqs_2.push_back(freq_from_percent(cpu_avail_freqs, 60));
+			new_cpu_max_freqs_1.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
+			new_cpu_max_freqs_2.push_back(freq_from_percent(cpu_avail_freqs, 60, offset));
 			new_cpu_max_freqs_3.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 		} else {
 			new_cpu_max_freqs_0.push_back(0);
@@ -265,7 +270,7 @@ void Subcore::setup_levels() {
 	level_0.level_data.oom_kill_allocating_task = 0;
 	level_0.level_data.overcommit_memory = 0;
 	level_0.level_data.page_cluster = 0;
-	level_0.level_data.ksm = 0;	
+	level_0.level_data.ksm = 0;
 	level_1.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_1.level_data.swappiness = 20;
 	level_1.level_data.cache_pressure = 60;
@@ -329,12 +334,12 @@ void Subcore::setup_levels() {
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
-			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20);
-			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20) << ":97 " << freq_from_percent(cpu_avail_freqs, 30) << ":99")).str();
-			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30);
-			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 20) << ":80 " << freq_from_percent(cpu_avail_freqs, 30) << ":85 " << freq_from_percent(cpu_avail_freqs, 45) << ":99")).str();
+			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]);
+			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, freq_offsets[i]) << ":99")).str();
+			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30, freq_offsets[i]);
+			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]) << ":80 " << freq_from_percent(cpu_avail_freqs, 30, freq_offsets[i]) << ":85 " << freq_from_percent(cpu_avail_freqs, 45, freq_offsets[i]) << ":99")).str();
 			interactive_3.hispeed_freq = freq_from_percent(cpu_avail_freqs, 45);
-			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20) << ":75 " << freq_from_percent(cpu_avail_freqs, 45) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
+			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20, freq_offsets[i]) << ":75 " << freq_from_percent(cpu_avail_freqs, 45, freq_offsets[i]) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
 			interactive_1.hispeed_freq = 0;
 			interactive_1.target_loads = "";
@@ -462,17 +467,21 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	return "performance";
 }
 
-uint32_t Subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent) {
-	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
+uint32_t Subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent, uint8_t offset) {
+	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1 + offset;
 	if (index < 0)
 		index = 0;
+	if (index > (uint16_t) avail_freqs.size() - 1)
+		index = avail_freqs.size() - 1;
 	return avail_freqs[index];
 }
 
-uint32_t Subcore::freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent) {
-	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1;
+uint32_t Subcore::freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent, uint8_t offset) {
+	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1 + offset;
 	if (index < 0)
 		index = 0;
+	if (index > (uint16_t) avail_freqs.size() - 1)
+		index = avail_freqs.size() - 1;
 	return avail_freqs[index];
 }
 
