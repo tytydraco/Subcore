@@ -7,7 +7,7 @@
 
 #include "misc.h"
 
-namespace IO {
+namespace io {
 	void write_file(std::string path, std::string in) {
 		std::ofstream of;
 		of.open(path);

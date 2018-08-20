@@ -7,12 +7,12 @@
 #include "sysfs.h"
 #include "subcore.h"
 
-Subcore subcore;
+subcore subcore;
 
 void onexit_handler(int signum) {
 	if (subcore.debug)
 		std::cout << "[*] Restoring user settings" << std::endl;
-	subcore.user_settings.load();
+	subcore.settings.load();
 	std::exit(signum);
 }
 
@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 	signal(SIGTERM, onexit_handler);
 
 	// perform the root check
-	if (!Root::is_root()) {
+	if (!root::is_root()) {
 		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
 		std::exit(1);
 	}
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 	// user settings managenent
 	if (subcore.debug)
 		std::cout << "[*] Saving user settings" << std::endl;
-	subcore.user_settings.save();
+	subcore.settings.save();
 
 	// setup the presets based on the device
 	subcore.setup_levels();

@@ -8,7 +8,7 @@
 
 #include "subcore.h"
 
-void Subcore::UserSettings::save() {
+void subcore::user_settings::save() {
 	hotplug = cpu.hotplug();
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
@@ -43,26 +43,26 @@ void Subcore::UserSettings::save() {
 	for (size_t i = 0; i < online; i++) {
 		interactive_struct interactive;
 		std::string PATH_INTERACTIVE;
-		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
+		if (io::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
-		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
+		else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive";
 		else {
 			backup_settings.interactives.push_back(interactive);
 			continue;
 		}
-		interactive.go_hispeed_load = (uint8_t) stoi(IO::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
-		interactive.above_hispeed_delay = IO::read_file(PATH_INTERACTIVE + "/above_hispeed_delay");
-		interactive.timer_rate = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_rate"));
-		interactive.timer_slack = (int32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/timer_slack"));
-		interactive.min_sample_time = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/min_sample_time"));
-		interactive.hispeed_freq = (uint32_t) stoi(IO::read_file(PATH_INTERACTIVE + "/hispeed_freq"));
-		interactive.target_loads = IO::read_file(PATH_INTERACTIVE + "/target_loads");
+		interactive.go_hispeed_load = (uint8_t) stoi(io::read_file(PATH_INTERACTIVE + "/go_hispeed_load"));
+		interactive.above_hispeed_delay = io::read_file(PATH_INTERACTIVE + "/above_hispeed_delay");
+		interactive.timer_rate = (uint32_t) stoi(io::read_file(PATH_INTERACTIVE + "/timer_rate"));
+		interactive.timer_slack = (int32_t) stoi(io::read_file(PATH_INTERACTIVE + "/timer_slack"));
+		interactive.min_sample_time = (uint32_t) stoi(io::read_file(PATH_INTERACTIVE + "/min_sample_time"));
+		interactive.hispeed_freq = (uint32_t) stoi(io::read_file(PATH_INTERACTIVE + "/hispeed_freq"));
+		interactive.target_loads = io::read_file(PATH_INTERACTIVE + "/target_loads");
 		backup_settings.interactives.push_back(interactive);
 	}
 }
 
-void Subcore::UserSettings::load() {
+void subcore::user_settings::load() {
 	cpu.hotplug(hotplug, true);
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
@@ -95,24 +95,24 @@ void Subcore::UserSettings::load() {
 
 	for (uint8_t i = 0; i < online; i++) {
 		std::string PATH_INTERACTIVE;
-		if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
+		if (io::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
-		else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
+		else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
 			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive";
 		else
 			continue;
-		IO::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(backup_settings.interactives[i].go_hispeed_load));
-		IO::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", backup_settings.interactives[i].above_hispeed_delay);
-		IO::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(backup_settings.interactives[i].timer_rate));
-		IO::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(backup_settings.interactives[i].timer_slack));
-		IO::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
-		IO::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
-		IO::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
+		io::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(backup_settings.interactives[i].go_hispeed_load));
+		io::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", backup_settings.interactives[i].above_hispeed_delay);
+		io::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(backup_settings.interactives[i].timer_rate));
+		io::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(backup_settings.interactives[i].timer_slack));
+		io::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
+		io::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
+		io::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
 		cpu.gov(i, backup_settings.cpu_govs[i]);
 	}
 }
 
-void Subcore::algorithm() {
+void subcore::algorithm() {
 	uint8_t load = cpu.loadavg();
 	if (cpu.online() <= 4)
 		load *= 1.5;
@@ -157,14 +157,14 @@ void Subcore::algorithm() {
 	}
 }
 
-void Subcore::setup_levels() {
+void subcore::setup_levels() {
 	std::string hotplug = cpu.hotplug();
 	while (hotplug != "") {
 		cpu.hotplug(hotplug, false);
 		hotplug = cpu.hotplug();
 	}
 	
-	uint16_t mp_pid = IO::get_pid("mpdecision");
+	uint16_t mp_pid = io::get_pid("mpdecision");
 	if (mp_pid != 0)
 		kill(mp_pid, SIGTERM);
 
@@ -363,7 +363,7 @@ void Subcore::setup_levels() {
 	}
 }
 
-void Subcore::set_sysfs(level_struct level) {
+void subcore::set_sysfs(level_struct level) {
 	// if we are already on this state, do nothing
 	if (current_state == level.state) {
 		if (display.suspended()) {
@@ -446,27 +446,27 @@ void Subcore::set_sysfs(level_struct level) {
 	same_level_count = 0;
 }
 
-void Subcore::set_interactive(uint8_t core, interactive_struct interactive) {
+void subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 	std::string PATH_INTERACTIVE;
 	
 	// SMP
-	if (IO::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
+	if (io::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
-	else if (IO::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive"))
+	else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive"))
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive";
 	else
 		return;
 
-	IO::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(interactive.go_hispeed_load));
-	IO::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", interactive.above_hispeed_delay);
-	IO::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(interactive.timer_rate));
-	IO::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(interactive.timer_slack));
-	IO::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(interactive.min_sample_time));
-	IO::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(interactive.hispeed_freq));
-	IO::write_file(PATH_INTERACTIVE + "/target_loads", interactive.target_loads);
+	io::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(interactive.go_hispeed_load));
+	io::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", interactive.above_hispeed_delay);
+	io::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(interactive.timer_rate));
+	io::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(interactive.timer_slack));
+	io::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(interactive.min_sample_time));
+	io::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(interactive.hispeed_freq));
+	io::write_file(PATH_INTERACTIVE + "/target_loads", interactive.target_loads);
 }
 
-std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
+std::string subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	std::vector<std::string> cpu_avail_govs = cpu.govs();
 	std::string new_cpu_pref_gov;
 	for (std::string pref_gov : pref_govs)
@@ -478,7 +478,7 @@ std::string Subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	return "performance";
 }
 
-uint32_t Subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent, uint8_t offset) {
+uint32_t subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent, uint8_t offset) {
 	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1 + offset;
 	if (index < 0)
 		index = 0;
@@ -487,7 +487,7 @@ uint32_t Subcore::freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t p
 	return avail_freqs[index];
 }
 
-uint32_t Subcore::freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent, uint8_t offset) {
+uint32_t subcore::freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent, uint8_t offset) {
 	int16_t index = round(avail_freqs.size() * ((float) percent / 100)) - 1 + offset;
 	if (index < 0)
 		index = 0;

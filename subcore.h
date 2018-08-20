@@ -2,10 +2,10 @@
 
 #include "sysfs.h"
 
-class Subcore {
+class subcore {
 	private:
 		// objects
-		enum State {
+		enum state {
 			state_level_0,
 			state_level_1,
 			state_level_2,
@@ -58,37 +58,37 @@ class Subcore {
 		};
 
 		struct level_struct {
-			State state;
+			state state;
 			std::vector<std::string> gov_pref;
 			uint8_t load_requirement;
 			sysfs_struct level_data;
 		};
 
-		class UserSettings {
+		class user_settings {
 			private:
 				sysfs_struct backup_settings;
 				std::string hotplug;
-				SysFs::Cpu &cpu;
-				SysFs::Block &block;
-				SysFs::Gpu &gpu;
+				sysfs::cpu &cpu;
+				sysfs::block &block;
+				sysfs::gpu &gpu;
 				bool low_mem;
 			public:
 				void save();
 				void load();
 
-				UserSettings(SysFs::Cpu &_cpu, SysFs::Block &_block, SysFs::Gpu &_gpu)
+				user_settings(sysfs::cpu &_cpu, sysfs::block &_block, sysfs::gpu &_gpu)
 					: cpu(_cpu), block(_block), gpu(_gpu) {}
 		};
 
 		// declarations
-		State current_state = state_init;
+		state current_state = state_init;
 
-		SysFs::Cpu cpu;
-		SysFs::Block block;
-		SysFs::Memory memory;
-		SysFs::Gpu gpu;
-		SysFs::Battery battery;
-		SysFs::Display display;	
+		sysfs::cpu cpu;
+		sysfs::block block;
+		sysfs::memory memory;
+		sysfs::gpu gpu;
+		sysfs::battery battery;
+		sysfs::display display;	
 
 		level_struct level_0;
 		level_struct level_1;
@@ -113,7 +113,7 @@ class Subcore {
 		bool low_mem = false;
 		bool power_aware = true;
 
-		UserSettings user_settings = UserSettings(cpu, block, gpu);
+		user_settings settings = user_settings(cpu, block, gpu);
 
 		void algorithm();	
 		void setup_levels();

@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-namespace IO {
+namespace io {
 	void write_file(std::string path, std::string in);
 	std::string read_file(std::string path);
 	uint16_t get_pid(std::string process_name);
@@ -15,7 +15,7 @@ namespace IO {
 	}
 }
 
-namespace Root {
+namespace root {
 	inline bool is_root() {
 		return (geteuid() == 0);
 	}

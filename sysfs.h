@@ -8,8 +8,8 @@
 
 #include "misc.h"
 
-namespace SysFs {
-	class Cpu {
+namespace sysfs {
+	class cpu {
 		private:
 			const std::string PATH_CPU = "/sys/devices/system/cpu";
 			const std::string PATH_STAT = "/proc/stat";
@@ -24,53 +24,53 @@ namespace SysFs {
 			
 			inline void online(uint8_t core, bool state) {
 				uint8_t new_state = state ? 1 : 0;
-				IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/online", std::to_string(new_state));
+				io::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/online", std::to_string(new_state));
 			}
 			
 			inline bool online(uint8_t core) {
-				std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/online");
+				std::string str = io::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/online");
 				return (str == "1");
 			}
 
 			inline void max_freq(uint8_t core, uint32_t freq) {
-				IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq", std::to_string(freq));
+				io::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq", std::to_string(freq));
 			}
 
 			inline uint32_t max_freq(uint8_t core) {
-				std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq");
+				std::string str = io::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_max_freq");
 				if (str == "")
 					return 0;
 				return (uint32_t) atoi(str.c_str());
 			}
 
 			inline void min_freq(uint8_t core, uint32_t freq) {
-				IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq", std::to_string(freq));
+				io::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq", std::to_string(freq));
 			}
 
 			inline uint32_t min_freq(uint8_t core) {
-				std::string str = IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq");
+				std::string str = io::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_min_freq");
 				if (str == "")
 					return 0;
 				return (uint32_t) atoi(str.c_str());
 			}
 
 			inline uint8_t online() {
-				std::string str = IO::read_file(PATH_CPU + "/online");
+				std::string str = io::read_file(PATH_CPU + "/online");
 				if (str == "")
 					return 0;
 				return ((uint8_t) str.at(2) - '0') + 1;
 			}
 
 			inline void gov(uint8_t core, std::string gov) {
-				IO::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor", gov);
+				io::write_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor", gov);
 			}
 
 			inline std::string gov(uint8_t core) {
-				return IO::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
+				return io::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
 			}
 	};
 
-	class Gpu {
+	class gpu {
 		private:
 			const std::string PATH_GPU = "/sys/kernel/gpu";
 		public:
@@ -78,37 +78,37 @@ namespace SysFs {
 			uint8_t load();	
 
 			inline void max_freq(uint16_t freq) {
-				IO::write_file(PATH_GPU + "/gpu_max_clock", std::to_string(freq));
+				io::write_file(PATH_GPU + "/gpu_max_clock", std::to_string(freq));
 			}
 
 			inline uint16_t max_freq() {
-				std::string str = IO::read_file(PATH_GPU + "/gpu_max_clock");
+				std::string str = io::read_file(PATH_GPU + "/gpu_max_clock");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void min_freq(uint16_t freq) {
-				IO::write_file(PATH_GPU + "/gpu_min_clock", std::to_string(freq));
+				io::write_file(PATH_GPU + "/gpu_min_clock", std::to_string(freq));
 			}
 
 			inline uint16_t min_freq() {
-				std::string str = IO::read_file(PATH_GPU + "/gpu_min_clock");
+				std::string str = io::read_file(PATH_GPU + "/gpu_min_clock");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void gov(std::string gov) {
-				IO::write_file(PATH_GPU + "/gpu_governor", gov);
+				io::write_file(PATH_GPU + "/gpu_governor", gov);
 			}
 
 			inline std::string gov() {
-				return IO::read_file(PATH_GPU + "/gpu_governor");
+				return io::read_file(PATH_GPU + "/gpu_governor");
 			}
 	};
 
-	class Block {
+	class block {
 		private:
 			const std::string PATH_BLOCK = "/sys/block";
 			const std::string PATH_MOUNTS = "/proc/mounts";
@@ -126,137 +126,137 @@ namespace SysFs {
 			std::vector<std::string> blkdevs();
 
 			inline void iosched(std::string blkdev, std::string iosched) {
-				IO::write_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler", iosched);
+				io::write_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler", iosched);
 			}
 
 			inline std::string iosched(std::string blkdev) {
-				return IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler");
+				return io::read_file(PATH_BLOCK + "/" + blkdev + "/queue/scheduler");
 			}
 
 			inline void lmk(std::string minfree) {
-				IO::write_file(PATH_LMK + "/minfree", minfree);
+				io::write_file(PATH_LMK + "/minfree", minfree);
 			}
 
 			inline std::string lmk() {
-				return IO::read_file(PATH_LMK + "/minfree");
+				return io::read_file(PATH_LMK + "/minfree");
 			}
 
 			inline void read_ahead(std::string blkdev, uint16_t read_ahead) {
-				IO::write_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb", std::to_string(read_ahead));
+				io::write_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb", std::to_string(read_ahead));
 			}
 
 			inline uint16_t read_ahead(std::string blkdev) {
-				std::string str = IO::read_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb");
+				std::string str = io::read_file(PATH_BLOCK + "/" + blkdev + "/queue/read_ahead_kb");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void swappiness(uint8_t swappiness) {
-				IO::write_file(PATH_VM + "/swappiness", std::to_string(swappiness));
+				io::write_file(PATH_VM + "/swappiness", std::to_string(swappiness));
 			}
 
 			inline uint8_t swappiness() {
-				std::string str = IO::read_file(PATH_VM + "/swappiness");
+				std::string str = io::read_file(PATH_VM + "/swappiness");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
 			}
 
 			inline void cache_pressure(uint8_t pressure) {
-				IO::write_file(PATH_VM + "/vfs_cache_pressure", std::to_string(pressure));
+				io::write_file(PATH_VM + "/vfs_cache_pressure", std::to_string(pressure));
 			}
 
 			inline uint8_t cache_pressure() {
-				std::string str = IO::read_file(PATH_VM + "/vfs_cache_pressure");
+				std::string str = io::read_file(PATH_VM + "/vfs_cache_pressure");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
 			}
 
 			inline void dirty_ratio(uint8_t ratio) {
-				IO::write_file(PATH_VM + "/dirty_ratio", std::to_string(ratio));
+				io::write_file(PATH_VM + "/dirty_ratio", std::to_string(ratio));
 			}
 
 			inline uint8_t dirty_ratio() {
-				std::string str = IO::read_file(PATH_VM + "/dirty_ratio");
+				std::string str = io::read_file(PATH_VM + "/dirty_ratio");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
 			}
 
 			inline void dirty_background_ratio(uint8_t ratio) {
-				IO::write_file(PATH_VM + "/dirty_background_ratio", std::to_string(ratio));
+				io::write_file(PATH_VM + "/dirty_background_ratio", std::to_string(ratio));
 			}
 
 			inline uint8_t dirty_background_ratio() {
-				std::string str = IO::read_file(PATH_VM + "/dirty_background_ratio");
+				std::string str = io::read_file(PATH_VM + "/dirty_background_ratio");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
 			}
 
 			inline void entropy_read(uint16_t entropy) {
-				IO::write_file(PATH_ENTROPY + "/read_wakeup_threshold", std::to_string(entropy));
+				io::write_file(PATH_ENTROPY + "/read_wakeup_threshold", std::to_string(entropy));
 			}
 
 			inline uint16_t entropy_read() {
-				std::string str = IO::read_file(PATH_ENTROPY + "/read_wakeup_threshold");
+				std::string str = io::read_file(PATH_ENTROPY + "/read_wakeup_threshold");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void entropy_write(uint16_t entropy) {
-				IO::write_file(PATH_ENTROPY + "/write_wakeup_threshold", std::to_string(entropy));
+				io::write_file(PATH_ENTROPY + "/write_wakeup_threshold", std::to_string(entropy));
 			}
 
 			inline uint16_t entropy_write() {
-				std::string str = IO::read_file(PATH_ENTROPY + "/write_wakeup_threshold");
+				std::string str = io::read_file(PATH_ENTROPY + "/write_wakeup_threshold");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void laptop_mode(uint8_t state) {
-				IO::write_file(PATH_VM + "/laptop_mode", std::to_string(state));
+				io::write_file(PATH_VM + "/laptop_mode", std::to_string(state));
 			}
 
 			inline uint8_t laptop_mode() {
-				std::string str = IO::read_file(PATH_VM + "/laptop_mode");
+				std::string str = io::read_file(PATH_VM + "/laptop_mode");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);	
 			}
 
 			inline void oom_kill_allocating_task(uint8_t state) {
-				IO::write_file(PATH_VM + "/oom_kill_allocating_task", std::to_string(state));
+				io::write_file(PATH_VM + "/oom_kill_allocating_task", std::to_string(state));
 			}
 
 			inline uint8_t oom_kill_allocating_task() {
-				std::string str = IO::read_file(PATH_VM + "/oom_kill_allocating_task");
+				std::string str = io::read_file(PATH_VM + "/oom_kill_allocating_task");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
 			}
 
 			inline void overcommit_memory(uint8_t state) {
-				IO::write_file(PATH_VM + "/overcommit_memory", std::to_string(state));
+				io::write_file(PATH_VM + "/overcommit_memory", std::to_string(state));
 			}
 
 			inline uint8_t overcommit_memory() {
-				std::string str = IO::read_file(PATH_VM + "/overcommit_memory");
+				std::string str = io::read_file(PATH_VM + "/overcommit_memory");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
 			}
 
 			inline void page_cluster(uint8_t size) {
-				IO::write_file(PATH_VM + "/page-cluster", std::to_string(size));
+				io::write_file(PATH_VM + "/page-cluster", std::to_string(size));
 			}
 
 			inline uint8_t page_cluster() {
-				std::string str = IO::read_file(PATH_VM + "/page-cluster");
+				std::string str = io::read_file(PATH_VM + "/page-cluster");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
@@ -264,33 +264,33 @@ namespace SysFs {
 
 			// dirty * centisecs are set by laptop mode
 			inline void dirty_expire_centisecs(uint16_t secs) {
-				IO::write_file(PATH_VM + "/dirty_expire_centisecs", std::to_string(secs));
+				io::write_file(PATH_VM + "/dirty_expire_centisecs", std::to_string(secs));
 			}
 
 			inline uint16_t dirty_expire_centisecs() {
-				std::string str = IO::read_file(PATH_VM + "/dirty_expire_centisecs");
+				std::string str = io::read_file(PATH_VM + "/dirty_expire_centisecs");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void dirty_writeback_centisecs(uint16_t size) {
-				IO::write_file(PATH_VM + "/dirty_writeback_centisecs", std::to_string(size));
+				io::write_file(PATH_VM + "/dirty_writeback_centisecs", std::to_string(size));
 			}
 
 			inline uint16_t dirty_writeback_centisecs() {
-				std::string str = IO::read_file(PATH_VM + "/dirty_writeback_centisecs");
+				std::string str = io::read_file(PATH_VM + "/dirty_writeback_centisecs");
 				if (str == "")
 					return 0;
 				return (uint16_t) stoi(str);
 			}
 
 			inline void ksm(uint8_t state) {
-				IO::write_file(PATH_MM + "/ksm/run", std::to_string(state));
+				io::write_file(PATH_MM + "/ksm/run", std::to_string(state));
 			}
 
 			inline uint8_t ksm() {
-				std::string str = IO::read_file(PATH_MM + "/ksm/run");
+				std::string str = io::read_file(PATH_MM + "/ksm/run");
 				if (str == "")
 					return 0;
 				return (uint8_t) stoi(str);
@@ -298,24 +298,24 @@ namespace SysFs {
 
 	};
 
-	class Battery {
+	class battery {
 		private:
 			const std::string PATH_BATTERY = "/sys/class/power_supply/battery";
 		public:
 			inline uint8_t capacity() {
-				std::string str = IO::read_file(PATH_BATTERY + "/capacity");
+				std::string str = io::read_file(PATH_BATTERY + "/capacity");
 				if (str == "")
 					return 100;
 				return (uint8_t) stoi(str);
 			}
 
 			inline bool charging() {
-				std::string str = IO::read_file(PATH_BATTERY + "/status");
+				std::string str = io::read_file(PATH_BATTERY + "/status");
 				return (str.find("Charging") != std::string::npos);
 			}
 	};
 
-	class Memory {
+	class memory {
 		private:
 			const std::string PATH_MEMINFO = "/proc/meminfo";
 		public:
@@ -323,7 +323,7 @@ namespace SysFs {
 			uint32_t avail_ram();	
 	};
 
-	class Display {
+	class display {
 		private:
 			const std::string PATH_STATE_NOTIFIER = "/sys/module/state_notifier/parameters";				
 			const std::string PATH_POWER_SUSPEND = "/sys/kernel/power_suspend";
