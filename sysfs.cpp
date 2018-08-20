@@ -44,29 +44,28 @@ std::vector<std::string> SysFs::Cpu::govs() {
 }
 
 uint8_t SysFs::Cpu::loadavg() {
-	long double a[4], b[4], loadavg;
-	FILE *fp;
-	try {
-		// take first measurement
-		fp = std::fopen(PATH_STAT.c_str(), "r");
-		fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
-		fclose(fp);
-	
-		// sleep
-		usleep(STAT_AVG_SLEEP_MS * 1000);
+	long double a[4], b[4], loadavg = 0;
 
-		// take second measurement
-		fp = std::fopen(PATH_STAT.c_str(), "r");
-		fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &b[0], &b[1], &b[2], &b[3]);
-		fclose(fp);
+	// take first measurement
+	FILE *fp = std::fopen(PATH_STAT.c_str(), "r");
+	if (fp == NULL)
+		return 0;
+	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &a[0], &a[1], &a[2], &a[3]);
+	fclose(fp);
 
-		// calculate avg based on measurements
-		loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
-		loadavg *= 100;
-	} catch (...) {
-		std::cout << "[!] Error: loadavg() failed. Device may be unsupported." << std::endl;
-		exit(1);
-	}
+	// sleep
+	usleep(STAT_AVG_SLEEP_MS * 1000);
+
+	// take second measurement
+	fp = std::fopen(PATH_STAT.c_str(), "r");
+	if (fp == NULL)
+		return 0;
+	fscanf(fp, "%*s %Lf %Lf %Lf %Lf", &b[0], &b[1], &b[2], &b[3]);
+	fclose(fp);
+
+	// calculate avg based on measurements
+	loadavg = ((b[0]+b[1]+b[2]) - (a[0]+a[1]+a[2])) / ((b[0]+b[1]+b[2]+b[3]) - (a[0]+a[1]+a[2]+a[3]));
+	loadavg *= 100;
 
 	// limit bounds
 	if (loadavg > 100)
