@@ -178,7 +178,7 @@ void subcore::setup_levels() {
 	level_3.state = state_level_3;
 	
 	level_0.gov_pref = std::vector<std::string> {
-		"powersave",
+		"interactive",
 		"schedutil",
 		"performance"
 	};
@@ -207,9 +207,9 @@ void subcore::setup_levels() {
 			uint8_t offset = std::distance(cpu_avail_freqs.begin(), itr);
 			cpu_freq_offsets.push_back(offset);
 
-			level_0.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+			level_0.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 20, offset));
 			level_1.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
-			level_2.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 60, offset));
+			level_2.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 45, offset));
 			level_3.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 
 			level_0.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
@@ -287,7 +287,7 @@ void subcore::setup_levels() {
 	level_1.level_data.dirty_background_ratio = 80;
 	level_1.level_data.entropy_read = 1024;
 	level_1.level_data.entropy_write = 2048;
-	level_1.level_data.subcore_scan_ms = 1000;
+	level_1.level_data.subcore_scan_ms = 500;
 	level_1.level_data.laptop_mode = 1;
 	level_1.level_data.oom_kill_allocating_task = 0;
 	level_1.level_data.overcommit_memory = 0;
@@ -300,7 +300,7 @@ void subcore::setup_levels() {
 	level_2.level_data.dirty_background_ratio = 80;
 	level_2.level_data.entropy_read = 1024;
 	level_2.level_data.entropy_write = 2048;
-	level_2.level_data.subcore_scan_ms = 1000;
+	level_2.level_data.subcore_scan_ms = 500;
 	level_2.level_data.laptop_mode = 1;
 	level_2.level_data.oom_kill_allocating_task = 0;
 	level_2.level_data.overcommit_memory = 1;
@@ -313,17 +313,23 @@ void subcore::setup_levels() {
 	level_3.level_data.dirty_background_ratio = 80;
 	level_3.level_data.entropy_read = 1024;
 	level_3.level_data.entropy_write = 2048;
-	level_3.level_data.subcore_scan_ms = 1000;
+	level_3.level_data.subcore_scan_ms = 500;
 	level_3.level_data.laptop_mode = 1;
 	level_3.level_data.oom_kill_allocating_task = 0;
 	level_3.level_data.overcommit_memory = 1;
 	level_3.level_data.page_cluster = 3;
 	level_3.level_data.ksm = 0;
 	for (size_t i = 0; i < online; i++) {
+		interactive_struct interactive_0;
 		interactive_struct interactive_1;
 		interactive_struct interactive_2;
 		interactive_struct interactive_3;
 		// universal
+		interactive_0.go_hispeed_load = 99;
+		interactive_0.above_hispeed_delay = "80000";
+		interactive_0.timer_rate = 40000;
+		interactive_0.timer_slack = -1;
+		interactive_0.min_sample_time = 100000;
 		interactive_1.go_hispeed_load = 99;
 		interactive_1.above_hispeed_delay = "80000";
 		interactive_1.timer_rate = 40000;
@@ -343,6 +349,8 @@ void subcore::setup_levels() {
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
+			interactive_0.hispeed_freq = cpu_freq_offsets[0];
+			interactive_0.target_loads = ((std::ostringstream&) (std::ostringstream("") << "97 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":99")).str();
 			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]);
 			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":99")).str();
 			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]);
@@ -350,6 +358,8 @@ void subcore::setup_levels() {
 			interactive_3.hispeed_freq = freq_from_percent(cpu_avail_freqs, 45);
 			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":75 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
+			interactive_0.hispeed_freq = 0;
+			interactive_0.target_loads = "";
 			interactive_1.hispeed_freq = 0;
 			interactive_1.target_loads = "";
 			interactive_2.hispeed_freq = 0;
@@ -357,6 +367,7 @@ void subcore::setup_levels() {
 			interactive_3.hispeed_freq = 0;
 			interactive_3.target_loads = "";
 		}
+		level_0.level_data.interactives.push_back(interactive_0);
 		level_1.level_data.interactives.push_back(interactive_1);
 		level_2.level_data.interactives.push_back(interactive_2);
 		level_3.level_data.interactives.push_back(interactive_3);
