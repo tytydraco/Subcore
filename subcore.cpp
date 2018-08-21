@@ -257,7 +257,7 @@ void subcore::setup_levels() {
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_0.level_data.readaheads.push_back(1024);
+		level_0.level_data.readaheads.push_back(2048);
 		level_0.level_data.ioscheds.push_back("noop");
 		level_1.level_data.readaheads.push_back(2048);
 		level_1.level_data.ioscheds.push_back("deadline");
@@ -269,7 +269,7 @@ void subcore::setup_levels() {
 
 	level_0.level_data.lmk_minfree = block.LMK_LIGHT;
 	level_0.level_data.swappiness = 0;
-	level_0.level_data.cache_pressure = 50;
+	level_0.level_data.cache_pressure = 30;
 	level_0.level_data.dirty_ratio = 90;
 	level_0.level_data.dirty_background_ratio = 80;
 	level_0.level_data.entropy_read = 1024;
@@ -326,8 +326,8 @@ void subcore::setup_levels() {
 		interactive_struct interactive_3;
 		// universal
 		interactive_0.go_hispeed_load = 99;
-		interactive_0.above_hispeed_delay = "80000";
-		interactive_0.timer_rate = 40000;
+		interactive_0.above_hispeed_delay = "100000";
+		interactive_0.timer_rate = 80000;
 		interactive_0.timer_slack = -1;
 		interactive_0.min_sample_time = 100000;
 		interactive_1.go_hispeed_load = 99;
@@ -375,23 +375,12 @@ void subcore::setup_levels() {
 }
 
 void subcore::set_sysfs(level_struct level) {
-	// if we are already on this state, do nothing
 	if (current_state == level.state) {
 		if (display.suspended()) {
-			// do not count when sleeping to avoid
-			// stutter on wakeup (after +5000ms)
 			same_level_count = 0;
-
-			// we can return now, as thats all we need to do
 			return;
 		}
-
-		// if we're awake, add to the counter
 		same_level_count++;
-
-		// depending on how constant the load is,
-		// add a minor delay to keep it from dipping
-		// too soon (IE loading scene / video pause)
 		cpu.STAT_AVG_SLEEP_MS = level.level_data.subcore_scan_ms;
 		if (same_level_count >= 10) {
 			cpu.STAT_AVG_SLEEP_MS += 3000;
@@ -402,11 +391,9 @@ void subcore::set_sysfs(level_struct level) {
 			if (debug)
 				std::cout << "+1500ms\t";
 			}	
-
 		return;
 	}
 
-	//cpu gov & max freq
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
@@ -415,19 +402,13 @@ void subcore::set_sysfs(level_struct level) {
 		if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
 	}
-
-	// gpu max freq
 	gpu.max_freq(level.level_data.gpu_max_freq);
 	gpu.min_freq(level.level_data.gpu_min_freq);
-
-	// iosched & readahead
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
 		block.iosched(blkdevs[i], level.level_data.ioscheds[i]);
 		block.read_ahead(blkdevs[i], level.level_data.readaheads[i]);
 	}
-	
-	// low-memory devices will behave strangely with these tweaks
 	if (!low_mem) {
 		block.swappiness(level.level_data.swappiness);
 		block.cache_pressure(level.level_data.cache_pressure);
@@ -460,7 +441,6 @@ void subcore::set_sysfs(level_struct level) {
 void subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 	std::string PATH_INTERACTIVE;
 	
-	// SMP
 	if (io::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
 		PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
 	else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/interactive"))
