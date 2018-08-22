@@ -217,6 +217,11 @@ void subcore::setup_levels() {
 			level_2.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
 			level_3.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
 		} else {
+			level_0.level_data.cpu_max_freqs.push_back(0);
+			level_1.level_data.cpu_max_freqs.push_back(0);
+			level_2.level_data.cpu_max_freqs.push_back(0);
+			level_3.level_data.cpu_max_freqs.push_back(0);
+
 			level_0.level_data.cpu_min_freqs.push_back(0);
 			level_1.level_data.cpu_min_freqs.push_back(0);
 			level_2.level_data.cpu_min_freqs.push_back(0);
@@ -393,14 +398,13 @@ void subcore::set_sysfs(level_struct level) {
 			}	
 		return;
 	}
-
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
 		if (power_aware && display.suspended())
 			cpu.max_freq(i, cpu.freqs(i)[0]);
 		else
-			cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
+			cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);	
 		cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
 		if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
