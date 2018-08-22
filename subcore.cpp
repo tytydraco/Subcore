@@ -349,7 +349,7 @@ void subcore::setup_levels() {
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
-			interactive_0.hispeed_freq = cpu_freq_offsets[0];
+			interactive_0.hispeed_freq = cpu_avail_freqs[cpu_freq_offsets[i]];
 			interactive_0.target_loads = ((std::ostringstream&) (std::ostringstream("") << "97 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":99")).str();
 			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]);
 			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":99")).str();
