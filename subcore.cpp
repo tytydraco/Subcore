@@ -332,7 +332,7 @@ void subcore::setup_levels() {
 		// universal
 		interactive_0.go_hispeed_load = 99;
 		interactive_0.above_hispeed_delay = "100000";
-		interactive_0.timer_rate = 80000;
+		interactive_0.timer_rate = 40000;
 		interactive_0.timer_slack = -1;
 		interactive_0.min_sample_time = 100000;
 		interactive_1.go_hispeed_load = 99;
