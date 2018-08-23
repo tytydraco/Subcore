@@ -401,11 +401,14 @@ void subcore::set_sysfs(level_struct level) {
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
-		if (power_aware && display.suspended())
-			cpu.max_freq(i, cpu.freqs(i)[0]);
-		else
-			cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);	
-		cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
+		if (power_aware && display.suspended()) {
+			std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
+			cpu.max_freq(i, cpu_avail_freqs[0]);
+			cpu.min_freq(i, cpu_avail_freqs[0]);
+		} else {
+			cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
+			cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
+		}	
 		if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
 	}
