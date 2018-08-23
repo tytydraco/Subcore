@@ -118,9 +118,7 @@ void subcore::algorithm() {
 		load *= 1.5;
 	
 	//special cases
-	if (display.suspended()) {
-		load = 0;
-	} else if (power_aware) {
+	if (power_aware) {
 		uint8_t capacity = battery.capacity();
 		bool charging = battery.charging();
 		if (charging)
@@ -135,7 +133,11 @@ void subcore::algorithm() {
 		std::cout << "[*] Load: " << std::to_string(load) << "\t";
 
 	// load based algorithm
-	if (load <= level_idle.load_requirement) {
+	if (display.suspended()) {
+		set_sysfs(level_sleep);
+		if (debug)
+			std::cout << "level_sleep" << std::endl;
+	} if (load <= level_idle.load_requirement && load > 0) {
 		set_sysfs(level_idle);
 		if (debug)
 			std::cout << "level_idle" << std::endl;
@@ -168,6 +170,8 @@ void subcore::setup_levels() {
 	if (mp_pid != 0)
 		kill(mp_pid, SIGTERM);
 
+	level_sleep.load_requirement = 0;
+	level_sleep.state = state_level_sleep;
 	level_idle.load_requirement = 10;
 	level_idle.state = state_level_idle;
 	level_light.load_requirement = 40;
