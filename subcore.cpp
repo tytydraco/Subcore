@@ -280,8 +280,8 @@ void subcore::setup_levels() {
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_idle.level_data.readaheads.push_back(128);
-		level_idle.level_data.ioscheds.push_back("noop");
+		level_sleep.level_data.readaheads.push_back(128);
+		level_sleep.level_data.ioscheds.push_back("noop");
 		level_idle.level_data.readaheads.push_back(2048);
 		level_idle.level_data.ioscheds.push_back("noop");
 		level_light.level_data.readaheads.push_back(2048);
