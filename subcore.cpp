@@ -137,7 +137,7 @@ void subcore::algorithm() {
 		set_sysfs(level_sleep);
 		if (debug)
 			std::cout << "level_sleep" << std::endl;
-	} if (load <= level_idle.load_requirement && load > 0) {
+	} else if (load <= level_idle.load_requirement) {
 		set_sysfs(level_idle);
 		if (debug)
 			std::cout << "level_idle" << std::endl;
