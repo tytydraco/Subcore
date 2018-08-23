@@ -85,10 +85,7 @@ int main(int argc, char** argv) {
 	if (!root::is_root()) {
 		std::cout << "[!] EUID is not 0. Please run this with root privileges." << std::endl;
 		std::exit(1);
-	}
-
-	if (subcore.debug)
-		std::cout << "[*] SubCore Init" << std::endl;
+	}	
 
 	// user settings managenent
 	if (subcore.debug)
@@ -96,7 +93,12 @@ int main(int argc, char** argv) {
 	subcore.settings.save();
 
 	// setup the presets based on the device
+	if (subcore.debug)
+		std::cout << "[*] Generating level profiles" << std::endl;
 	subcore.setup_levels();
+
+	if (subcore.debug)
+		std::cout << "[*] Initializing algorithm loop" << std::endl;
 
 	// start the algorithm itself
 	while (1) {
