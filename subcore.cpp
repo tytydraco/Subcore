@@ -212,10 +212,10 @@ void subcore::setup_levels() {
 			level_2.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 45, offset));
 			level_3.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 
-			level_0.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
-			level_1.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
-			level_2.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
-			level_3.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
+			level_0.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_1.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_2.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_3.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
 		} else {
 			level_0.level_data.cpu_max_freqs.push_back(0);
 			level_1.level_data.cpu_max_freqs.push_back(0);
