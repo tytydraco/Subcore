@@ -6,11 +6,12 @@ class subcore {
 	private:
 		// objects
 		enum state {
-			state_level_0,
-			state_level_1,
-			state_level_2,
-			state_level_3,
-			state_init
+			state_init,
+			state_level_sleep,
+			state_level_idle,
+			state_level_light,
+			state_level_medium,
+			state_level_aggressive
 		};
 
 		struct interactive_struct {
@@ -90,10 +91,11 @@ class subcore {
 		sysfs::battery battery;
 		sysfs::display display;	
 
-		level_struct level_0;
-		level_struct level_1;
-		level_struct level_2;
-		level_struct level_3;
+		level_struct level_sleep;
+		level_struct level_idle;
+		level_struct level_light;
+		level_struct level_medium;
+		level_struct level_aggressive;
 
 		// the # of times the same level is selected
 		uint16_t same_level_count = 0;

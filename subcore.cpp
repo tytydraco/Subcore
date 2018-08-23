@@ -135,22 +135,22 @@ void subcore::algorithm() {
 		std::cout << "[*] Load: " << std::to_string(load) << "\t";
 
 	// load based algorithm
-	if (load <= level_0.load_requirement) {
-		set_sysfs(level_0);
+	if (load <= level_idle.load_requirement) {
+		set_sysfs(level_idle);
 		if (debug)
-			std::cout << "level_0" << std::endl;
-	} else if (load <= level_1.load_requirement) {
-		set_sysfs(level_1);
+			std::cout << "level_idle" << std::endl;
+	} else if (load <= level_light.load_requirement) {
+		set_sysfs(level_light);
 		if (debug)
-			std::cout << "level_1" << std::endl;
-	} else if (load <= level_2.load_requirement) {
-		set_sysfs(level_2);
+			std::cout << "level_light" << std::endl;
+	} else if (load <= level_medium.load_requirement) {
+		set_sysfs(level_medium);
 		if (debug)
-			std::cout << "level_2" << std::endl;
-	} else if (load <= level_3.load_requirement) {
-		set_sysfs(level_3);
+			std::cout << "level_medium" << std::endl;
+	} else if (load <= level_aggressive.load_requirement) {
+		set_sysfs(level_aggressive);
 		if (debug)
-			std::cout << "level_3" << std::endl;
+			std::cout << "level_aggressive" << std::endl;
 	} else {
 		if (debug)
 			std::cout << "other" << std::endl;
@@ -168,31 +168,36 @@ void subcore::setup_levels() {
 	if (mp_pid != 0)
 		kill(mp_pid, SIGTERM);
 
-	level_0.load_requirement = 10;
-	level_0.state = state_level_0;
-	level_1.load_requirement = 40;
-	level_1.state = state_level_1;
-	level_2.load_requirement = 70;
-	level_2.state = state_level_2;
-	level_3.load_requirement = 100;
-	level_3.state = state_level_3;
-	
-	level_0.gov_pref = std::vector<std::string> {
+	level_idle.load_requirement = 10;
+	level_idle.state = state_level_idle;
+	level_light.load_requirement = 40;
+	level_light.state = state_level_light;
+	level_medium.load_requirement = 70;
+	level_medium.state = state_level_medium;
+	level_aggressive.load_requirement = 100;
+	level_aggressive.state = state_level_aggressive;
+
+	level_sleep.gov_pref = std::vector<std::string> {
+		"powersave",
+		"schedutil",
+		"performance"
+	};	
+	level_idle.gov_pref = std::vector<std::string> {
 		"interactive",
 		"schedutil",
 		"performance"
 	};
-	level_1.gov_pref = std::vector<std::string> {
+	level_light.gov_pref = std::vector<std::string> {
 		"interactive",
 		"schedutil",
 		"performance"
 	};
-	level_2.gov_pref = std::vector<std::string> {
+	level_medium.gov_pref = std::vector<std::string> {
 		"interactive",
 		"schedutil",
 		"performance"
 	};
-	level_3.gov_pref = std::vector<std::string> {
+	level_aggressive.gov_pref = std::vector<std::string> {
 		"interactive",
 		"schedutil",
 		"performance"
@@ -207,30 +212,35 @@ void subcore::setup_levels() {
 			uint8_t offset = std::distance(cpu_avail_freqs.begin(), itr);
 			cpu_freq_offsets.push_back(offset);
 
-			level_0.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 20, offset));
-			level_1.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
-			level_2.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 45, offset));
-			level_3.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
+			level_sleep.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[0]);
+			level_idle.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 20, offset));
+			level_light.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 30, offset));
+			level_medium.level_data.cpu_max_freqs.push_back(freq_from_percent(cpu_avail_freqs, 45, offset));
+			level_aggressive.level_data.cpu_max_freqs.push_back(cpu_avail_freqs[cpu_avail_freqs.size() - 1]);
 
-			level_0.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
-			level_1.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
-			level_2.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
-			level_3.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_sleep.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[0]);
+			level_idle.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_light.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_medium.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
+			level_aggressive.level_data.cpu_min_freqs.push_back(cpu_avail_freqs[offset]);
 		} else {
-			level_0.level_data.cpu_max_freqs.push_back(0);
-			level_1.level_data.cpu_max_freqs.push_back(0);
-			level_2.level_data.cpu_max_freqs.push_back(0);
-			level_3.level_data.cpu_max_freqs.push_back(0);
-
-			level_0.level_data.cpu_min_freqs.push_back(0);
-			level_1.level_data.cpu_min_freqs.push_back(0);
-			level_2.level_data.cpu_min_freqs.push_back(0);
-			level_3.level_data.cpu_min_freqs.push_back(0);
+			level_sleep.level_data.cpu_max_freqs.push_back(0);
+			level_idle.level_data.cpu_max_freqs.push_back(0);
+			level_light.level_data.cpu_max_freqs.push_back(0);
+			level_medium.level_data.cpu_max_freqs.push_back(0);
+			level_aggressive.level_data.cpu_max_freqs.push_back(0);
+			
+			level_sleep.level_data.cpu_min_freqs.push_back(0);
+			level_idle.level_data.cpu_min_freqs.push_back(0);
+			level_light.level_data.cpu_min_freqs.push_back(0);
+			level_medium.level_data.cpu_min_freqs.push_back(0);
+			level_aggressive.level_data.cpu_min_freqs.push_back(0);
 		}
-		level_0.level_data.cpu_govs.push_back(preferred_gov(level_0.gov_pref));
-		level_1.level_data.cpu_govs.push_back(preferred_gov(level_1.gov_pref));
-		level_2.level_data.cpu_govs.push_back(preferred_gov(level_2.gov_pref));
-		level_3.level_data.cpu_govs.push_back(preferred_gov(level_3.gov_pref));
+		level_sleep.level_data.cpu_govs.push_back(preferred_gov(level_sleep.gov_pref));
+		level_idle.level_data.cpu_govs.push_back(preferred_gov(level_idle.gov_pref));
+		level_light.level_data.cpu_govs.push_back(preferred_gov(level_light.gov_pref));
+		level_medium.level_data.cpu_govs.push_back(preferred_gov(level_medium.gov_pref));
+		level_aggressive.level_data.cpu_govs.push_back(preferred_gov(level_aggressive.gov_pref));
 	}
 
 	std::vector<uint16_t> gpu_avail_freqs = gpu.freqs();
@@ -239,148 +249,167 @@ void subcore::setup_levels() {
 		uint8_t offset = std::distance(gpu_avail_freqs.begin(), itr);
 		gpu_freq_offsets.push_back(offset);
 
-		level_0.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 50, offset);
-		level_1.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 70, offset);
-		level_2.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
-		level_3.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+		level_sleep.level_data.gpu_max_freq = gpu_avail_freqs[0];
+		level_idle.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 50, offset);
+		level_light.level_data.gpu_max_freq = freq_from_percent(gpu_avail_freqs, 70, offset);
+		level_medium.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
+		level_aggressive.level_data.gpu_max_freq = gpu_avail_freqs[gpu_avail_freqs.size() - 1];
 
-		level_0.level_data.gpu_min_freq = gpu_avail_freqs[0];
-		level_1.level_data.gpu_min_freq = gpu_avail_freqs[0];
-		level_2.level_data.gpu_min_freq = gpu_avail_freqs[0];
-		level_3.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_sleep.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_idle.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_light.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_medium.level_data.gpu_min_freq = gpu_avail_freqs[0];
+		level_aggressive.level_data.gpu_min_freq = gpu_avail_freqs[0];
 	} else {
-		level_0.level_data.gpu_max_freq = 0;
-		level_1.level_data.gpu_max_freq = 0;
-		level_2.level_data.gpu_max_freq = 0;
-		level_3.level_data.gpu_max_freq = 0;
+		level_sleep.level_data.gpu_max_freq = 0;
+		level_idle.level_data.gpu_max_freq = 0;
+		level_light.level_data.gpu_max_freq = 0;
+		level_medium.level_data.gpu_max_freq = 0;
+		level_aggressive.level_data.gpu_max_freq = 0;
 		
-		level_0.level_data.gpu_min_freq = 0;
-		level_1.level_data.gpu_min_freq = 0;
-		level_2.level_data.gpu_min_freq = 0;
-		level_3.level_data.gpu_min_freq = 0;
+		level_sleep.level_data.gpu_min_freq = 0;
+		level_idle.level_data.gpu_min_freq = 0;
+		level_light.level_data.gpu_min_freq = 0;
+		level_medium.level_data.gpu_min_freq = 0;
+		level_aggressive.level_data.gpu_min_freq = 0;
 	}
 
 	std::vector<std::string> blkdevs = block.blkdevs();
 	for (size_t i = 0; i < blkdevs.size(); i++) {
-		level_0.level_data.readaheads.push_back(2048);
-		level_0.level_data.ioscheds.push_back("noop");
-		level_1.level_data.readaheads.push_back(2048);
-		level_1.level_data.ioscheds.push_back("deadline");
-		level_2.level_data.readaheads.push_back(2048);
-		level_2.level_data.ioscheds.push_back("deadline");
-		level_3.level_data.readaheads.push_back(2048);
-		level_3.level_data.ioscheds.push_back("deadline");
+		level_idle.level_data.readaheads.push_back(128);
+		level_idle.level_data.ioscheds.push_back("noop");
+		level_idle.level_data.readaheads.push_back(2048);
+		level_idle.level_data.ioscheds.push_back("noop");
+		level_light.level_data.readaheads.push_back(2048);
+		level_light.level_data.ioscheds.push_back("deadline");
+		level_medium.level_data.readaheads.push_back(2048);
+		level_medium.level_data.ioscheds.push_back("deadline");
+		level_aggressive.level_data.readaheads.push_back(2048);
+		level_aggressive.level_data.ioscheds.push_back("deadline");
 	}
 
-	level_0.level_data.lmk_minfree = block.LMK_LIGHT;
-	level_0.level_data.swappiness = 0;
-	level_0.level_data.cache_pressure = 30;
-	level_0.level_data.dirty_ratio = 90;
-	level_0.level_data.dirty_background_ratio = 80;
-	level_0.level_data.entropy_read = 1024;
-	level_0.level_data.entropy_write = 2048;
-	level_0.level_data.subcore_scan_ms = 500;
-	level_0.level_data.laptop_mode = 1;
-	level_0.level_data.oom_kill_allocating_task = 0;
-	level_0.level_data.overcommit_memory = 0;
-	level_0.level_data.page_cluster = 0;
-	level_0.level_data.ksm = 0;
-	level_1.level_data.lmk_minfree = block.LMK_MEDIUM;
-	level_1.level_data.swappiness = 20;
-	level_1.level_data.cache_pressure = 60;
-	level_1.level_data.dirty_ratio = 90;
-	level_1.level_data.dirty_background_ratio = 80;
-	level_1.level_data.entropy_read = 1024;
-	level_1.level_data.entropy_write = 2048;
-	level_1.level_data.subcore_scan_ms = 500;
-	level_1.level_data.laptop_mode = 1;
-	level_1.level_data.oom_kill_allocating_task = 0;
-	level_1.level_data.overcommit_memory = 0;
-	level_1.level_data.page_cluster = 0;
-	level_1.level_data.ksm = 0;
-	level_2.level_data.lmk_minfree = block.LMK_MEDIUM;
-	level_2.level_data.swappiness = 30;
-	level_2.level_data.cache_pressure = 70;
-	level_2.level_data.dirty_ratio = 90;
-	level_2.level_data.dirty_background_ratio = 80;
-	level_2.level_data.entropy_read = 1024;
-	level_2.level_data.entropy_write = 2048;
-	level_2.level_data.subcore_scan_ms = 500;
-	level_2.level_data.laptop_mode = 1;
-	level_2.level_data.oom_kill_allocating_task = 0;
-	level_2.level_data.overcommit_memory = 1;
-	level_2.level_data.page_cluster = 3;
-	level_2.level_data.ksm = 0;
-	level_3.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
-	level_3.level_data.swappiness = 40;
-	level_3.level_data.cache_pressure = 80;
-	level_3.level_data.dirty_ratio = 90;
-	level_3.level_data.dirty_background_ratio = 80;
-	level_3.level_data.entropy_read = 1024;
-	level_3.level_data.entropy_write = 2048;
-	level_3.level_data.subcore_scan_ms = 500;
-	level_3.level_data.laptop_mode = 1;
-	level_3.level_data.oom_kill_allocating_task = 0;
-	level_3.level_data.overcommit_memory = 1;
-	level_3.level_data.page_cluster = 3;
-	level_3.level_data.ksm = 0;
+	level_sleep.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_sleep.level_data.swappiness = 0;
+	level_sleep.level_data.cache_pressure = 100;
+	level_sleep.level_data.dirty_ratio = 90;
+	level_sleep.level_data.dirty_background_ratio = 80;
+	level_sleep.level_data.entropy_read = 64;
+	level_sleep.level_data.entropy_write = 128;
+	level_sleep.level_data.subcore_scan_ms = 1000;
+	level_sleep.level_data.laptop_mode = 1;
+	level_sleep.level_data.oom_kill_allocating_task = 0;
+	level_sleep.level_data.overcommit_memory = 0;
+	level_sleep.level_data.page_cluster = 0;
+	level_sleep.level_data.ksm = 0;
+	level_idle.level_data.lmk_minfree = block.LMK_LIGHT;
+	level_idle.level_data.swappiness = 0;
+	level_idle.level_data.cache_pressure = 30;
+	level_idle.level_data.dirty_ratio = 90;
+	level_idle.level_data.dirty_background_ratio = 80;
+	level_idle.level_data.entropy_read = 1024;
+	level_idle.level_data.entropy_write = 2048;
+	level_idle.level_data.subcore_scan_ms = 500;
+	level_idle.level_data.laptop_mode = 1;
+	level_idle.level_data.oom_kill_allocating_task = 0;
+	level_idle.level_data.overcommit_memory = 0;
+	level_idle.level_data.page_cluster = 0;
+	level_idle.level_data.ksm = 0;
+	level_light.level_data.lmk_minfree = block.LMK_MEDIUM;
+	level_light.level_data.swappiness = 20;
+	level_light.level_data.cache_pressure = 60;
+	level_light.level_data.dirty_ratio = 90;
+	level_light.level_data.dirty_background_ratio = 80;
+	level_light.level_data.entropy_read = 1024;
+	level_light.level_data.entropy_write = 2048;
+	level_light.level_data.subcore_scan_ms = 500;
+	level_light.level_data.laptop_mode = 1;
+	level_light.level_data.oom_kill_allocating_task = 0;
+	level_light.level_data.overcommit_memory = 0;
+	level_light.level_data.page_cluster = 0;
+	level_light.level_data.ksm = 0;
+	level_medium.level_data.lmk_minfree = block.LMK_MEDIUM;
+	level_medium.level_data.swappiness = 30;
+	level_medium.level_data.cache_pressure = 70;
+	level_medium.level_data.dirty_ratio = 90;
+	level_medium.level_data.dirty_background_ratio = 80;
+	level_medium.level_data.entropy_read = 1024;
+	level_medium.level_data.entropy_write = 2048;
+	level_medium.level_data.subcore_scan_ms = 500;
+	level_medium.level_data.laptop_mode = 1;
+	level_medium.level_data.oom_kill_allocating_task = 0;
+	level_medium.level_data.overcommit_memory = 1;
+	level_medium.level_data.page_cluster = 3;
+	level_medium.level_data.ksm = 0;
+	level_aggressive.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_aggressive.level_data.swappiness = 40;
+	level_aggressive.level_data.cache_pressure = 80;
+	level_aggressive.level_data.dirty_ratio = 90;
+	level_aggressive.level_data.dirty_background_ratio = 80;
+	level_aggressive.level_data.entropy_read = 1024;
+	level_aggressive.level_data.entropy_write = 2048;
+	level_aggressive.level_data.subcore_scan_ms = 500;
+	level_aggressive.level_data.laptop_mode = 1;
+	level_aggressive.level_data.oom_kill_allocating_task = 0;
+	level_aggressive.level_data.overcommit_memory = 1;
+	level_aggressive.level_data.page_cluster = 3;
+	level_aggressive.level_data.ksm = 0;
 	for (size_t i = 0; i < online; i++) {
-		interactive_struct interactive_0;
-		interactive_struct interactive_1;
-		interactive_struct interactive_2;
-		interactive_struct interactive_3;
+		interactive_struct interactive_idle;
+		interactive_struct interactive_light;
+		interactive_struct interactive_medium;
+		interactive_struct interactive_aggressive;
 		// universal
-		interactive_0.go_hispeed_load = 99;
-		interactive_0.above_hispeed_delay = "100000";
-		interactive_0.timer_rate = 40000;
-		interactive_0.timer_slack = -1;
-		interactive_0.min_sample_time = 100000;
-		interactive_1.go_hispeed_load = 99;
-		interactive_1.above_hispeed_delay = "80000";
-		interactive_1.timer_rate = 40000;
-		interactive_1.timer_slack = -1;
-		interactive_1.min_sample_time = 100000;
-		interactive_2.go_hispeed_load = 80;
-		interactive_2.above_hispeed_delay = "80000";
-		interactive_2.timer_rate = 20000;
-		interactive_2.timer_slack = -1;
-		interactive_2.min_sample_time = 80000;
-		interactive_3.go_hispeed_load = 75;
-		interactive_3.above_hispeed_delay = "40000";
-		interactive_3.timer_rate = 20000;
-		interactive_3.timer_slack = -1;
-		interactive_3.min_sample_time = 80000;
+		interactive_idle.go_hispeed_load = 99;
+		interactive_idle.above_hispeed_delay = "100000";
+		interactive_idle.timer_rate = 40000;
+		interactive_idle.timer_slack = -1;
+		interactive_idle.min_sample_time = 100000;
+		interactive_light.go_hispeed_load = 99;
+		interactive_light.above_hispeed_delay = "80000";
+		interactive_light.timer_rate = 40000;
+		interactive_light.timer_slack = -1;
+		interactive_light.min_sample_time = 100000;
+		interactive_medium.go_hispeed_load = 80;
+		interactive_medium.above_hispeed_delay = "80000";
+		interactive_medium.timer_rate = 20000;
+		interactive_medium.timer_slack = -1;
+		interactive_medium.min_sample_time = 80000;
+		interactive_aggressive.go_hispeed_load = 75;
+		interactive_aggressive.above_hispeed_delay = "40000";
+		interactive_aggressive.timer_rate = 20000;
+		interactive_aggressive.timer_slack = -1;
+		interactive_aggressive.min_sample_time = 80000;
 
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
-			interactive_0.hispeed_freq = cpu_avail_freqs[cpu_freq_offsets[i]];
-			interactive_0.target_loads = ((std::ostringstream&) (std::ostringstream("") << "97 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":99")).str();
-			interactive_1.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]);
-			interactive_1.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":99")).str();
-			interactive_2.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]);
-			interactive_2.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":80 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":85 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":99")).str();
-			interactive_3.hispeed_freq = freq_from_percent(cpu_avail_freqs, 45);
-			interactive_3.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":75 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
+			interactive_idle.hispeed_freq = cpu_avail_freqs[cpu_freq_offsets[i]];
+			interactive_idle.target_loads = ((std::ostringstream&) (std::ostringstream("") << "97 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":99")).str();
+			interactive_light.hispeed_freq = freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]);
+			interactive_light.target_loads = ((std::ostringstream&) (std::ostringstream("") << "95 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":97 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":99")).str();
+			interactive_medium.hispeed_freq = freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]);
+			interactive_medium.target_loads = ((std::ostringstream&) (std::ostringstream("") << "75 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":80 " << freq_from_percent(cpu_avail_freqs, 30, cpu_freq_offsets[i]) << ":85 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":99")).str();
+			interactive_aggressive.hispeed_freq = freq_from_percent(cpu_avail_freqs, 45);
+			interactive_aggressive.target_loads = ((std::ostringstream&) (std::ostringstream("") << "70 " << freq_from_percent(cpu_avail_freqs, 20, cpu_freq_offsets[i]) << ":75 " << freq_from_percent(cpu_avail_freqs, 45, cpu_freq_offsets[i]) << ":80 " << cpu_avail_freqs[cpu_avail_freqs.size() - 1] << ":85")).str();
 		} else {
-			interactive_0.hispeed_freq = 0;
-			interactive_0.target_loads = "";
-			interactive_1.hispeed_freq = 0;
-			interactive_1.target_loads = "";
-			interactive_2.hispeed_freq = 0;
-			interactive_2.target_loads = "";
-			interactive_3.hispeed_freq = 0;
-			interactive_3.target_loads = "";
+			interactive_idle.hispeed_freq = 0;
+			interactive_idle.target_loads = "";
+			interactive_light.hispeed_freq = 0;
+			interactive_light.target_loads = "";
+			interactive_medium.hispeed_freq = 0;
+			interactive_medium.target_loads = "";
+			interactive_aggressive.hispeed_freq = 0;
+			interactive_aggressive.target_loads = "";
 		}
-		level_0.level_data.interactives.push_back(interactive_0);
-		level_1.level_data.interactives.push_back(interactive_1);
-		level_2.level_data.interactives.push_back(interactive_2);
-		level_3.level_data.interactives.push_back(interactive_3);
+		level_idle.level_data.interactives.push_back(interactive_idle);
+		level_light.level_data.interactives.push_back(interactive_light);
+		level_medium.level_data.interactives.push_back(interactive_medium);
+		level_aggressive.level_data.interactives.push_back(interactive_aggressive);
 	}
 }
 
 void subcore::set_sysfs(level_struct level) {
-	if (current_state == level.state) {
+	if (current_state == level.state && current_state != state_init) {
 		if (display.suspended()) {
 			same_level_count = 0;
 			return;
@@ -401,14 +430,8 @@ void subcore::set_sysfs(level_struct level) {
 	uint8_t online = cpu.online();
 	for (size_t i = 0; i < online; i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
-		if (power_aware && display.suspended()) {
-			std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
-			cpu.max_freq(i, cpu_avail_freqs[0]);
-			cpu.min_freq(i, cpu_avail_freqs[0]);
-		} else {
-			cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
-			cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
-		}	
+		cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
+		cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
 		if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
 	}
