@@ -68,6 +68,7 @@ void subcore::user_settings::load() {
 	for (size_t i = 0; i < online; i++) {
 		cpu.max_freq(i, backup_settings.cpu_max_freqs[i]);
 		cpu.min_freq(i, backup_settings.cpu_min_freqs[i]);
+		cpu.gov(i, backup_settings.cpu_gov[i]);
 	}
 	gpu.max_freq(backup_settings.gpu_max_freq);
 	gpu.min_freq(backup_settings.gpu_min_freq);
