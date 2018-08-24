@@ -431,8 +431,7 @@ void subcore::set_sysfs(level_struct level) {
 			}	
 		return;
 	}
-	uint8_t online = cpu.online();
-	for (size_t i = 0; i < online; i++) {
+	for (size_t i = 0; i < cpu.online(); i++) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
 		cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
 		cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
