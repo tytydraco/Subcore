@@ -16,6 +16,7 @@ void subcore::user_settings::save() {
 		backup_settings.cpu_min_freqs.push_back(cpu.min_freq(i));
 		backup_settings.cpu_govs.push_back(cpu.gov(i));
 	}
+	backup_settings.cpu_boost = cpu.cpu_boost();
 	backup_settings.gpu_max_freq = gpu.max_freq();
 	backup_settings.gpu_min_freq = gpu.min_freq();
 
@@ -70,6 +71,7 @@ void subcore::user_settings::load() {
 		cpu.min_freq(i, backup_settings.cpu_min_freqs[i]);
 		cpu.gov(i, backup_settings.cpu_govs[i]);
 	}
+	cpu.cpu_boost(backup_settings.cpu_boost);
 	gpu.max_freq(backup_settings.gpu_max_freq);
 	gpu.min_freq(backup_settings.gpu_min_freq);
 
@@ -293,6 +295,7 @@ void subcore::setup_levels() {
 		level_aggressive.level_data.ioscheds.push_back("deadline");
 	}
 
+	level_sleep.level_data.cpu_boost = "0:0";
 	level_sleep.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_sleep.level_data.swappiness = 0;
 	level_sleep.level_data.cache_pressure = 100;
@@ -306,6 +309,7 @@ void subcore::setup_levels() {
 	level_sleep.level_data.overcommit_memory = 0;
 	level_sleep.level_data.page_cluster = 0;
 	level_sleep.level_data.ksm = 0;
+	level_idle.level_data.cpu_boost = "0:0";
 	level_idle.level_data.lmk_minfree = block.LMK_LIGHT;
 	level_idle.level_data.swappiness = 0;
 	level_idle.level_data.cache_pressure = 30;
@@ -319,6 +323,7 @@ void subcore::setup_levels() {
 	level_idle.level_data.overcommit_memory = 0;
 	level_idle.level_data.page_cluster = 0;
 	level_idle.level_data.ksm = 0;
+	level_light.level_data.cpu_boost = "0:0";
 	level_light.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_light.level_data.swappiness = 20;
 	level_light.level_data.cache_pressure = 60;
@@ -332,6 +337,7 @@ void subcore::setup_levels() {
 	level_light.level_data.overcommit_memory = 0;
 	level_light.level_data.page_cluster = 0;
 	level_light.level_data.ksm = 0;
+	level_medium.level_data.cpu_boost = "0:0";
 	level_medium.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_medium.level_data.swappiness = 30;
 	level_medium.level_data.cache_pressure = 70;
@@ -345,6 +351,7 @@ void subcore::setup_levels() {
 	level_medium.level_data.overcommit_memory = 1;
 	level_medium.level_data.page_cluster = 3;
 	level_medium.level_data.ksm = 0;
+	level_aggressive.level_data.cpu_boost = "0:0";
 	level_aggressive.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 	level_aggressive.level_data.swappiness = 40;
 	level_aggressive.level_data.cache_pressure = 80;
@@ -439,6 +446,7 @@ void subcore::set_sysfs(level_struct level) {
 		if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
 	}
+	cpu.cpu_boost(level.level_data.cpu_boost);
 	gpu.max_freq(level.level_data.gpu_max_freq);
 	gpu.min_freq(level.level_data.gpu_min_freq);
 	std::vector<std::string> blkdevs = block.blkdevs();

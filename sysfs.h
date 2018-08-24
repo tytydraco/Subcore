@@ -12,6 +12,7 @@ namespace sysfs {
 	class cpu {
 		private:
 			const std::string PATH_CPU = "/sys/devices/system/cpu";
+			const std::string PATH_CPU_BOOST = "/sys/module/cpu_boost/parameters";
 			const std::string PATH_STAT = "/proc/stat";
 		public:
 			uint16_t STAT_AVG_SLEEP_MS = 1000;
@@ -67,6 +68,14 @@ namespace sysfs {
 
 			inline std::string gov(uint8_t core) {
 				return io::read_file(PATH_CPU + "/cpu" + std::to_string(core) + "/cpufreq/scaling_governor");
+			}
+
+			inline void cpu_boost(std::string freq) {
+				io::write_file(PATH_CPU_BOOST + "/input_boost_freq", freq);
+			}
+			
+			inline std::string cpu_boost() {
+				return io::read_file(PATH_CPU_BOOST + "/input_boost_freq");
 			}
 	};
 
