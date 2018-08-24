@@ -114,6 +114,7 @@ class subcore {
 		bool debug = false;
 		bool low_mem = false;
 		bool power_aware = true;
+		bool sleep_aware = true;
 
 		user_settings settings = user_settings(cpu, block, gpu);
 

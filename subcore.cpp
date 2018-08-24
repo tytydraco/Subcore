@@ -134,7 +134,7 @@ void subcore::algorithm() {
 		std::cout << "[*] Load: " << std::to_string(load) << "\t";
 
 	// load based algorithm
-	if (display.suspended()) {
+	if (sleep_aware && display.suspended()) {
 		set_sysfs(level_sleep);
 		if (debug)
 			std::cout << "level_sleep" << std::endl;

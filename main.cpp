@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 	// scan for command line args
 	int16_t opt;
 	bool fork = true;
-	while ((opt = getopt(argc, argv, "dmpf")) != -1) {
+	while ((opt = getopt(argc, argv, "dmpfs")) != -1) {
 		switch (opt) {
 			case 'd':
 				std::cout << "[*] Debug enabled" << std::endl;
@@ -67,6 +67,11 @@ int main(int argc, char** argv) {
 				if (subcore.debug)
 					std::cout << "[*] Not forking" << std::endl;
 				fork = false;
+				break;
+			case 's':
+				if (subcore.debug)
+					std::cout << "[*] Sleep-Aware disabled" << std::endl;
+				subcore.sleep_aware = false;
 				break;
 			case '?':  // unknown option...
 				exit(1);
