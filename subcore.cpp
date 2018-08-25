@@ -111,7 +111,6 @@ void subcore::user_settings::load() {
 		io::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
 		io::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
 		io::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
-		cpu.gov(i, backup_settings.cpu_govs[i]);
 	}
 }
 
