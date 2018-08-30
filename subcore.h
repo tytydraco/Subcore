@@ -66,21 +66,8 @@ class subcore {
 			sysfs_struct level_data;
 		};
 
-		class user_settings {
-			private:
-				sysfs_struct backup_settings;
-				std::string hotplug;
-				sysfs::cpu &cpu;
-				sysfs::block &block;
-				sysfs::gpu &gpu;
-				bool low_mem;
-			public:
-				void save();
-				void load();
-
-				user_settings(sysfs::cpu &_cpu, sysfs::block &_block, sysfs::gpu &_gpu)
-					: cpu(_cpu), block(_block), gpu(_gpu) {}
-		};
+		// place to save user settings in mem
+		sysfs_struct backup_settings;	
 
 		// declarations
 		state current_state = state_init;
@@ -100,6 +87,7 @@ class subcore {
 
 		// the # of times the same level is selected
 		uint16_t same_level_count = 0;
+		std::string hotplug;
 
 		// min freq offsets
 		std::vector<uint8_t> cpu_freq_offsets;
@@ -116,8 +104,10 @@ class subcore {
 		bool low_mem = false;
 		bool power_aware = true;
 		bool sleep_aware = true;
+		bool gpu_mode	= false;
 
-		user_settings settings = user_settings(cpu, block, gpu);
+		void settings_save();
+		void settings_load();
 
 		void algorithm();	
 		void setup_levels();

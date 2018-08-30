@@ -12,7 +12,7 @@ subcore subcore;
 void onexit_handler(int signum) {
 	if (subcore.debug)
 		std::cout << "[*] Restoring user settings" << std::endl;
-	subcore.settings.load();
+	subcore.settings_load();
 	std::exit(signum);
 }
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 	// scan for command line args
 	int16_t opt;
 	bool fork = true;
-	while ((opt = getopt(argc, argv, "dmpfs")) != -1) {
+	while ((opt = getopt(argc, argv, "dmpfsg")) != -1) {
 		switch (opt) {
 			case 'd':
 				std::cout << "[*] Debug enabled" << std::endl;
@@ -73,6 +73,12 @@ int main(int argc, char** argv) {
 					std::cout << "[*] Sleep-Aware disabled" << std::endl;
 				subcore.sleep_aware = false;
 				break;
+			case 'g':
+				if (subcore.debug)
+					std::cout << "[*] GPU-Mode enabled" << std::endl;
+				subcore.gpu_mode = true;
+				break;
+
 			case '?':  // unknown option...
 				exit(1);
 				break;
@@ -95,7 +101,7 @@ int main(int argc, char** argv) {
 	// user settings managenent
 	if (subcore.debug)
 		std::cout << "[*] Saving user settings" << std::endl;
-	subcore.settings.save();
+	subcore.settings_save();
 
 	// setup the presets based on the device
 	if (subcore.debug)
