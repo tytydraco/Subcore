@@ -118,8 +118,12 @@ void subcore::settings_load() {
 
 void subcore::algorithm() {
 	uint8_t load = cpu.loadavg();
+
+	// account for less powerful devices
 	if (cpu.online() <= 4)
 		load *= 1.5;
+	if (load > 100)
+		load = 100;
 	
 	//special cases
 	if (power_aware) {
@@ -130,7 +134,9 @@ void subcore::algorithm() {
 		else if (capacity <= 5)
 			load = 0;
 		else if (capacity <= 15)
-			load /= 2;
+			// don't divide by 0
+			if (load != 0)
+				load /= 2;
 	}
 
 	if (debug)
