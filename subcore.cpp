@@ -303,10 +303,15 @@ void subcore::setup_levels() {
 	}
 
 	level_sleep.level_data.cpu_boost = "0:0";
+	level_sleep.level_data.subcore_scan_ms = 1000;
 	level_idle.level_data.cpu_boost = "0:0";
+	level_idle.level_data.subcore_scan_ms = 500;
 	level_light.level_data.cpu_boost = "0:0";
+	level_light.level_data.subcore_scan_ms = 500;
 	level_medium.level_data.cpu_boost = "0:0";
+	level_medium.level_data.subcore_scan_ms = 500;
 	level_aggressive.level_data.cpu_boost = "0:0";
+	level_aggressive.level_data.subcore_scan_ms = 500;
 
 	if (!low_mem) {	
 		level_sleep.level_data.lmk_minfree = block.LMK_LIGHT;
@@ -315,8 +320,7 @@ void subcore::setup_levels() {
 		level_sleep.level_data.dirty_ratio = 90;
 		level_sleep.level_data.dirty_background_ratio = 80;
 		level_sleep.level_data.entropy_read = 64;
-		level_sleep.level_data.entropy_write = 128;
-		level_sleep.level_data.subcore_scan_ms = 1000;
+		level_sleep.level_data.entropy_write = 128;	
 		level_sleep.level_data.laptop_mode = 1;
 		level_sleep.level_data.oom_kill_allocating_task = 0;
 		level_sleep.level_data.overcommit_memory = 0;
@@ -328,8 +332,7 @@ void subcore::setup_levels() {
 		level_idle.level_data.dirty_ratio = 90;
 		level_idle.level_data.dirty_background_ratio = 80;
 		level_idle.level_data.entropy_read = 1024;
-		level_idle.level_data.entropy_write = 2048;
-		level_idle.level_data.subcore_scan_ms = 500;
+		level_idle.level_data.entropy_write = 2048;	
 		level_idle.level_data.laptop_mode = 1;
 		level_idle.level_data.oom_kill_allocating_task = 0;
 		level_idle.level_data.overcommit_memory = 0;
@@ -341,8 +344,7 @@ void subcore::setup_levels() {
 		level_light.level_data.dirty_ratio = 90;
 		level_light.level_data.dirty_background_ratio = 80;
 		level_light.level_data.entropy_read = 1024;
-		level_light.level_data.entropy_write = 2048;
-		level_light.level_data.subcore_scan_ms = 500;
+		level_light.level_data.entropy_write = 2048;	
 		level_light.level_data.laptop_mode = 1;
 		level_light.level_data.oom_kill_allocating_task = 0;
 		level_light.level_data.overcommit_memory = 0;
@@ -354,8 +356,7 @@ void subcore::setup_levels() {
 		level_medium.level_data.dirty_ratio = 90;
 		level_medium.level_data.dirty_background_ratio = 80;
 		level_medium.level_data.entropy_read = 1024;
-		level_medium.level_data.entropy_write = 2048;
-		level_medium.level_data.subcore_scan_ms = 500;
+		level_medium.level_data.entropy_write = 2048;	
 		level_medium.level_data.laptop_mode = 1;
 		level_medium.level_data.oom_kill_allocating_task = 0;
 		level_medium.level_data.overcommit_memory = 1;
@@ -367,8 +368,7 @@ void subcore::setup_levels() {
 		level_aggressive.level_data.dirty_ratio = 90;
 		level_aggressive.level_data.dirty_background_ratio = 80;
 		level_aggressive.level_data.entropy_read = 1024;
-		level_aggressive.level_data.entropy_write = 2048;
-		level_aggressive.level_data.subcore_scan_ms = 500;
+		level_aggressive.level_data.entropy_write = 2048;	
 		level_aggressive.level_data.laptop_mode = 1;
 		level_aggressive.level_data.oom_kill_allocating_task = 0;
 		level_aggressive.level_data.overcommit_memory = 1;
