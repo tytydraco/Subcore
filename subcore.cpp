@@ -295,9 +295,9 @@ void subcore::setup_levels() {
 	}
 
 	level_sleep.level_data.cpu_boost = "0:0";
-	level_sleep.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
+	level_sleep.level_data.lmk_minfree = block.LMK_LIGHT;
 	level_sleep.level_data.swappiness = 0;
-	level_sleep.level_data.cache_pressure = 100;
+	level_sleep.level_data.cache_pressure = 10;
 	level_sleep.level_data.dirty_ratio = 90;
 	level_sleep.level_data.dirty_background_ratio = 80;
 	level_sleep.level_data.entropy_read = 64;
@@ -309,7 +309,7 @@ void subcore::setup_levels() {
 	level_sleep.level_data.page_cluster = 0;
 	level_sleep.level_data.ksm = 0;
 	level_idle.level_data.cpu_boost = "0:0";
-	level_idle.level_data.lmk_minfree = block.LMK_LIGHT;
+	level_idle.level_data.lmk_minfree = block.LMK_MEDIUM;
 	level_idle.level_data.swappiness = 0;
 	level_idle.level_data.cache_pressure = 30;
 	level_idle.level_data.dirty_ratio = 90;
