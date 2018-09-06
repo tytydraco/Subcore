@@ -34,10 +34,17 @@ class subcore {
 			uint32_t boostpulse_duration;
 		};
 
+		struct schedutil_struct {
+			uint16_t up_rate_limit_us;
+			uint16_t down_rate_limit_us;
+			uint16_t rate_limit_us;
+		};
+
 		struct sysfs_struct {
 			std::vector<std::string> ioscheds;
 			std::vector<std::string> cpu_govs;
 			std::vector<interactive_struct> interactives;
+			std::vector<schedutil_struct> schedutils;
 			std::vector<uint32_t> cpu_max_freqs;
 			std::vector<uint32_t> cpu_min_freqs;
 			std::string cpu_boost;
@@ -96,6 +103,7 @@ class subcore {
 		// functions
 		void set_sysfs(level_struct level);
 		void set_interactive(uint8_t core, interactive_struct interactive);
+		void set_schedutil(uint8_t core, schedutil_struct schedutil);
 		std::string preferred_gov(std::vector<std::string> pref_govs);
 		uint32_t freq_from_percent(std::vector<uint32_t> avail_freqs, uint8_t percent, uint8_t offset = 0);
 		uint32_t freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent, uint8_t offset = 0);

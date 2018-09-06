@@ -62,6 +62,26 @@ void subcore::settings_save() {
 		interactive.target_loads = io::read_file(PATH_INTERACTIVE + "/target_loads");
 		backup_settings.interactives.push_back(interactive);
 	}
+
+	for (size_t i = 0; i < online; i++) {
+		schedutil_struct schedutil;
+		std::string PATH_SCHEDUTIL;
+		if (io::path_exists("/sys/devices/system/cpu/cpufreq/schedutil"))
+			PATH_SCHEDUTIL = "/sys/devices/system/cpu/cpufreq/schedutil";
+		else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/schedutil"))
+			PATH_SCHEDUTIL = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/schedutil";
+		else {
+			backup_settings.schedutils.push_back(schedutil);
+			continue;
+		}
+
+		if (io::path_exists(PATH_SCHEDUTIL + "/up_rate_limit_us"))
+			schedutil.up_rate_limit_us = (uint16_t) stoi(io::read_file(PATH_SCHEDUTIL + "/up_rate_limit_us"));
+		if (io::path_exists(PATH_SCHEDUTIL + "/down_rate_limit_us"))
+			schedutil.down_rate_limit_us = (uint16_t) stoi(io::read_file(PATH_SCHEDUTIL + "/down_rate_limit_us"));
+		if (io::path_exists(PATH_SCHEDUTIL + "/rate_limit_us"))
+			schedutil.rate_limit_us = (uint16_t) stoi(io::read_file(PATH_SCHEDUTIL + "/rate_limit_us"));
+	}
 }
 
 void subcore::settings_load() {
@@ -98,22 +118,10 @@ void subcore::settings_load() {
 	block.entropy_read(backup_settings.entropy_read);
 	block.entropy_write(backup_settings.entropy_write);
 
-	for (uint8_t i = 0; i < online; i++) {
-		std::string PATH_INTERACTIVE;
-		if (io::path_exists("/sys/devices/system/cpu/cpufreq/interactive"))
-			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/interactive";
-		else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive"))
-			PATH_INTERACTIVE = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(i) + "/interactive";
-		else
-			continue;
-		io::write_file(PATH_INTERACTIVE + "/go_hispeed_load", std::to_string(backup_settings.interactives[i].go_hispeed_load));
-		io::write_file(PATH_INTERACTIVE + "/above_hispeed_delay", backup_settings.interactives[i].above_hispeed_delay);
-		io::write_file(PATH_INTERACTIVE + "/timer_rate", std::to_string(backup_settings.interactives[i].timer_rate));
-		io::write_file(PATH_INTERACTIVE + "/timer_slack", std::to_string(backup_settings.interactives[i].timer_slack));
-		io::write_file(PATH_INTERACTIVE + "/min_sample_time", std::to_string(backup_settings.interactives[i].min_sample_time));
-		io::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(backup_settings.interactives[i].hispeed_freq));
-		io::write_file(PATH_INTERACTIVE + "/target_loads", backup_settings.interactives[i].target_loads);
-	}
+	for (uint8_t i = 0; i < online; i++)
+		set_interactive(i, backup_settings.interactives[i]);		
+	for (size_t i = 0; i < online; i++)
+		set_schedutil(i, backup_settings.schedutils[i]);
 }
 
 void subcore::algorithm() {
@@ -191,23 +199,23 @@ void subcore::setup_levels() {
 		"performance"
 	};	
 	level_idle.gov_pref = std::vector<std::string> {
-		"interactive",
 		"schedutil",
+		"interactive",
 		"performance"
 	};
 	level_light.gov_pref = std::vector<std::string> {
-		"interactive",
 		"schedutil",
+		"interactive",
 		"performance"
 	};
 	level_medium.gov_pref = std::vector<std::string> {
-		"interactive",
 		"schedutil",
+		"interactive",
 		"performance"
 	};
 	level_aggressive.gov_pref = std::vector<std::string> {
-		"interactive",
 		"schedutil",
+		"interactive",
 		"performance"
 	};
 		
@@ -374,6 +382,10 @@ void subcore::setup_levels() {
 		interactive_struct interactive_light;
 		interactive_struct interactive_medium;
 		interactive_struct interactive_aggressive;
+		schedutil_struct schedutil_idle;
+		schedutil_struct schedutil_light;
+		schedutil_struct schedutil_medium;
+		schedutil_struct schedutil_aggressive;
 		// universal
 		interactive_idle.go_hispeed_load = 99;
 		interactive_idle.above_hispeed_delay = "100000";
@@ -395,7 +407,18 @@ void subcore::setup_levels() {
 		interactive_aggressive.timer_rate = 20000;
 		interactive_aggressive.timer_slack = -1;
 		interactive_aggressive.min_sample_time = 80000;
-
+		schedutil_idle.up_rate_limit_us = 7000;
+		schedutil_idle.down_rate_limit_us = 7000;
+		schedutil_idle.rate_limit_us = 7000;
+		schedutil_light.up_rate_limit_us = 5000;
+		schedutil_light.down_rate_limit_us = 5000;
+		schedutil_light.rate_limit_us = 5000;
+		schedutil_medium.up_rate_limit_us = 3000;
+		schedutil_medium.down_rate_limit_us = 3000;
+		schedutil_medium.rate_limit_us = 3000;
+		schedutil_aggressive.up_rate_limit_us = 1000;
+		schedutil_aggressive.down_rate_limit_us = 1000;
+		schedutil_aggressive.rate_limit_us = 1000;
 		// per cpu
 		std::vector<uint32_t> cpu_avail_freqs = cpu.freqs(i);
 		if (cpu_avail_freqs.size() >= 4) {
@@ -421,6 +444,10 @@ void subcore::setup_levels() {
 		level_light.level_data.interactives.push_back(interactive_light);
 		level_medium.level_data.interactives.push_back(interactive_medium);
 		level_aggressive.level_data.interactives.push_back(interactive_aggressive);
+		level_idle.level_data.schedutils.push_back(schedutil_idle);
+		level_light.level_data.schedutils.push_back(schedutil_light);
+		level_medium.level_data.schedutils.push_back(schedutil_medium);
+		level_aggressive.level_data.schedutils.push_back(schedutil_aggressive);
 	}
 }
 
@@ -447,7 +474,9 @@ void subcore::set_sysfs(level_struct level) {
 		cpu.gov(i, level.level_data.cpu_govs[i]);
 		cpu.max_freq(i, level.level_data.cpu_max_freqs[i]);
 		cpu.min_freq(i, level.level_data.cpu_min_freqs[i]);
-		if (level.level_data.cpu_govs[i] == "interactive")
+		if (level.level_data.cpu_govs[i] == "schedutil")
+			set_schedutil(i, level.level_data.schedutils[i]);
+		else if (level.level_data.cpu_govs[i] == "interactive")
 			set_interactive(i, level.level_data.interactives[i]);
 	}
 	cpu.cpu_boost(level.level_data.cpu_boost);
@@ -507,6 +536,24 @@ void subcore::set_interactive(uint8_t core, interactive_struct interactive) {
 	io::write_file(PATH_INTERACTIVE + "/hispeed_freq", std::to_string(interactive.hispeed_freq));
 	io::write_file(PATH_INTERACTIVE + "/target_loads", interactive.target_loads);
 }
+
+void subcore::set_schedutil(uint8_t core, schedutil_struct schedutil) {
+	std::string PATH_SCHEDUTIL;
+	if (io::path_exists("/sys/devices/system/cpu/cpufreq/schedutil"))
+		PATH_SCHEDUTIL = "/sys/devices/system/cpu/cpufreq/schedutil";
+	else if (io::path_exists("/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/schedutil"))
+		PATH_SCHEDUTIL = "/sys/devices/system/cpu/cpufreq/policy" + std::to_string(core) + "/schedutil";
+	else
+		return;
+
+	if (io::path_exists(PATH_SCHEDUTIL + "/up_rate_limit_us"))
+		io::write_file(PATH_SCHEDUTIL + "/up_rate_limit_us", std::to_string(schedutil.up_rate_limit_us));
+	if (io::path_exists(PATH_SCHEDUTIL + "/down_rate_limit_us"))
+		io::write_file(PATH_SCHEDUTIL + "/down_rate_limit_us", std::to_string(schedutil.down_rate_limit_us));
+	if (io::path_exists(PATH_SCHEDUTIL + "/rate_limit_us"))
+		io::write_file(PATH_SCHEDUTIL + "/rate_limit_us", std::to_string(schedutil.rate_limit_us));
+}
+
 
 std::string subcore::preferred_gov(std::vector<std::string> pref_govs) {
 	std::vector<std::string> cpu_avail_govs = cpu.govs();
