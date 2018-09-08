@@ -217,8 +217,8 @@ bool sysfs::display::suspended() {
 		std::string str = io::read_file(PATH_POWER_SUSPEND + "/power_suspend_state");
 		return (str.find("1") != std::string::npos);
 	} else if (io::path_exists(PATH_FB0)) {
-		std::string str = io::read_file(PATH_FB0 + "/idle_notify");
-		return (str.find("yes") != std::string::npos);
+		std::string str = io::read_file(PATH_FB0 + "/measured_fps");
+		return (str.find("0.0") != std::string::npos);
 	}
 
 	// not accessible
