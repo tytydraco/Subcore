@@ -27,7 +27,7 @@ void subcore::settings_save() {
 		backup_settings.readaheads.push_back(block.read_ahead(blkdev));
 	}
 	
-	if (!low_mem) {
+	if (memory_aware) {
 		backup_settings.swappiness = block.swappiness();
 		backup_settings.cache_pressure = block.cache_pressure();
 		backup_settings.dirty_ratio = block.dirty_ratio();
@@ -103,7 +103,7 @@ void subcore::settings_load() {
 		block.read_ahead(blkdevs[i], backup_settings.readaheads[i]);
 	}
 
-	if (!low_mem) {
+	if (memory_aware) {
 		block.swappiness(backup_settings.swappiness);
 		block.cache_pressure(backup_settings.cache_pressure);
 		block.dirty_ratio(backup_settings.dirty_ratio);
@@ -321,7 +321,7 @@ void subcore::setup_levels() {
 	level_aggressive.level_data.cpu_boost = "0:0";
 	level_aggressive.level_data.subcore_scan_ms = 500;
 
-	if (!low_mem) {	
+	if (memory_aware) {	
 		level_sleep.level_data.lmk_minfree = block.LMK_LIGHT;
 		level_sleep.level_data.swappiness = 0;
 		level_sleep.level_data.cache_pressure = 10;
@@ -495,7 +495,7 @@ void subcore::set_sysfs(level_struct level) {
 		block.iosched(blkdevs[i], level.level_data.ioscheds[i]);
 		block.read_ahead(blkdevs[i], level.level_data.readaheads[i]);
 	}
-	if (!low_mem) {
+	if (memory_aware) {
 		block.swappiness(level.level_data.swappiness);
 		block.cache_pressure(level.level_data.cache_pressure);
 		block.dirty_ratio(level.level_data.dirty_ratio);

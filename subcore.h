@@ -109,7 +109,7 @@ class subcore {
 		uint32_t freq_from_percent(std::vector<uint16_t> avail_freqs, uint8_t percent, uint8_t offset = 0);
 	public:
 		bool debug = false;
-		bool low_mem = false;
+		bool memory_aware = false;
 		bool power_aware = true;
 		bool sleep_aware = true;
 		bool gpu_mode	= false;

@@ -55,8 +55,8 @@ int main(int argc, char** argv) {
 				break;
 			case 'm':
 				if (subcore.debug)
-					std::cout << "[*] Low-Memory enabled" << std::endl;
-				subcore.low_mem = true;
+					std::cout << "[*] Memory-Aware enabled" << std::endl;
+				subcore.memory_aware = true;
 				break;
 			case 'p':
 				if (subcore.debug)
