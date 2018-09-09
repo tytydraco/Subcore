@@ -324,7 +324,7 @@ void subcore::setup_levels() {
 	if (memory_aware) {	
 		level_sleep.level_data.lmk_minfree = block.LMK_LIGHT;
 		level_sleep.level_data.swappiness = 0;
-		level_sleep.level_data.cache_pressure = 10;
+		level_sleep.level_data.cache_pressure = 50;
 		level_sleep.level_data.dirty_ratio = 90;
 		level_sleep.level_data.dirty_background_ratio = 80;
 		level_sleep.level_data.entropy_read = 64;
@@ -336,7 +336,7 @@ void subcore::setup_levels() {
 		level_sleep.level_data.ksm = 0;	
 		level_idle.level_data.lmk_minfree = block.LMK_MEDIUM;
 		level_idle.level_data.swappiness = 0;
-		level_idle.level_data.cache_pressure = 30;
+		level_idle.level_data.cache_pressure = 60;
 		level_idle.level_data.dirty_ratio = 90;
 		level_idle.level_data.dirty_background_ratio = 80;
 		level_idle.level_data.entropy_read = 1024;
@@ -348,7 +348,7 @@ void subcore::setup_levels() {
 		level_idle.level_data.ksm = 0;
 		level_light.level_data.lmk_minfree = block.LMK_MEDIUM;
 		level_light.level_data.swappiness = 20;
-		level_light.level_data.cache_pressure = 60;
+		level_light.level_data.cache_pressure = 70;
 		level_light.level_data.dirty_ratio = 90;
 		level_light.level_data.dirty_background_ratio = 80;
 		level_light.level_data.entropy_read = 1024;
@@ -360,7 +360,7 @@ void subcore::setup_levels() {
 		level_light.level_data.ksm = 0;	
 		level_medium.level_data.lmk_minfree = block.LMK_MEDIUM;
 		level_medium.level_data.swappiness = 30;
-		level_medium.level_data.cache_pressure = 70;
+		level_medium.level_data.cache_pressure = 80;
 		level_medium.level_data.dirty_ratio = 90;
 		level_medium.level_data.dirty_background_ratio = 80;
 		level_medium.level_data.entropy_read = 1024;
@@ -372,7 +372,7 @@ void subcore::setup_levels() {
 		level_medium.level_data.ksm = 0;	
 		level_aggressive.level_data.lmk_minfree = block.LMK_AGGRESSIVE;
 		level_aggressive.level_data.swappiness = 40;
-		level_aggressive.level_data.cache_pressure = 80;
+		level_aggressive.level_data.cache_pressure = 90;
 		level_aggressive.level_data.dirty_ratio = 90;
 		level_aggressive.level_data.dirty_background_ratio = 80;
 		level_aggressive.level_data.entropy_read = 1024;
